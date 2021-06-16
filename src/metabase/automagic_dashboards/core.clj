@@ -1059,7 +1059,11 @@
                                 :source       (:source root)
                                 :query-filter (:query-filter root)
                                 :database     (:database root)))
-       (concat (collect-metrics root question)
+       ;; No material support for joins in metrics, so leave it until we support them,
+       ;; instead of erroring out like previously.
+       (concat (if theres no join
+                 (collect-metrics root question)
+                 '())
                (collect-breakout-fields root question))))
 
 (defn- pluralize
