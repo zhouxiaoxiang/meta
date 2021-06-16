@@ -1061,7 +1061,7 @@
                                 :database     (:database root)))
        ;; No material support for joins in metrics, so leave it until we support them,
        ;; instead of erroring out like previously.
-       (concat (if theres no join
+       (concat (if (not (get-in question [:dataset_query :query :joins]))
                  (collect-metrics root question)
                  '())
                (collect-breakout-fields root question))))
