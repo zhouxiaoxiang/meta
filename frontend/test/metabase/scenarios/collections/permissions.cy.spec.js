@@ -293,7 +293,7 @@ describe("collection permissions", () => {
 
                 it("should be able to edit question details (metabase#11719-1)", () => {
                   cy.skipOn(user === "nodata");
-                  cy.findByText("Edit this question").click();
+                  cy.findByTestId("edit-details-button").click();
                   cy.findByLabelText("Name")
                     .click()
                     .type("1");
@@ -304,7 +304,7 @@ describe("collection permissions", () => {
 
                 it("should be able to move the question (metabase#11719-2)", () => {
                   cy.skipOn(user === "nodata");
-                  cy.findByText("Move").click();
+                  cy.findByTestId("move-button").click();
                   cy.findByText("My personal collection").click();
                   clickButton("Move");
                   assertOnRequest("updateQuestion");
@@ -315,7 +315,7 @@ describe("collection permissions", () => {
                   cy.intercept("GET", "/api/collection/root/items**").as(
                     "getItems",
                   );
-                  cy.findByText("Archive").click();
+                  cy.findByTestId("archive-button").click();
                   clickButton("Archive");
                   assertOnRequest("updateQuestion");
                   cy.wait("@getItems"); // pinned items
@@ -325,9 +325,7 @@ describe("collection permissions", () => {
                 });
 
                 it("should be able to add question to dashboard", () => {
-                  popover()
-                    .findByText("Add to dashboard")
-                    .click();
+                  cy.findByTestId("add-to-dashboard-button").click();
 
                   cy.get(".Modal")
                     .as("modal")
@@ -463,10 +461,8 @@ describe("collection permissions", () => {
             describe("managing question from the question's edit dropdown", () => {
               it("should not be offered to add question to dashboard inside a collection they have `read` access to", () => {
                 cy.visit("/question/1");
-                cy.icon("pencil").click();
-                popover()
-                  .findByText("Add to dashboard")
-                  .click();
+                cy.findByTestId("saved-question-header-button").click();
+                cy.findByTestId("add-to-dashboard-button").click();
 
                 cy.get(".Modal").within(() => {
                   cy.findByText("Orders in a dashboard").should("not.exist");
@@ -482,10 +478,8 @@ describe("collection permissions", () => {
                 const { first_name, last_name } = USERS[user];
                 const personalCollection = `${first_name} ${last_name}'s Personal Collection`;
                 cy.visit("/question/1");
-                cy.icon("pencil").click();
-                popover()
-                  .findByText("Add to dashboard")
-                  .click();
+                cy.findByTestId("saved-question-header-button").click();
+                cy.findByTestId("add-to-dashboard-button").click();
 
                 cy.get(".Modal").within(() => {
                   cy.findByText("Create a new dashboard").click();
@@ -628,8 +622,8 @@ describe("collection permissions", () => {
                 // For now that's not possible for user without data access (likely it will be again when #11719 is fixed)
                 cy.skipOn(user === "nodata");
                 cy.visit("/question/1");
-                cy.icon("pencil").click();
-                cy.findByText("View revision history").click();
+                cy.findByTestId("history-button").click();
+
                 clickRevert("First revision.");
                 cy.wait("@revert").then(xhr => {
                   expect(xhr.status).to.eq(200);
@@ -658,8 +652,8 @@ describe("collection permissions", () => {
               it("should not see question revert buttons (metabase#13229)", () => {
                 cy.signIn(user);
                 cy.visit("/question/1");
-                cy.icon("pencil").click();
-                cy.findByText("View revision history").click();
+                cy.findByRole("button", { name: /Edited .*/ }).click();
+
                 cy.findAllByRole("button", { name: "Revert" }).should(
                   "not.exist",
                 );
