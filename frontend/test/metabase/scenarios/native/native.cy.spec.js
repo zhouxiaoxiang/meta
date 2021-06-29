@@ -336,7 +336,7 @@ describe("scenarios > question > native", () => {
     });
 
     cy.reload();
-    cy.icon("pencil").click();
+    cy.findByTestId("revision-history-button").click();
     cy.findByText(/View revision history/i).click();
     cy.findByText(/Revert/i).click(); // Revert to the first revision
     cy.findByText(/Open Editor/i).click();
