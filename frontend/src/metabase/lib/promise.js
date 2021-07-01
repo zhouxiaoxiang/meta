@@ -1,5 +1,5 @@
 // return a promise wrapping the provided one but with a "cancel" method
-export function cancelable(promise) {
+export function cancellable(promise) {
   let canceled = false;
 
   const wrappedPromise = new Promise((resolve, reject) => {
