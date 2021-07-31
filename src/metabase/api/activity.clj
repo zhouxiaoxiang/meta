@@ -62,9 +62,9 @@
 (defendpoint GET "/"
   "Get recent activity."
   []
-  (filter mi/can-read? (-> (db/select Activity {:order-by [[:timestamp :desc]]
-                                                :limit    offset-paging/*limit*
-                                                :offset   offset-paging/*offset*})
+  (filter mi/can-read? (-> (db/select Activity (cond-> {:order-by [[:timestamp :desc]]}
+                                                        (some? offset-paging/*limit*)  (assoc :limit offset-paging/*limit*)
+                                                        (some? offset-paging/*offset*) (assoc :offset offset-paging/*offset*)))
                            (hydrate :user :table :database)
                            add-model-exists-info)))
 
