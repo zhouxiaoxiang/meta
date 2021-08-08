@@ -3,7 +3,6 @@
             [clojure.java.io :as io]
             [clojure.pprint :as pprint]
             [clojure.set :as set]
-            [clojure.string :as str]
             [clojure.tools.namespace.dependency :as ns.deps]
             [clojure.tools.namespace.find :as ns.find]
             [clojure.tools.namespace.parse :as ns.parse]
@@ -56,23 +55,29 @@
          (ns.find/sources-in-jar jarfile))))))
 
 (def extra-deps
+  ;; See https://github.com/clj-commons/manifold/issues/207
   '{manifold.stream.deferred #{manifold.stream.graph}})
 
-(defonce ^:private namespace->deps
+(def classpath-decls
+  (delay (ns.find/find-ns-decls (classpath/system-classpath))))
+
+(def ^:private namespace->deps
   (delay
     (into
      {}
      (map (fn [ns-decl]
             (let [lib (ns.parse/name-from-ns-decl ns-decl)]
               [lib
-               (cond-> (set/union
-                        (set (ns.parse/deps-from-ns-decl ns-decl))
-                        (@clojure-core-requires lib)
-                        (get extra-deps lib))
-                 (not= lib 'clojure.core) (conj 'clojure.core))])))
-     (ns.find/find-ns-decls (classpath/system-classpath)))))
+               (not-empty
+                (set
+                 (cond-> (set/union
+                          (ns.parse/deps-from-ns-decl ns-decl)
+                          (@clojure-core-requires lib)
+                          (get extra-deps lib))
+                   (not= lib 'clojure.core) (conj 'clojure.core))))])))
+     @classpath-decls)))
 
-(defonce ^:private deps-graph
+(def ^:private deps-graph
   (delay
     (reduce
      (fn [graph [ns-symbol deps]]
@@ -87,7 +92,8 @@
 (defn transitive-deps [lib]
   (let [graph @deps-graph]
     (vec (sort (let [topo-comp (ns.deps/topo-comparator graph)]
-                 (fn [x y]
+                 topo-comp
+                 #_(fn [x y]
                    (let [dep-type        (fn [lib]
                                            (cond
                                              (str/starts-with? lib "clojure")  :clojure
@@ -96,7 +102,11 @@
                          [x-type y-type] (mapv dep-type [x y])
                          type->val       {:clojure 0, :lib 1, :metabase 2}
                          n               (if (= x-type y-type)
-                                           (topo-comp x y)
+                                           (let [n (topo-comp x y)]
+                                             (when (zero? n)
+                                               (println "x" x "y" y "x-type" x-type "y-type" y-type) ; NOCOMMIT
+                                               )
+                                             n)
                                            (apply compare (map type->val [x-type y-type])))]
                      #_(println "x y n:" x y n 'x-clojure? x-clojure? 'y-clojure? y-clojure? 'x-lib? x-lib? 'y-lib? y-lib?) ; NOCOMMIT
                      n)))
@@ -109,5 +119,8 @@
      (with-out-str
        (pprint/pprint
         (mapv (fn [lib]
-                [lib (get @namespace->deps lib)])
-              deps))))))
+                (let [deps (get @namespace->deps lib)]
+                  (if deps
+                    [lib deps]
+                    [lib])))
+              (concat deps ['metabase.core])))))))

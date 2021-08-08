@@ -1,7 +1,7 @@
 (ns metabase.server.handler
   "Top-level Metabase Ring handler."
-  (:require [metabase.config :as config]
-            [metabase.plugins.classloader :as classloader]
+  (:require metabase.async.api-response
+            [metabase.config :as config]
             [metabase.server.middleware.auth :as mw.auth]
             [metabase.server.middleware.browser-cookie :as mw.browser]
             [metabase.server.middleware.exceptions :as mw.exceptions]
@@ -18,9 +18,8 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]))
 
-;; required here because this namespace is not actually used anywhere but we need it to be loaded because it adds
-;; impls for handling `core.async` channels as web server responses
-(classloader/require 'metabase.async.api-response)
+;; we need it to be loaded because it adds impls for handling `core.async` channels as web server responses
+(comment metabase.async.api-response/keep-me)
 
 (def ^:private middleware
   ;; ▼▼▼ POST-PROCESSING ▼▼▼ happens from TOP-TO-BOTTOM

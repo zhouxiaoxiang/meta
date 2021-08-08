@@ -11,6 +11,7 @@
             [metabase.db.spec :as db.spec]
             [metabase.driver :as driver]
             [metabase.driver.common :as driver.common]
+            metabase.driver.sql-jdbc
             [metabase.driver.sql-jdbc.common :as sql-jdbc.common]
             [metabase.driver.sql-jdbc.connection :as sql-jdbc.conn]
             [metabase.driver.sql-jdbc.execute :as sql-jdbc.execute]
@@ -26,6 +27,8 @@
   (:import [java.sql ResultSet ResultSetMetaData Time Types]
            [java.time LocalDateTime OffsetDateTime OffsetTime]
            [java.util Date UUID]))
+
+(comment metabase.driver.sql-jdbc/keep-me)
 
 (driver/register! :postgres, :parent :sql-jdbc)
 

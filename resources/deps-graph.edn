@@ -1,13 +1,13 @@
-[[clojure.core nil]
- [clojure.walk (clojure.core)]
- [clojure.tools.analyzer.env (clojure.core)]
+[[clojure.core]
+ [clojure.walk #{clojure.core}]
+ [clojure.tools.analyzer.env #{clojure.core}]
  [clojure.tools.analyzer.utils #{clojure.tools.analyzer.env clojure.core}]
  [clojure.tools.analyzer.ast #{clojure.core clojure.tools.analyzer.utils}]
  [clojure.tools.analyzer.passes.jvm.validate-recur
   #{clojure.tools.analyzer.ast clojure.core clojure.tools.analyzer.utils}]
- [clojure.core.async.impl.protocols (clojure.core)]
+ [clojure.core.async.impl.protocols #{clojure.core}]
  [clojure.core.async.impl.mutex #{clojure.core clojure.core.async.impl.protocols}]
- [clojure.core.async.impl.concurrent (clojure.core)]
+ [clojure.core.async.impl.concurrent #{clojure.core}]
  [clojure.core.async.impl.exec.threadpool
   #{clojure.core.async.impl.concurrent clojure.core clojure.core.async.impl.protocols}]
  [clojure.core.async.impl.dispatch
@@ -15,19 +15,44 @@
  [clojure.core.async.impl.channels
   #{clojure.core clojure.core.async.impl.protocols clojure.core.async.impl.dispatch clojure.core.async.impl.mutex}]
  [clojure.core.async.impl.timers #{clojure.core.async.impl.channels clojure.core clojure.core.async.impl.protocols}]
- [clojure.set (clojure.core)]
- [clojure.string (clojure.core)]
+ [clojure.set #{clojure.core}]
+ [metabase.types.coercion-hierarchies #{clojure.core clojure.set}]
+ [metabase.types #{clojure.core clojure.set metabase.types.coercion-hierarchies}]
+ [ring.util.parsing #{clojure.core}]
+ [clojure.string #{clojure.core}]
  [clojure.java.io #{clojure.core clojure.string}]
- [clojure.math.numeric-tower (clojure.core)]
- [clojure.tools.reader.default-data-readers (clojure.core)]
- [clojure.edn (clojure.core)]
+ [ring.util.time #{clojure.core clojure.string}]
+ [ring.util.io #{clojure.core clojure.java.io}]
+ [ring.util.response #{ring.util.io clojure.core ring.util.time clojure.java.io clojure.string ring.util.parsing}]
+ [ring.core.protocols #{clojure.core clojure.java.io ring.util.response}]
+ [ring.util.servlet #{clojure.core clojure.java.io ring.core.protocols clojure.string}]
+ [riddley.compiler #{clojure.core}]
+ [riddley.walk #{riddley.compiler clojure.core}]
+ [potemkin.walk #{clojure.core}]
+ [potemkin.macros #{potemkin.walk riddley.walk clojure.core}]
+ [potemkin.types #{potemkin.macros riddley.walk clojure.core clojure.set clojure.string}]
+ [metabase.server.protocols #{potemkin.types clojure.core ring.util.servlet}]
+ [dynapath.dynamic-classpath #{clojure.core}]
+ [dynapath.defaults #{dynapath.dynamic-classpath clojure.core}]
+ [clojure.math.numeric-tower #{clojure.core}]
+ [medley.core #{clojure.core}]
+ [clojure.tools.reader.default-data-readers #{clojure.core}]
+ [clojure.edn #{clojure.core}]
+ [environ.core #{clojure.core clojure.edn clojure.java.io clojure.string}]
  [clojure.tools.namespace.dependency #{clojure.core clojure.set}]
  [clojure.tools.namespace.track #{clojure.core clojure.set clojure.tools.namespace.dependency}]
- [clojure.tools.logging.impl (clojure.core)]
+ [schema.utils #{clojure.core clojure.string}]
+ [clojure.tools.logging.impl #{clojure.core}]
  [clojure.data #{clojure.core clojure.set}]
- [clojure.tools.reader.impl.inspect (clojure.core)]
+ [clj-tuple #{clojure.core}]
+ [clojure.tools.reader.impl.inspect #{clojure.core}]
+ [schema.macros #{clojure.core clojure.string schema.utils}]
+ [schema.spec.core #{schema.macros clojure.core schema.utils}]
+ [schema.spec.leaf #{schema.spec.core clojure.core}]
  [clojure.pprint #{clojure.core clojure.walk}]
- [clojure.tools.reader.impl.utils (clojure.core)]
+ [schema.spec.variant #{schema.macros schema.spec.core clojure.core schema.utils}]
+ [dynapath.util #{dynapath.dynamic-classpath clojure.core dynapath.defaults}]
+ [clojure.tools.reader.impl.utils #{clojure.core}]
  [clojure.tools.reader.reader-types #{clojure.tools.reader.impl.utils clojure.core}]
  [clojure.tools.reader.impl.errors #{clojure.tools.reader.reader-types clojure.core clojure.tools.reader.impl.inspect}]
  [clojure.tools.reader.impl.commons
@@ -39,7 +64,13 @@
     clojure.tools.reader.reader-types
     clojure.core
     clojure.tools.reader.default-data-readers}]
+ [cheshire.generate #{clojure.core}]
  [clojure.tools.logging #{clojure.core clojure.pprint clojure.string clojure.tools.logging.impl}]
+ [metabase.plugins.classloader #{clojure.tools.logging clojure.core dynapath.util clojure.string}]
+ [potemkin.utils #{potemkin.macros clojure.core clj-tuple}]
+ [potemkin.collections #{potemkin.utils potemkin.types potemkin.macros clojure.core}]
+ [potemkin.namespaces #{clojure.core}]
+ [potemkin #{potemkin.utils potemkin.types potemkin.macros potemkin.namespaces potemkin.collections clojure.core}]
  [clojure.tools.reader.edn
   #{clojure.tools.reader.impl.utils
     clojure.tools.reader.impl.commons
@@ -47,10 +78,56 @@
     clojure.tools.reader.reader-types
     clojure.core
     clojure.tools.reader}]
+ [schema.spec.collection #{schema.macros schema.spec.core clojure.core schema.utils}]
+ [schema.core
+  #{schema.macros
+    schema.spec.collection
+    schema.spec.core
+    clojure.core
+    schema.spec.variant
+    clojure.pprint
+    schema.spec.leaf
+    clojure.string
+    schema.utils}]
+ [metabase.util.i18n.impl
+  #{potemkin.types
+    clojure.tools.reader.edn
+    clojure.tools.logging
+    metabase.plugins.classloader
+    clojure.core
+    clojure.java.io
+    clojure.string}]
+ [metabase.util.i18n
+  #{metabase.util.i18n.impl
+    potemkin.types
+    schema.core
+    potemkin
+    clojure.tools.logging
+    clojure.core
+    cheshire.generate
+    clojure.string
+    clojure.walk}]
+ [flatland.ordered.common #{clojure.core}]
+ [flatland.ordered.set #{clojure.core flatland.ordered.common clojure.string}]
+ [buddy.core.codecs #{clojure.core clojure.string}]
+ [buddy.core.hash #{clojure.core buddy.core.codecs clojure.java.io}]
+ [buddy.core.kdf #{buddy.core.hash clojure.core buddy.core.codecs}]
+ [buddy.core.nonce #{clojure.core}]
+ [buddy.core.bytes #{clojure.core}]
+ [buddy.core.padding #{clojure.core buddy.core.bytes}]
+ [buddy.core.mac #{buddy.core.hash clojure.core buddy.core.bytes buddy.core.codecs clojure.java.io}]
+ [buddy.core.crypto
+  #{buddy.core.mac buddy.core.padding clojure.core buddy.core.bytes buddy.core.nonce buddy.core.codecs}]
  [clojure.tools.namespace.parse #{clojure.core clojure.set clojure.tools.reader}]
+ [flatland.ordered.map #{clojure.core flatland.ordered.common flatland.ordered.set clojure.string}]
  [clojure.java.classpath #{clojure.core clojure.java.io}]
+ [colorize.core #{clojure.core clojure.pprint}]
+ [weavejester.dependency #{clojure.core clojure.set}]
  [clojure.tools.namespace.file
   #{clojure.core clojure.tools.namespace.parse clojure.java.io clojure.tools.namespace.track}]
+ [ring.util.codec #{clojure.core clojure.string}]
+ [metabase.config #{metabase.plugins.classloader clojure.core clojure.java.io clojure.string environ.core}]
+ [metabase.shared.util #{clojure.core}]
  [clojure.tools.namespace.find
   #{clojure.tools.namespace.file
     clojure.core
@@ -58,11 +135,44 @@
     clojure.java.classpath
     clojure.tools.namespace.parse
     clojure.java.io}]
+ [metabase.util
+  #{clojure.tools.namespace.find
+    metabase.shared.util
+    metabase.config
+    ring.util.codec
+    potemkin
+    clojure.tools.logging
+    weavejester.dependency
+    clojure.core
+    colorize.core
+    clojure.set
+    clojure.java.classpath
+    flatland.ordered.map
+    clojure.pprint
+    metabase.util.i18n
+    clojure.string
+    clojure.data
+    clojure.walk
+    medley.core
+    clojure.math.numeric-tower}]
+ [metabase.util.encryption
+  #{ring.util.codec
+    clojure.tools.logging
+    clojure.core
+    metabase.util
+    buddy.core.nonce
+    buddy.core.codecs
+    buddy.core.crypto
+    buddy.core.kdf
+    metabase.util.i18n
+    clojure.string
+    environ.core}]
+ [taoensso.truss.impl #{clojure.core clojure.set}]
  [clojure.tools.analyzer.passes #{clojure.tools.analyzer.ast clojure.core clojure.tools.analyzer.utils}]
  [clojure.tools.analyzer.passes.source-info #{clojure.tools.analyzer.ast clojure.core clojure.tools.analyzer.utils}]
- [clojure.data.priority-map (clojure.core)]
+ [clojure.data.priority-map #{clojure.core}]
  [clojure.core.cache #{clojure.data.priority-map clojure.core}]
- [clojure.core.protocols (clojure.core)]
+ [clojure.core.protocols #{clojure.core}]
  [clojure.datafy #{clojure.core.protocols clojure.core}]
  [clojure.reflect #{clojure.datafy clojure.core clojure.set clojure.string}]
  [clojure.core.memoize #{clojure.core.cache clojure.core}]
@@ -94,7 +204,7 @@
   #{clojure.tools.analyzer.ast clojure.tools.analyzer.passes.uniquify clojure.core}]
  [clojure.tools.analyzer.passes.jvm.annotate-loops #{clojure.tools.analyzer.ast clojure.core}]
  [clojure.tools.analyzer.passes.jvm.fix-case-test #{clojure.core clojure.tools.analyzer.passes.add-binding-atom}]
- [clojure.tools.analyzer.passes.cleanup (clojure.core)]
+ [clojure.tools.analyzer.passes.cleanup #{clojure.core}]
  [clojure.tools.analyzer.passes.jvm.annotate-host-info
   #{clojure.tools.analyzer.ast
     clojure.tools.analyzer
@@ -201,89 +311,23 @@
     clojure.core.async.impl.dispatch
     clojure.core.async.impl.mutex
     clojure.core.async.impl.timers}]
- [clojure.java.jdbc #{clojure.core clojure.set clojure.string clojure.walk}]
- [clojure.data.csv #{clojure.core clojure.string}]
- [clojure.core.match.protocols (clojure.core)]
- [clojure.core.match #{clojure.core clojure.set clojure.core.match.protocols}]
- [clojure.tools.macro #{clojure.core clojure.string}]
- [clojure.stacktrace (clojure.core)]
- [clojure.test.check.random (clojure.core)]
- [clojure.math.combinatorics (clojure.core)]
- [clojure.future (clojure.core)]
- [clojure.spec.gen.alpha #{clojure.future clojure.core}]
- [clojure.spec.alpha #{clojure.future clojure.core clojure.spec.gen.alpha clojure.string clojure.walk}]
- [clojure.zip (clojure.core)]
- [clojurewerkz.quartzite.conversion (clojure.core)]
- [clojurewerkz.quartzite.triggers #{clojurewerkz.quartzite.conversion clojure.core}]
- [clojurewerkz.quartzite.jobs #{clojurewerkz.quartzite.conversion clojure.core}]
- [clojurewerkz.quartzite.scheduler
-  #{clojurewerkz.quartzite.jobs clojurewerkz.quartzite.conversion clojure.core clojurewerkz.quartzite.triggers}]
- [clojure.core.logic.protocols (clojure.core)]
- [clojure.core.logic #{clojure.core clojure.set clojure.core.logic.protocols clojure.string}]
- [clojure.java.jmx #{clojure.core clojure.walk}]
- [clojure.tools.trace #{clojure.core clojure.pprint}]
- [ring.util.parsing (clojure.core)]
- [ring.util.time #{clojure.core clojure.string}]
- [ring.util.io #{clojure.core clojure.java.io}]
- [ring.util.response #{ring.util.io clojure.core ring.util.time clojure.java.io clojure.string ring.util.parsing}]
- [ring.core.protocols #{clojure.core clojure.java.io ring.util.response}]
- [ring.util.servlet #{clojure.core clojure.java.io ring.core.protocols clojure.string}]
- [riddley.compiler (clojure.core)]
- [riddley.walk #{riddley.compiler clojure.core}]
- [potemkin.walk (clojure.core)]
- [potemkin.macros #{potemkin.walk riddley.walk clojure.core}]
- [potemkin.types #{potemkin.macros riddley.walk clojure.core clojure.set clojure.string}]
- [dynapath.dynamic-classpath (clojure.core)]
- [dynapath.defaults #{dynapath.dynamic-classpath clojure.core}]
- [medley.core (clojure.core)]
- [environ.core #{clojure.core clojure.edn clojure.java.io clojure.string}]
- [schema.utils #{clojure.core clojure.string}]
- [clj-tuple (clojure.core)]
- [schema.macros #{clojure.core clojure.string schema.utils}]
- [schema.spec.core #{schema.macros clojure.core schema.utils}]
- [schema.spec.leaf #{schema.spec.core clojure.core}]
- [schema.spec.variant #{schema.macros schema.spec.core clojure.core schema.utils}]
- [dynapath.util #{dynapath.dynamic-classpath clojure.core dynapath.defaults}]
- [cheshire.generate (clojure.core)]
- [potemkin.utils #{potemkin.macros clojure.core clj-tuple}]
- [potemkin.collections #{potemkin.utils potemkin.types potemkin.macros clojure.core}]
- [potemkin.namespaces (clojure.core)]
- [potemkin #{potemkin.utils potemkin.types potemkin.macros potemkin.namespaces potemkin.collections clojure.core}]
- [schema.spec.collection #{schema.macros schema.spec.core clojure.core schema.utils}]
- [schema.core
-  #{schema.macros
-    schema.spec.collection
-    schema.spec.core
+ [metabase.events
+  #{clojure.tools.logging
+    metabase.plugins.classloader
     clojure.core
-    schema.spec.variant
-    clojure.pprint
-    schema.spec.leaf
-    clojure.string
-    schema.utils}]
- [flatland.ordered.common (clojure.core)]
- [flatland.ordered.set #{clojure.core flatland.ordered.common clojure.string}]
- [buddy.core.codecs #{clojure.core clojure.string}]
- [buddy.core.hash #{clojure.core buddy.core.codecs clojure.java.io}]
- [buddy.core.kdf #{buddy.core.hash clojure.core buddy.core.codecs}]
- [buddy.core.nonce (clojure.core)]
- [buddy.core.bytes (clojure.core)]
- [buddy.core.padding #{clojure.core buddy.core.bytes}]
- [buddy.core.mac #{buddy.core.hash clojure.core buddy.core.bytes buddy.core.codecs clojure.java.io}]
- [buddy.core.crypto
-  #{buddy.core.mac buddy.core.padding clojure.core buddy.core.bytes buddy.core.nonce buddy.core.codecs}]
- [flatland.ordered.map #{clojure.core flatland.ordered.common flatland.ordered.set clojure.string}]
- [colorize.core #{clojure.core clojure.pprint}]
- [weavejester.dependency #{clojure.core clojure.set}]
- [ring.util.codec #{clojure.core clojure.string}]
- [taoensso.truss.impl #{clojure.core clojure.set}]
+    clojure.core.async
+    metabase.util
+    metabase.util.i18n
+    clojure.string}]
+ [metabase.db.spec #{metabase.config clojure.core clojure.string}]
  [clj-http.util #{clojure.core clojure.string clojure.walk}]
  [clj-http.headers #{potemkin clojure.core clojure.string}]
- [clj-http.multipart (clojure.core)]
+ [clj-http.multipart #{clojure.core}]
  [clj-http.conn-mgr #{clojure.core clojure.java.io clj-http.util}]
  [clj-http.core #{clj-http.conn-mgr clj-http.multipart clojure.core clojure.pprint clj-http.headers clj-http.util}]
  [java-time.util #{clojure.core clojure.string}]
  [java-time.potemkin.util #{clojure.core clj-tuple}]
- [java-time.core (clojure.core)]
+ [java-time.core #{clojure.core}]
  [java-time.format #{java-time.core clojure.core clojure.string java-time.util}]
  [java-time.properties #{java-time.core clojure.core java-time.util}]
  [java-time.graph #{clojure.core clojure.set java-time.potemkin.util clojure.string clj-tuple java-time.util}]
@@ -344,8 +388,8 @@
  [java-time.mock #{java-time.amount java-time.core java-time.temporal clojure.core java-time.zone}]
  [java-time.joda
   #{java-time.local java-time.defconversion java-time.temporal clojure.core java-time.zone java-time.util}]
- [java-time.seqs (clojure.core)]
- [java-time.potemkin.namespaces (clojure.core)]
+ [java-time.seqs #{clojure.core}]
+ [java-time.potemkin.namespaces #{clojure.core}]
  [java-time
   #{java-time.convert
     java-time.potemkin.namespaces
@@ -368,16 +412,21 @@
     java-time.sugar
     java-time.util
     java-time.single-field}]
- [cheshire.parse (clojure.core)]
- [honeysql.types (clojure.core)]
- [cemerick.friend.credentials (clojure.core)]
+ [metabase.util.date-2.common #{clojure.core metabase.util java-time clojure.string}]
+ [metabase.util.date-2.parse.builder #{clojure.core metabase.util.date-2.common}]
+ [cheshire.parse #{clojure.core}]
+ [honeysql.types #{clojure.core}]
+ [cemerick.friend.credentials #{clojure.core}]
+ [metabase.util.password
+  #{metabase.config clojure.core metabase.util cemerick.friend.credentials clojure.java.io clojure.string}]
  [cheshire.generate-seq #{clojure.core cheshire.generate}]
- [cheshire.factory (clojure.core)]
+ [cheshire.factory #{clojure.core}]
  [cheshire.core #{cheshire.factory cheshire.generate-seq clojure.core cheshire.generate cheshire.parse}]
- [honeysql.util (clojure.core)]
+ [honeysql.util #{clojure.core}]
  [honeysql.format #{clojure.core honeysql.types clojure.string}]
- [honeysql.helpers (clojure.core)]
+ [honeysql.helpers #{clojure.core}]
  [honeysql.core #{honeysql.helpers honeysql.format clojure.core honeysql.util honeysql.types clojure.string}]
+ [clojure.java.jdbc #{clojure.core clojure.set clojure.string clojure.walk}]
  [toucan.util #{clojure.core clojure.string}]
  [toucan.models #{potemkin.types toucan.util honeysql.format clojure.core clojure.walk}]
  [toucan.db
@@ -392,429 +441,6 @@
     clojure.pprint
     clojure.string
     clojure.walk}]
- [pretty.core #{clojure.core clojure.pprint}]
- [toucan.hydrate #{toucan.models clojure.core toucan.db}]
- [instaparse.viz (clojure.core)]
- [instaparse.print #{clojure.core clojure.string}]
- [instaparse.failure #{instaparse.print clojure.core}]
- [instaparse.auto-flatten-seq #{clojure.core.protocols clojure.core}]
- [instaparse.util (clojure.core)]
- [instaparse.reduction #{clojure.core instaparse.util instaparse.auto-flatten-seq}]
- [instaparse.combinators-source #{instaparse.reduction clojure.core instaparse.util}]
- [instaparse.gll
-  #{instaparse.combinators-source
-    instaparse.print
-    instaparse.reduction
-    clojure.core
-    instaparse.auto-flatten-seq
-    instaparse.failure}]
- [instaparse.repeat
-  #{instaparse.combinators-source
-    instaparse.reduction
-    clojure.core
-    instaparse.auto-flatten-seq
-    instaparse.failure
-    instaparse.gll
-    instaparse.viz}]
- [slingshot.support #{clojure.core clojure.walk}]
- [slingshot.slingshot #{slingshot.support clojure.core}]
- [instaparse.macros (clojure.core)]
- [instaparse.cfg
-  #{instaparse.combinators-source instaparse.reduction clojure.core instaparse.util instaparse.gll clojure.string}]
- [instaparse.transform #{clojure.core instaparse.util instaparse.gll}]
- [instaparse.abnf
-  #{instaparse.combinators-source
-    instaparse.reduction
-    instaparse.transform
-    instaparse.cfg
-    clojure.core
-    instaparse.util
-    instaparse.gll
-    clojure.walk}]
- [instaparse.line-col #{instaparse.transform clojure.core instaparse.util}]
- [instaparse.core
-  #{instaparse.combinators-source
-    instaparse.line-col
-    instaparse.print
-    instaparse.reduction
-    instaparse.transform
-    instaparse.cfg
-    clojure.core
-    instaparse.util
-    instaparse.abnf
-    instaparse.failure
-    instaparse.macros
-    instaparse.gll
-    instaparse.viz
-    clojure.walk
-    instaparse.repeat}]
- [net.cgrand.macrovich (clojure.core)]
- [taoensso.truss #{clojure.core taoensso.truss.impl}]
- [taoensso.encore
-  #{taoensso.truss clojure.tools.reader.edn clojure.core clojure.set clojure.java.io clojure.string clojure.walk}]
- [taoensso.nippy.crypto #{clojure.core taoensso.encore}]
- [ring.util.mime-type #{clojure.core clojure.string}]
- [compojure.response #{clojure.core ring.util.mime-type ring.util.response}]
- [clj-http.links (clojure.core)]
- [taoensso.nippy.utils #{clojure.core clojure.string taoensso.encore}]
- [taoensso.nippy.encryption #{clojure.core taoensso.nippy.crypto taoensso.encore}]
- [taoensso.nippy.compression #{clojure.core taoensso.encore}]
- [taoensso.nippy
-  #{taoensso.nippy.compression
-    taoensso.nippy.encryption
-    clojure.core
-    taoensso.nippy.utils
-    clojure.java.io
-    clojure.string
-    taoensso.encore}]
- [clout.core #{clojure.core clojure.set instaparse.core clojure.string}]
- [ring.middleware.head (clojure.core)]
- [compojure.core
-  #{clojure.tools.macro ring.util.codec compojure.response clojure.core ring.middleware.head clout.core medley.core}]
- [clj-http.cookies #{clojure.core clojure.string clj-http.util}]
- [clj-http.client
-  #{clj-http.conn-mgr
-    clojure.stacktrace
-    clojure.core
-    clj-http.cookies
-    clj-http.links
-    clojure.java.io
-    clojure.string
-    clojure.walk
-    slingshot.slingshot
-    clj-http.headers
-    clj-http.util
-    clj-http.core}]
- [user-agent #{clojure.core clojure.string}]
- [redux.utils (clojure.core)]
- [kixi.stats.math (clojure.core)]
- [kixi.stats.protocols (clojure.core)]
- [kixi.stats.distribution #{clojure.core clojure.test.check.random kixi.stats.protocols kixi.stats.math}]
- [kixi.stats.digest #{kixi.stats.distribution clojure.core}]
- [clj-time.core (clojure.core)]
- [kixi.stats.test #{clojure.math.combinatorics clojure.core kixi.stats.protocols kixi.stats.math}]
- [bigml.histogram.core (clojure.core)]
- [redux.core #{clojure.core redux.utils}]
- [kixi.stats.core
-  #{kixi.stats.distribution
-    redux.core
-    kixi.stats.test
-    clojure.core
-    kixi.stats.protocols
-    kixi.stats.math
-    kixi.stats.digest}]
- [clj-time.format #{clj-time.core clojure.core clojure.set}]
- [clj-time.coerce #{clj-time.core clojure.core clj-time.format}]
- [scout.core (clojure.core)]
- [postal.support #{clojure.core clojure.java.io}]
- [postal.date (clojure.core)]
- [postal.message #{postal.date postal.support clojure.core clojure.set clojure.java.io}]
- [stencil.re-utils (clojure.core)]
- [quoin.map-access (clojure.core)]
- [stencil.utils #{quoin.map-access clojure.core clojure.string}]
- [quoin.text (clojure.core)]
- [stencil.ast #{clojure.zip clojure.core stencil.utils clojure.string}]
- [stencil.parser
-  #{clojure.zip stencil.ast clojure.core stencil.utils clojure.pprint stencil.re-utils clojure.string scout.core}]
- [stencil.loader #{stencil.parser stencil.ast quoin.text clojure.core stencil.utils clojure.java.io}]
- [hiccup.util #{clojure.core clojure.string}]
- [hiccup.compiler #{clojure.core hiccup.util}]
- [hiccup.core #{hiccup.compiler clojure.core hiccup.util}]
- [stencil.core
-  #{stencil.parser stencil.ast quoin.text clojure.core stencil.utils clojure.java.io stencil.loader clojure.string}]
- [postal.sendmail #{clojure.core postal.message}]
- [postal.smtp #{postal.support clojure.core postal.message}]
- [postal.stress #{postal.smtp clojure.core postal.message}]
- [postal.core #{postal.stress postal.smtp clojure.core postal.sendmail}]
- [dk.ative.docjure.spreadsheet (clojure.core)]
- [yaml.reader #{clojure.core flatland.ordered.map flatland.ordered.set}]
- [yaml.writer #{clojure.core flatland.ordered.map flatland.ordered.set}]
- [yaml.core #{clojure.core yaml.writer clojure.java.io yaml.reader}]
- [schema.coerce #{schema.core schema.macros schema.spec.core clojure.core clojure.edn clojure.string schema.utils}]
- [ring.middleware.keyword-params (clojure.core)]
- [buddy.core.codecs.base64 #{clojure.core buddy.core.codecs}]
- [buddy.core.keys.jwk.proto #{clojure.core buddy.core.codecs.base64 buddy.core.codecs}]
- [buddy.util.deflate (clojure.core)]
- [buddy.core.keys.pem #{clojure.core clojure.java.io}]
- [buddy.core.dsa #{clojure.core buddy.core.codecs clojure.java.io}]
- [buddy.core.keys.jwk.ec #{buddy.core.hash clojure.core cheshire.core buddy.core.keys.jwk.proto}]
- [buddy.util.ecdsa (clojure.core)]
- [buddy.core.keys.jwk.rsa
-  #{buddy.core.hash clojure.core buddy.core.codecs.base64 buddy.core.codecs cheshire.core buddy.core.keys.jwk.proto}]
- [buddy.core.keys.jwk.okp #{buddy.core.hash clojure.core cheshire.core buddy.core.keys.jwk.proto}]
- [buddy.core.keys.jwk.eddsa
-  #{buddy.core.keys.jwk.okp clojure.core buddy.core.codecs.base64 buddy.core.codecs buddy.core.keys.jwk.proto}]
- [buddy.core.keys
-  #{buddy.core.keys.jwk.eddsa
-    buddy.core.keys.jwk.okp
-    buddy.core.keys.jwk.rsa
-    clojure.core
-    buddy.core.keys.jwk.ec
-    buddy.core.keys.pem
-    buddy.core.keys.jwk.proto}]
- [buddy.sign.jwe.cek #{buddy.core.keys clojure.core buddy.core.nonce buddy.core.codecs}]
- [buddy.sign.util #{clojure.core buddy.core.codecs}]
- [buddy.sign.jws
-  #{buddy.sign.util
-    buddy.core.mac
-    clojure.core
-    buddy.util.ecdsa
-    buddy.core.codecs.base64
-    buddy.core.dsa
-    buddy.core.codecs
-    cheshire.core
-    clojure.string}]
- [buddy.sign.jwe
-  #{buddy.sign.util
-    buddy.sign.jws
-    buddy.sign.jwe.cek
-    buddy.core.keys
-    clojure.core
-    buddy.core.bytes
-    buddy.core.codecs.base64
-    buddy.core.nonce
-    buddy.core.codecs
-    buddy.util.deflate
-    cheshire.core
-    buddy.core.crypto
-    clojure.string}]
- [buddy.sign.jwt #{buddy.sign.util buddy.sign.jws clojure.core buddy.sign.jwe buddy.core.codecs cheshire.core}]
- [manifold.executor #{clojure.tools.logging clojure.core}]
- [manifold.utils #{manifold.executor clojure.tools.logging clojure.core}]
- [manifold.time #{manifold.executor clojure.tools.logging clojure.core manifold.utils clojure.string}]
- [manifold.stream.core #{clojure.core manifold.utils}]
- [manifold.debug (clojure.core)]
- [manifold.deferred
-  #{manifold.executor
-    riddley.compiler
-    manifold.debug
-    riddley.walk
-    clojure.tools.logging
-    clojure.core
-    clojure.set
-    manifold.utils
-    manifold.time}]
- [manifold.stream.graph
-  #{manifold.executor manifold.deferred clojure.tools.logging clojure.core manifold.stream.core manifold.utils}]
- [manifold.stream.deferred #{manifold.deferred clojure.core manifold.stream.core manifold.stream.graph}]
- [manifold.stream.queue #{manifold.deferred clojure.core manifold.stream.core manifold.utils manifold.stream.graph}]
- [byte-streams.utils #{clojure.core clj-tuple}]
- [manifold.stream.seq
-  #{manifold.deferred
-    clojure.tools.logging
-    clojure.core
-    manifold.stream.core
-    manifold.utils
-    manifold.time
-    manifold.stream.graph}]
- [manifold.stream.random-access
-  #{manifold.deferred
-    clojure.tools.logging
-    clojure.core
-    manifold.stream.core
-    manifold.utils
-    manifold.time
-    manifold.stream.graph}]
- [manifold.stream.iterator
-  #{manifold.deferred
-    clojure.tools.logging
-    clojure.core
-    manifold.stream.core
-    manifold.utils
-    manifold.time
-    manifold.stream.graph}]
- [manifold.stream.default
-  #{manifold.executor
-    manifold.deferred
-    clojure.tools.logging
-    clojure.core
-    manifold.stream.core
-    manifold.utils
-    manifold.time
-    manifold.stream.graph}]
- [manifold.stream
-  #{manifold.stream.default
-    manifold.stream.iterator
-    manifold.stream.random-access
-    manifold.deferred
-    clojure.tools.logging
-    clojure.core
-    manifold.stream.seq
-    manifold.stream.core
-    manifold.utils
-    manifold.time
-    manifold.stream.queue
-    manifold.stream.deferred}]
- [primitive-math (clojure.core)]
- [byte-streams.pushback-stream
-  #{primitive-math manifold.stream manifold.deferred clojure.core manifold.utils byte-streams.utils clojure.walk}]
- [byte-streams.protocols #{clojure.core byte-streams.utils}]
- [byte-streams.graph #{manifold.stream byte-streams.protocols clojure.core byte-streams.utils clj-tuple}]
- [byte-streams.char-sequence (clojure.core)]
- [byte-streams
-  #{primitive-math
-    byte-streams.char-sequence
-    manifold.stream
-    byte-streams.protocols
-    manifold.deferred
-    byte-streams.graph
-    clojure.core
-    byte-streams.pushback-stream
-    byte-streams.utils
-    clojure.java.io}]
- [aleph.netty
-  #{primitive-math
-    manifold.stream
-    byte-streams
-    manifold.deferred
-    potemkin
-    clojure.tools.logging
-    clojure.core
-    clojure.set
-    manifold.stream.core
-    clojure.string}]
- [aleph.http.core
-  #{manifold.stream
-    byte-streams
-    aleph.netty
-    manifold.deferred
-    potemkin
-    clojure.tools.logging
-    clojure.core
-    clojure.set
-    clojure.string}]
- [aleph.flow #{manifold.executor manifold.deferred potemkin clojure.core}]
- [aleph.http.server
-  #{manifold.stream
-    byte-streams
-    aleph.netty
-    manifold.deferred
-    aleph.flow
-    clojure.tools.logging
-    clojure.core
-    aleph.http.core
-    clojure.string}]
- [throttle.core #{clojure.core clojure.math.numeric-tower}]
- [aleph.http.client-middleware
-  #{manifold.stream
-    byte-streams
-    manifold.executor
-    clojure.stacktrace
-    manifold.deferred
-    potemkin
-    clojure.core
-    aleph.http.core
-    clojure.edn
-    clojure.string
-    clojure.walk}]
- [aleph.http.encoding #{primitive-math byte-streams potemkin clojure.core}]
- [aleph.http.multipart #{byte-streams aleph.http.encoding clojure.core}]
- [aleph.http.client
-  #{aleph.http.multipart
-    manifold.stream
-    byte-streams
-    aleph.netty
-    manifold.deferred
-    clojure.tools.logging
-    clojure.core
-    aleph.http.core}]
- [aleph.http
-  #{aleph.http.client
-    manifold.executor
-    aleph.netty
-    manifold.deferred
-    aleph.flow
-    clojure.core
-    aleph.http.client-middleware
-    clojure.string
-    aleph.http.server}]
- [clj-ldap.client #{clojure.core clojure.pprint clojure.string}]
- [amalloy.ring-buffer (clojure.core)]
- [crypto.random #{clojure.core clojure.string}]
- [compojure.route #{compojure.response clojure.core compojure.core ring.util.mime-type ring.util.response}]
- [ring.util.request #{clojure.core ring.util.parsing}]
- [ring.middleware.params #{ring.util.request ring.util.codec clojure.core}]
- [ring.middleware.cookies #{ring.util.codec clojure.core clojure.string ring.util.parsing}]
- [ring.adapter.jetty #{clojure.core ring.util.servlet}]
- [ring.middleware.json
-  #{ring.util.request
-    ring.util.io
-    clojure.core
-    cheshire.core
-    clojure.java.io
-    ring.core.protocols
-    cheshire.parse
-    ring.util.response}]
- [ring.middleware.gzip #{clojure.reflect clojure.core clojure.java.io}]
- [metabase.types.coercion-hierarchies #{clojure.core clojure.set}]
- [metabase.types #{clojure.core clojure.set metabase.types.coercion-hierarchies}]
- [metabase.server.protocols #{potemkin.types clojure.core ring.util.servlet}]
- [metabase.plugins.classloader #{clojure.tools.logging clojure.core dynapath.util clojure.string}]
- [metabase.util.i18n.impl
-  #{potemkin.types
-    clojure.tools.reader.edn
-    clojure.tools.logging
-    metabase.plugins.classloader
-    clojure.core
-    clojure.java.io
-    clojure.string}]
- [metabase.util.i18n
-  #{metabase.util.i18n.impl
-    potemkin.types
-    schema.core
-    potemkin
-    clojure.tools.logging
-    clojure.core
-    cheshire.generate
-    clojure.string
-    clojure.walk}]
- [metabase.config #{metabase.plugins.classloader clojure.core clojure.java.io clojure.string environ.core}]
- [metabase.shared.util (clojure.core)]
- [metabase.util
-  #{clojure.tools.namespace.find
-    metabase.shared.util
-    metabase.config
-    ring.util.codec
-    potemkin
-    clojure.tools.logging
-    weavejester.dependency
-    clojure.core
-    colorize.core
-    clojure.set
-    clojure.java.classpath
-    flatland.ordered.map
-    clojure.pprint
-    metabase.util.i18n
-    clojure.string
-    clojure.data
-    clojure.walk
-    medley.core
-    clojure.math.numeric-tower}]
- [metabase.util.encryption
-  #{ring.util.codec
-    clojure.tools.logging
-    clojure.core
-    metabase.util
-    buddy.core.nonce
-    buddy.core.codecs
-    buddy.core.crypto
-    buddy.core.kdf
-    metabase.util.i18n
-    clojure.string
-    environ.core}]
- [metabase.events
-  #{clojure.tools.logging
-    metabase.plugins.classloader
-    clojure.core
-    clojure.core.async
-    metabase.util
-    metabase.util.i18n
-    clojure.string}]
- [metabase.db.spec #{metabase.config clojure.core clojure.string}]
- [metabase.util.date-2.common #{clojure.core metabase.util java-time clojure.string}]
- [metabase.util.date-2.parse.builder #{clojure.core metabase.util.date-2.common}]
- [metabase.util.password
-  #{metabase.config clojure.core metabase.util cemerick.friend.credentials clojure.java.io clojure.string}]
  [metabase.db.env
   #{metabase.config
     ring.util.codec
@@ -839,6 +465,7 @@
     schema.utils
     medley.core
     metabase.types}]
+ [pretty.core #{clojure.core clojure.pprint}]
  [metabase.util.honeysql-extensions
   #{potemkin.types
     schema.core
@@ -858,6 +485,7 @@
     metabase.util.i18n
     clojure.string
     metabase.util.date-2.parse.builder}]
+ [clojure.data.csv #{clojure.core clojure.string}]
  [metabase.util.date-2
   #{potemkin.types
     schema.core
@@ -898,11 +526,73 @@
     metabase.events}]
  [metabase.models.humanization
   #{clojure.tools.logging clojure.core metabase.models.setting toucan.db metabase.util.i18n clojure.string}]
- [metabase.query-processor.error-type (clojure.core)]
+ [toucan.hydrate #{toucan.models clojure.core toucan.db}]
+ [instaparse.viz #{clojure.core}]
+ [instaparse.print #{clojure.core clojure.string}]
+ [instaparse.failure #{instaparse.print clojure.core}]
+ [instaparse.auto-flatten-seq #{clojure.core.protocols clojure.core}]
+ [instaparse.util #{clojure.core}]
+ [instaparse.reduction #{clojure.core instaparse.util instaparse.auto-flatten-seq}]
+ [instaparse.combinators-source #{instaparse.reduction clojure.core instaparse.util}]
+ [instaparse.gll
+  #{instaparse.combinators-source
+    instaparse.print
+    instaparse.reduction
+    clojure.core
+    instaparse.auto-flatten-seq
+    instaparse.failure}]
+ [instaparse.repeat
+  #{instaparse.combinators-source
+    instaparse.reduction
+    clojure.core
+    instaparse.auto-flatten-seq
+    instaparse.failure
+    instaparse.gll
+    instaparse.viz}]
+ [metabase.query-processor.error-type #{clojure.core}]
+ [clojure.core.match.protocols #{clojure.core}]
+ [slingshot.support #{clojure.core clojure.walk}]
+ [slingshot.slingshot #{slingshot.support clojure.core}]
+ [instaparse.macros #{clojure.core}]
+ [instaparse.cfg
+  #{instaparse.combinators-source instaparse.reduction clojure.core instaparse.util instaparse.gll clojure.string}]
+ [instaparse.transform #{clojure.core instaparse.util instaparse.gll}]
+ [instaparse.abnf
+  #{instaparse.combinators-source
+    instaparse.reduction
+    instaparse.transform
+    instaparse.cfg
+    clojure.core
+    instaparse.util
+    instaparse.gll
+    clojure.walk}]
+ [instaparse.line-col #{instaparse.transform clojure.core instaparse.util}]
+ [instaparse.core
+  #{instaparse.combinators-source
+    instaparse.line-col
+    instaparse.print
+    instaparse.reduction
+    instaparse.transform
+    instaparse.cfg
+    clojure.core
+    instaparse.util
+    instaparse.abnf
+    instaparse.failure
+    instaparse.macros
+    instaparse.gll
+    instaparse.viz
+    clojure.walk
+    instaparse.repeat}]
+ [clojure.core.match #{clojure.core clojure.set clojure.core.match.protocols}]
  [metabase.models.permissions.parse #{clojure.core clojure.core.match instaparse.core clojure.walk}]
+ [net.cgrand.macrovich #{clojure.core}]
  [metabase.shared.util.log #{clojure.core net.cgrand.macrovich}]
  [metabase.models.permissions.delete-sandboxes
   #{pretty.core potemkin metabase.plugins.classloader clojure.core metabase.util}]
+ [taoensso.truss #{clojure.core taoensso.truss.impl}]
+ [taoensso.encore
+  #{taoensso.truss clojure.tools.reader.edn clojure.core clojure.set clojure.java.io clojure.string clojure.walk}]
+ [taoensso.nippy.crypto #{clojure.core taoensso.encore}]
  [metabase.driver.impl
   #{schema.core clojure.tools.logging metabase.plugins.classloader clojure.core metabase.util metabase.util.i18n}]
  [metabase.driver
@@ -930,8 +620,10 @@
  [metabase.mbql.schema.macros #{metabase.mbql.schema.helpers clojure.core}]
  [metabase.mbql.schema
   #{schema.core metabase.mbql.schema.helpers metabase.mbql.schema.macros clojure.core clojure.set}]
+ [ring.util.mime-type #{clojure.core clojure.string}]
  [metabase.async.streaming-response.thread-pool #{metabase.config clojure.core}]
  [metabase.async.util #{schema.core clojure.tools.logging clojure.core clojure.core.async}]
+ [compojure.response #{clojure.core ring.util.mime-type ring.util.response}]
  [metabase.async.streaming-response
   #{potemkin.types
     compojure.response
@@ -959,8 +651,20 @@
     metabase.util.i18n
     clojure.string}]
  [metabase.util.cron #{schema.core metabase.util.schema clojure.core metabase.util.i18n clojure.string}]
+ [clj-http.links #{clojure.core}]
+ [taoensso.nippy.utils #{clojure.core clojure.string taoensso.encore}]
+ [taoensso.nippy.encryption #{clojure.core taoensso.nippy.crypto taoensso.encore}]
+ [taoensso.nippy.compression #{clojure.core taoensso.encore}]
+ [taoensso.nippy
+  #{taoensso.nippy.compression
+    taoensso.nippy.encryption
+    clojure.core
+    taoensso.nippy.utils
+    clojure.java.io
+    clojure.string
+    taoensso.encore}]
  [metabase.shared.util.i18n #{clojure.core net.cgrand.macrovich}]
- [metabase.mbql.util.match.impl (clojure.core)]
+ [metabase.mbql.util.match.impl #{clojure.core}]
  [metabase.mbql.util.match
   #{metabase.mbql.util.match.impl clojure.core clojure.core.match net.cgrand.macrovich clojure.walk}]
  [metabase.mbql.util
@@ -981,6 +685,26 @@
     clojure.walk
     metabase.shared.util.log
     medley.core}]
+ [clout.core #{clojure.core clojure.set instaparse.core clojure.string}]
+ [ring.middleware.head #{clojure.core}]
+ [clojure.tools.macro #{clojure.core clojure.string}]
+ [compojure.core
+  #{clojure.tools.macro ring.util.codec compojure.response clojure.core ring.middleware.head clout.core medley.core}]
+ [clj-http.cookies #{clojure.core clojure.string clj-http.util}]
+ [clojure.stacktrace #{clojure.core}]
+ [clj-http.client
+  #{clj-http.conn-mgr
+    clojure.stacktrace
+    clojure.core
+    clj-http.cookies
+    clj-http.links
+    clojure.java.io
+    clojure.string
+    clojure.walk
+    slingshot.slingshot
+    clj-http.headers
+    clj-http.util
+    clj-http.core}]
  [metabase.public-settings.metastore
   #{clojure.core.memoize
     clj-http.client
@@ -1165,7 +889,7 @@
     metabase.api.common
     medley.core}]
  [metabase.util.ssh #{metabase.public-settings metabase.driver clojure.tools.logging clojure.core metabase.util}]
- [metabase.connection-pool (clojure.core)]
+ [metabase.connection-pool #{clojure.core}]
  [metabase.driver.sql-jdbc.connection
   #{metabase.config
     metabase.connection-pool
@@ -1215,6 +939,7 @@
     metabase.util.i18n}]
  [metabase.db
   #{metabase.config potemkin metabase.db.connection-pool-setup clojure.core metabase.db.connection metabase.db.setup}]
+ [user-agent #{clojure.core clojure.string}]
  [metabase.server.request.util
   #{metabase.public-settings
     clj-http.client
@@ -1390,6 +1115,13 @@
     metabase.query-processor.timezone
     metabase.mbql.schema
     metabase.types}]
+ [redux.utils #{clojure.core}]
+ [kixi.stats.math #{clojure.core}]
+ [kixi.stats.protocols #{clojure.core}]
+ [clojure.test.check.random #{clojure.core}]
+ [kixi.stats.distribution #{clojure.core clojure.test.check.random kixi.stats.protocols kixi.stats.math}]
+ [kixi.stats.digest #{kixi.stats.distribution clojure.core}]
+ [clj-time.core #{clojure.core}]
  [metabase.sync.interface
   #{metabase.models.table
     schema.core
@@ -1411,7 +1143,7 @@
     toucan.db
     java-time
     metabase.util.i18n}]
- [metabase.query-processor.interface (clojure.core)]
+ [metabase.query-processor.interface #{clojure.core}]
  [metabase.sync.util
   #{metabase.models.table
     metabase.query-processor.interface
@@ -1445,6 +1177,18 @@
     metabase.sync.util
     metabase.models.database
     clojure.string}]
+ [clojure.math.combinatorics #{clojure.core}]
+ [kixi.stats.test #{clojure.math.combinatorics clojure.core kixi.stats.protocols kixi.stats.math}]
+ [bigml.histogram.core #{clojure.core}]
+ [redux.core #{clojure.core redux.utils}]
+ [kixi.stats.core
+  #{kixi.stats.distribution
+    redux.core
+    kixi.stats.test
+    clojure.core
+    kixi.stats.protocols
+    kixi.stats.math
+    kixi.stats.digest}]
  [metabase.sync.analyze.fingerprint.fingerprinters
   #{redux.core
     metabase.util.date-2
@@ -1477,6 +1221,8 @@
     metabase.util
     metabase.query-processor.context.default
     metabase.query-processor.context}]
+ [clj-time.format #{clj-time.core clojure.core clojure.set}]
+ [clj-time.coerce #{clj-time.core clojure.core clj-time.format}]
  [metabase.moderation #{schema.core clojure.core metabase.util toucan.db clojure.string}]
  [metabase.driver.common
   #{schema.core
@@ -1538,7 +1284,7 @@
     clojure.string
     metabase.query-processor.error-type
     metabase.query-processor.middleware.wrap-value-literals}]
- [metabase.core.initialization-status (clojure.core)]
+ [metabase.core.initialization-status #{clojure.core}]
  [metabase.server.middleware.session
   #{metabase.public-settings
     schema.core
@@ -1673,6 +1419,9 @@
  [metabase.models.query-cache #{toucan.models clojure.core metabase.util}]
  [metabase.query-processor.middleware.desugar
   #{metabase.mbql.predicates schema.core metabase.mbql.util clojure.core metabase.mbql.schema medley.core}]
+ [clojure.future #{clojure.core}]
+ [clojure.spec.gen.alpha #{clojure.future clojure.core}]
+ [clojure.spec.alpha #{clojure.future clojure.core clojure.spec.gen.alpha clojure.string clojure.walk}]
  [metabase.shared.models.visualization-settings
   #{clojure.spec.alpha clojure.core clojure.set metabase.mbql.normalize cheshire.core medley.core}]
  [metabase.query-processor.middleware.visualization-settings
@@ -1793,7 +1542,7 @@
   #{schema.core metabase.models.params clojure.core metabase.mbql.schema metabase.query-processor.error-type}]
  [metabase.query-processor.middleware.add-rows-truncated
   #{metabase.query-processor.util metabase.query-processor.interface clojure.core}]
- [metabase.query-processor.middleware.constraints (clojure.core)]
+ [metabase.query-processor.middleware.constraints #{clojure.core}]
  [metabase.models.pulse-channel-recipient #{toucan.models clojure.core}]
  [metabase.query-processor.middleware.add-timezone-info #{clojure.core metabase.query-processor.timezone}]
  [metabase.query-processor.middleware.parameters.mbql
@@ -2159,6 +1908,7 @@
     clojure.data
     toucan.hydrate
     metabase.events}]
+ [scout.core #{clojure.core}]
  [metabase.sync.sync-metadata.sync-timezone
   #{schema.core
     metabase.driver
@@ -2178,6 +1928,9 @@
     metabase.models.permissions
     toucan.db}]
  [metabase.query-processor.streaming.interface #{potemkin.types clojure.core}]
+ [postal.support #{clojure.core clojure.java.io}]
+ [postal.date #{clojure.core}]
+ [postal.message #{postal.date postal.support clojure.core clojure.set clojure.java.io}]
  [metabase.pulse.render.style #{metabase.public-settings clojure.core clojure.string}]
  [metabase.sync.sync-metadata.fields.common
   #{schema.core
@@ -2380,6 +2133,20 @@
     metabase.sync.interface
     metabase.sync.field-values
     metabase.sync.util}]
+ [stencil.re-utils #{clojure.core}]
+ [quoin.map-access #{clojure.core}]
+ [stencil.utils #{quoin.map-access clojure.core clojure.string}]
+ [quoin.text #{clojure.core}]
+ [clojure.zip #{clojure.core}]
+ [stencil.ast #{clojure.zip clojure.core stencil.utils clojure.string}]
+ [stencil.parser
+  #{clojure.zip stencil.ast clojure.core stencil.utils clojure.pprint stencil.re-utils clojure.string scout.core}]
+ [stencil.loader #{stencil.parser stencil.ast quoin.text clojure.core stencil.utils clojure.java.io}]
+ [clojurewerkz.quartzite.conversion #{clojure.core}]
+ [clojurewerkz.quartzite.triggers #{clojurewerkz.quartzite.conversion clojure.core}]
+ [clojurewerkz.quartzite.jobs #{clojurewerkz.quartzite.conversion clojure.core}]
+ [clojurewerkz.quartzite.scheduler
+  #{clojurewerkz.quartzite.jobs clojurewerkz.quartzite.conversion clojure.core clojurewerkz.quartzite.triggers}]
  [metabase.task
   #{schema.core
     clojurewerkz.quartzite.scheduler
@@ -2405,6 +2172,9 @@
     metabase.models.segment
     metabase.events
     metabase.models.dashboard}]
+ [hiccup.util #{clojure.core clojure.string}]
+ [hiccup.compiler #{clojure.core hiccup.util}]
+ [hiccup.core #{hiccup.compiler clojure.core hiccup.util}]
  [metabase.pulse.render.datetime
   #{schema.core
     metabase.util.date-2
@@ -2414,12 +2184,18 @@
     java-time
     metabase.util.i18n
     clojure.string}]
- [metabase.util.ui-logic (clojure.core)]
+ [stencil.core
+  #{stencil.parser stencil.ast quoin.text clojure.core stencil.utils clojure.java.io stencil.loader clojure.string}]
+ [metabase.util.ui-logic #{clojure.core}]
  [metabase.pulse.render.js-engine #{clojure.core metabase.util}]
  [metabase.pulse.render.color
   #{schema.core metabase.pulse.render.js-engine clojure.core cheshire.core clojure.java.io metabase.util.i18n}]
+ [postal.sendmail #{clojure.core postal.message}]
  [metabase.util.urls #{metabase.public-settings clojure.core}]
  [metabase.pulse.render.image-bundle #{clojure.core clojure.java.io}]
+ [postal.smtp #{postal.support clojure.core postal.message}]
+ [postal.stress #{postal.smtp clojure.core postal.message}]
+ [postal.core #{postal.stress postal.smtp clojure.core postal.sendmail}]
  [metabase.pulse.render.common
   #{potemkin.types schema.core clojure.core metabase.util.ui-logic clojure.pprint hiccup.util}]
  [metabase.pulse.render.png
@@ -2431,7 +2207,7 @@
     clojure.java.io
     metabase.util.i18n
     metabase.pulse.render.style}]
- [metabase.util.quotation (clojure.core)]
+ [metabase.util.quotation #{clojure.core}]
  [metabase.pulse.render.sparkline
   #{schema.core
     metabase.util.date-2
@@ -2587,6 +2363,7 @@
     metabase.models.dashboard}]
  [metabase.util.files
   #{clojure.tools.logging clojure.core metabase.util clojure.java.io metabase.util.i18n clojure.string}]
+ [dk.ative.docjure.spreadsheet #{clojure.core}]
  [metabase.query-processor.streaming.common
   #{metabase.util.date-2 metabase.query-processor.store clojure.core metabase.query-processor.timezone java-time}]
  [metabase.query-processor.streaming.json
@@ -2625,6 +2402,10 @@
     metabase.async.streaming-response
     metabase.query-processor.context
     metabase.query-processor.streaming.interface}]
+ [yaml.reader #{clojure.core flatland.ordered.map flatland.ordered.set}]
+ [yaml.writer #{clojure.core flatland.ordered.map flatland.ordered.set}]
+ [yaml.core #{clojure.core yaml.writer clojure.java.io yaml.reader}]
+ [schema.coerce #{schema.core schema.macros schema.spec.core clojure.core clojure.edn clojure.string schema.utils}]
  [metabase.util.yaml
   #{metabase.util.files clojure.tools.logging clojure.core metabase.util metabase.util.i18n clojure.string yaml.core}]
  [metabase.automagic-dashboards.rules
@@ -2640,7 +2421,225 @@
     metabase.util
     metabase.util.i18n
     clojure.string}]
- [metabase.driver.sql-jdbc.execute.diagnostic (clojure.core)]
+ [metabase.driver.sql.parameters.substitution
+  #{schema.core
+    metabase.mbql.util
+    metabase.util.date-2
+    metabase.util.schema
+    metabase.driver
+    metabase.driver.sql.query-processor
+    honeysql.core
+    clojure.core
+    metabase.driver.common.parameters.operators
+    metabase.query-processor.timezone
+    metabase.driver.common.parameters
+    metabase.util.i18n
+    clojure.string
+    metabase.query-processor.error-type
+    metabase.query-processor.middleware.wrap-value-literals
+    metabase.driver.common.parameters.dates}]
+ [metabase.driver.common.parameters.parse
+  #{schema.core
+    clojure.tools.logging
+    clojure.core
+    metabase.util
+    metabase.driver.common.parameters
+    metabase.util.i18n
+    clojure.string
+    metabase.query-processor.error-type}]
+ [metabase.driver.sql.util
+  #{schema.core
+    metabase.driver.sql.query-processor
+    honeysql.core
+    clojure.tools.logging
+    clojure.core
+    metabase.util.honeysql-extensions
+    metabase.util
+    metabase.util.i18n
+    clojure.string}]
+ [metabase.driver.sql.util.unprepare
+  #{metabase.driver
+    metabase.driver.sql.util
+    clojure.tools.logging
+    clojure.core
+    metabase.util
+    java-time
+    metabase.util.i18n
+    clojure.string}]
+ [metabase.driver.sql.parameters.substitute
+  #{metabase.driver
+    clojure.core
+    metabase.driver.sql.parameters.substitution
+    metabase.driver.common.parameters
+    metabase.util.i18n
+    clojure.string
+    metabase.query-processor.error-type}]
+ [metabase.driver.common.parameters.values
+  #{metabase.query-processor
+    schema.core
+    metabase.util.schema
+    metabase.models.native-query-snippet
+    clojure.tools.logging
+    clojure.core
+    metabase.models.field
+    metabase.models.card
+    toucan.db
+    metabase.driver.common.parameters
+    metabase.util.i18n
+    clojure.string
+    metabase.query-processor.error-type}]
+ [metabase.driver.sql
+  #{schema.core
+    metabase.driver.common.parameters.values
+    metabase.util.schema
+    metabase.driver
+    metabase.driver.sql.query-processor
+    potemkin
+    clojure.core
+    metabase.driver.sql.parameters.substitute
+    metabase.driver.sql.util.unprepare
+    metabase.driver.common.parameters.parse
+    metabase.driver.sql.parameters.substitution}]
+ [metabase.driver.sql-jdbc.sync.interface #{metabase.driver clojure.core}]
+ [metabase.driver.sql-jdbc.execute.old-impl #{metabase.driver clojure.core}]
+ [metabase.driver.sql-jdbc.execute.diagnostic #{clojure.core}]
+ [metabase.driver.sql-jdbc.execute
+  #{metabase.query-processor.util
+    metabase.driver.sql-jdbc.connection
+    metabase.query-processor.interface
+    metabase.driver.sql-jdbc.execute.diagnostic
+    metabase.mbql.util
+    metabase.driver
+    metabase.query-processor.store
+    potemkin
+    metabase.driver.sql-jdbc.execute.old-impl
+    clojure.tools.logging
+    clojure.core
+    clojure.core.async
+    metabase.util
+    metabase.driver.sql-jdbc.sync.interface
+    metabase.query-processor.timezone
+    metabase.query-processor.context
+    java-time
+    metabase.util.i18n
+    clojure.string
+    metabase.query-processor.reducible
+    metabase.query-processor.error-type}]
+ [metabase.driver.sql-jdbc.common #{clojure.core clojure.string}]
+ [metabase.driver.sql-jdbc.sync.common #{clojure.core metabase.driver.sql-jdbc.execute}]
+ [metabase.driver.sql-jdbc.sync.describe-table
+  #{metabase.driver.sql-jdbc.connection
+    clojure.java.jdbc
+    metabase.driver
+    metabase.driver.sql.query-processor
+    clojure.tools.logging
+    metabase.driver.sql-jdbc.sync.common
+    clojure.core
+    metabase.util.honeysql-extensions
+    metabase.util
+    metabase.driver.sql-jdbc.sync.interface
+    clojure.string
+    medley.core}]
+ [metabase.driver.sql-jdbc.sync.describe-database
+  #{metabase.driver.sql-jdbc.connection
+    clojure.java.jdbc
+    metabase.driver
+    metabase.driver.sql.query-processor
+    metabase.driver.sql-jdbc.sync.common
+    clojure.core
+    metabase.util.honeysql-extensions
+    metabase.driver.sql-jdbc.sync.interface
+    metabase.driver.sql-jdbc.execute
+    clojure.string}]
+ [metabase.driver.sql-jdbc.sync
+  #{metabase.driver.sql-jdbc.sync.describe-database
+    metabase.driver.sql-jdbc.sync.describe-table
+    potemkin
+    clojure.core
+    metabase.driver.sql-jdbc.sync.interface}]
+ [metabase.driver.sql-jdbc
+  #{metabase.driver.sql-jdbc.sync
+    metabase.driver.sql-jdbc.connection
+    clojure.java.jdbc
+    metabase.driver
+    metabase.driver.sql.query-processor
+    clojure.core
+    metabase.util.honeysql-extensions
+    metabase.driver.sql-jdbc.execute
+    metabase.driver.sql}]
+ [metabase.driver.postgres
+  #{metabase.driver.sql-jdbc.sync
+    metabase.driver.sql-jdbc.connection
+    metabase.driver.sql-jdbc
+    metabase.util.ssh
+    clojure.java.jdbc
+    pretty.core
+    metabase.util.date-2
+    metabase.driver
+    metabase.driver.sql.query-processor
+    metabase.models
+    honeysql.format
+    honeysql.core
+    clojure.tools.logging
+    clojure.core
+    metabase.driver.common
+    clojure.set
+    metabase.util.honeysql-extensions
+    metabase.util
+    metabase.driver.sql.util.unprepare
+    metabase.driver.sql-jdbc.common
+    java-time
+    metabase.driver.sql-jdbc.execute
+    clojure.string
+    metabase.db.spec}]
+ [ring.middleware.keyword-params #{clojure.core}]
+ [buddy.core.codecs.base64 #{clojure.core buddy.core.codecs}]
+ [buddy.core.keys.jwk.proto #{clojure.core buddy.core.codecs.base64 buddy.core.codecs}]
+ [buddy.util.deflate #{clojure.core}]
+ [buddy.core.keys.pem #{clojure.core clojure.java.io}]
+ [buddy.core.dsa #{clojure.core buddy.core.codecs clojure.java.io}]
+ [buddy.core.keys.jwk.ec #{buddy.core.hash clojure.core cheshire.core buddy.core.keys.jwk.proto}]
+ [buddy.util.ecdsa #{clojure.core}]
+ [buddy.core.keys.jwk.rsa
+  #{buddy.core.hash clojure.core buddy.core.codecs.base64 buddy.core.codecs cheshire.core buddy.core.keys.jwk.proto}]
+ [buddy.core.keys.jwk.okp #{buddy.core.hash clojure.core cheshire.core buddy.core.keys.jwk.proto}]
+ [buddy.core.keys.jwk.eddsa
+  #{buddy.core.keys.jwk.okp clojure.core buddy.core.codecs.base64 buddy.core.codecs buddy.core.keys.jwk.proto}]
+ [buddy.core.keys
+  #{buddy.core.keys.jwk.eddsa
+    buddy.core.keys.jwk.okp
+    buddy.core.keys.jwk.rsa
+    clojure.core
+    buddy.core.keys.jwk.ec
+    buddy.core.keys.pem
+    buddy.core.keys.jwk.proto}]
+ [buddy.sign.jwe.cek #{buddy.core.keys clojure.core buddy.core.nonce buddy.core.codecs}]
+ [buddy.sign.util #{clojure.core buddy.core.codecs}]
+ [buddy.sign.jws
+  #{buddy.sign.util
+    buddy.core.mac
+    clojure.core
+    buddy.util.ecdsa
+    buddy.core.codecs.base64
+    buddy.core.dsa
+    buddy.core.codecs
+    cheshire.core
+    clojure.string}]
+ [buddy.sign.jwe
+  #{buddy.sign.util
+    buddy.sign.jws
+    buddy.sign.jwe.cek
+    buddy.core.keys
+    clojure.core
+    buddy.core.bytes
+    buddy.core.codecs.base64
+    buddy.core.nonce
+    buddy.core.codecs
+    buddy.util.deflate
+    cheshire.core
+    buddy.core.crypto
+    clojure.string}]
+ [buddy.sign.jwt #{buddy.sign.util buddy.sign.jws clojure.core buddy.sign.jwe buddy.core.codecs cheshire.core}]
  [metabase.util.embed
   #{metabase.public-settings
     ring.util.codec
@@ -2679,6 +2678,8 @@
     metabase.plugins.jdbc-proxy
     metabase.util
     metabase.util.i18n}]
+ [clojure.core.logic.protocols #{clojure.core}]
+ [clojure.core.logic #{clojure.core clojure.set clojure.core.logic.protocols clojure.string}]
  [metabase.api.testing
   #{metabase.models.setting.cache
     clojure.java.jdbc
@@ -2701,6 +2702,24 @@
     metabase.query-processor.context
     metabase.util.i18n
     metabase.query-processor.error-type}]
+ [manifold.executor #{clojure.tools.logging clojure.core}]
+ [manifold.utils #{manifold.executor clojure.tools.logging clojure.core}]
+ [manifold.time #{manifold.executor clojure.tools.logging clojure.core manifold.utils clojure.string}]
+ [manifold.stream.core #{clojure.core manifold.utils}]
+ [manifold.debug #{clojure.core}]
+ [manifold.deferred
+  #{manifold.executor
+    riddley.compiler
+    manifold.debug
+    riddley.walk
+    clojure.tools.logging
+    clojure.core
+    clojure.set
+    manifold.utils
+    manifold.time}]
+ [manifold.stream.graph
+  #{manifold.executor manifold.deferred clojure.tools.logging clojure.core manifold.stream.core manifold.utils}]
+ [manifold.stream.deferred #{manifold.deferred clojure.core manifold.stream.core manifold.stream.graph}]
  [metabase.related
   #{metabase.query-processor.util
     metabase.models.table
@@ -2720,6 +2739,103 @@
     metabase.models.segment
     medley.core
     metabase.models.dashboard}]
+ [manifold.stream.queue #{manifold.deferred clojure.core manifold.stream.core manifold.utils manifold.stream.graph}]
+ [byte-streams.utils #{clojure.core clj-tuple}]
+ [manifold.stream.seq
+  #{manifold.deferred
+    clojure.tools.logging
+    clojure.core
+    manifold.stream.core
+    manifold.utils
+    manifold.time
+    manifold.stream.graph}]
+ [manifold.stream.random-access
+  #{manifold.deferred
+    clojure.tools.logging
+    clojure.core
+    manifold.stream.core
+    manifold.utils
+    manifold.time
+    manifold.stream.graph}]
+ [manifold.stream.iterator
+  #{manifold.deferred
+    clojure.tools.logging
+    clojure.core
+    manifold.stream.core
+    manifold.utils
+    manifold.time
+    manifold.stream.graph}]
+ [manifold.stream.default
+  #{manifold.executor
+    manifold.deferred
+    clojure.tools.logging
+    clojure.core
+    manifold.stream.core
+    manifold.utils
+    manifold.time
+    manifold.stream.graph}]
+ [manifold.stream
+  #{manifold.stream.default
+    manifold.stream.iterator
+    manifold.stream.random-access
+    manifold.deferred
+    clojure.tools.logging
+    clojure.core
+    manifold.stream.seq
+    manifold.stream.core
+    manifold.utils
+    manifold.time
+    manifold.stream.queue
+    manifold.stream.deferred}]
+ [primitive-math #{clojure.core}]
+ [byte-streams.pushback-stream
+  #{primitive-math manifold.stream manifold.deferred clojure.core manifold.utils byte-streams.utils clojure.walk}]
+ [byte-streams.protocols #{clojure.core byte-streams.utils}]
+ [byte-streams.graph #{manifold.stream byte-streams.protocols clojure.core byte-streams.utils clj-tuple}]
+ [byte-streams.char-sequence #{clojure.core}]
+ [byte-streams
+  #{primitive-math
+    byte-streams.char-sequence
+    manifold.stream
+    byte-streams.protocols
+    manifold.deferred
+    byte-streams.graph
+    clojure.core
+    byte-streams.pushback-stream
+    byte-streams.utils
+    clojure.java.io}]
+ [aleph.netty
+  #{primitive-math
+    manifold.stream
+    byte-streams
+    manifold.deferred
+    potemkin
+    clojure.tools.logging
+    clojure.core
+    clojure.set
+    manifold.stream.core
+    clojure.string}]
+ [aleph.http.core
+  #{manifold.stream
+    byte-streams
+    aleph.netty
+    manifold.deferred
+    potemkin
+    clojure.tools.logging
+    clojure.core
+    clojure.set
+    clojure.string}]
+ [aleph.flow #{manifold.executor manifold.deferred potemkin clojure.core}]
+ [aleph.http.server
+  #{manifold.stream
+    byte-streams
+    aleph.netty
+    manifold.deferred
+    aleph.flow
+    clojure.tools.logging
+    clojure.core
+    aleph.http.core
+    clojure.string}]
  [metabase.api.dataset
   #{metabase.query-processor
     metabase.query-processor.util
@@ -2843,6 +2959,7 @@
     metabase.util.i18n
     clojure.string
     metabase.api.common}]
+ [throttle.core #{clojure.core clojure.math.numeric-tower}]
  [metabase.metabot.events
   #{clojure.tools.logging
     clojure.core
@@ -2853,6 +2970,39 @@
     metabase.metabot.command
     metabase.util.i18n
     clojure.string}]
+ [aleph.http.client-middleware
+  #{manifold.stream
+    byte-streams
+    manifold.executor
+    clojure.stacktrace
+    manifold.deferred
+    potemkin
+    clojure.core
+    aleph.http.core
+    clojure.edn
+    clojure.string
+    clojure.walk}]
+ [aleph.http.encoding #{primitive-math byte-streams potemkin clojure.core}]
+ [aleph.http.multipart #{byte-streams aleph.http.encoding clojure.core}]
+ [aleph.http.client
+  #{aleph.http.multipart
+    manifold.stream
+    byte-streams
+    aleph.netty
+    manifold.deferred
+    clojure.tools.logging
+    clojure.core
+    aleph.http.core}]
+ [aleph.http
+  #{aleph.http.client
+    manifold.executor
+    aleph.netty
+    manifold.deferred
+    aleph.flow
+    clojure.core
+    aleph.http.client-middleware
+    clojure.string
+    aleph.http.server}]
  [metabase.server.middleware.security
   #{metabase.public-settings
     metabase.config
@@ -2921,7 +3071,7 @@
     metabase.util.i18n
     clojure.string}]
  [metabase.setup #{clojure.core metabase.models.setting toucan.db environ.core}]
- [metabase.automagic-dashboards.visualization-macros (clojure.core)]
+ [metabase.automagic-dashboards.visualization-macros #{clojure.core}]
  [metabase.automagic-dashboards.core
   #{metabase.automagic-dashboards.populate
     metabase.query-processor.util
@@ -2984,6 +3134,7 @@
     clojure.string
     clojure.data
     metabase.api.common}]
+ [clj-ldap.client #{clojure.core clojure.pprint clojure.string}]
  [metabase.integrations.common
   #{metabase.models.permissions-group
     clojure.tools.logging
@@ -3045,6 +3196,7 @@
     clojure.string
     metabase.models.humanization
     medley.core}]
+ [clojure.java.jmx #{clojure.core clojure.walk}]
  [metabase.troubleshooting
   #{metabase.config
     clojure.java.jmx
@@ -3054,6 +3206,8 @@
     metabase.models.setting
     metabase.db
     toucan.db}]
+ [amalloy.ring-buffer #{clojure.core}]
+ [crypto.random #{clojure.core clojure.string}]
  [metabase.logger #{metabase.config amalloy.ring-buffer clojure.core clj-time.format clj-time.coerce}]
  [metabase.api.util
   #{metabase.logger
@@ -3067,7 +3221,7 @@
     ring.util.response}]
  [metabase.domain-entities.specs
   #{schema.core metabase.mbql.util metabase.util.yaml schema.coerce clojure.core metabase.mbql.normalize medley.core}]
- [metabase.server.middleware.util (clojure.core)]
+ [metabase.server.middleware.util #{clojure.core}]
  [metabase.server.middleware.auth #{metabase.server.middleware.util clojure.core metabase.models.setting}]
  [metabase.models.params.chain-filter.dedupe-joins #{clojure.core clojure.set clojure.core.logic}]
  [metabase.models.params.chain-filter
@@ -3448,6 +3602,7 @@
     metabase.transforms.core
     metabase.api.common
     medley.core}]
+ [compojure.route #{compojure.response clojure.core compojure.core ring.util.mime-type ring.util.response}]
  [metabase.api.native-query-snippet
   #{schema.core
     metabase.models.interface
@@ -3816,6 +3971,37 @@
     metabase.api.routes
     metabase.api.dataset
     ring.util.response}]
+ [ring.util.request #{clojure.core ring.util.parsing}]
+ [ring.middleware.params #{ring.util.request ring.util.codec clojure.core}]
+ [ring.middleware.cookies #{ring.util.codec clojure.core clojure.string ring.util.parsing}]
+ [metabase.db.data-migrations
+  #{metabase.public-settings
+    toucan.models
+    metabase.models.collection
+    metabase.models.permissions-group
+    clojure.tools.logging
+    clojure.core
+    metabase.models.permissions-group-membership
+    metabase.models.pulse
+    metabase.models.field
+    metabase.util
+    metabase.models.dashboard-card
+    metabase.models.user
+    cemerick.friend.credentials
+    metabase.models.setting
+    metabase.db.util
+    metabase.models.card
+    metabase.models.permissions
+    toucan.db
+    cheshire.core
+    metabase.mbql.schema
+    metabase.models.database
+    metabase.util.i18n
+    clojure.walk
+    metabase.models.humanization
+    medley.core
+    metabase.models.dashboard}]
+ [ring.adapter.jetty #{clojure.core ring.util.servlet}]
  [metabase.server
   #{metabase.config
     ring.adapter.jetty
@@ -3841,6 +4027,51 @@
     toucan.db
     metabase.util.i18n
     clojure.string}]
+ [metabase.driver.mysql
+  #{metabase.driver.sql-jdbc.sync
+    metabase.driver.sql-jdbc.connection
+    metabase.driver.sql-jdbc
+    metabase.util.ssh
+    clojure.java.jdbc
+    metabase.driver
+    metabase.driver.sql.query-processor
+    honeysql.core
+    clojure.tools.logging
+    clojure.core
+    metabase.driver.common
+    clojure.set
+    metabase.util.honeysql-extensions
+    metabase.util
+    metabase.driver.sql.util.unprepare
+    metabase.driver.sql-jdbc.common
+    metabase.query-processor.timezone
+    java-time
+    metabase.driver.sql-jdbc.execute
+    metabase.util.i18n
+    clojure.string
+    metabase.db.spec}]
+ [metabase.driver.h2
+  #{metabase.driver.sql-jdbc.sync
+    metabase.driver.sql-jdbc.connection
+    metabase.driver.sql-jdbc
+    metabase.db.jdbc-protocols
+    metabase.util.ssh
+    metabase.driver
+    metabase.driver.sql.query-processor
+    metabase.query-processor.store
+    honeysql.core
+    clojure.tools.logging
+    metabase.plugins.classloader
+    clojure.core
+    metabase.driver.common
+    metabase.util.honeysql-extensions
+    metabase.util
+    java-time
+    metabase.driver.sql-jdbc.execute
+    metabase.util.i18n
+    clojure.string
+    metabase.query-processor.error-type
+    metabase.db.spec}]
  [metabase.server.middleware.ssl
   #{metabase.public-settings
     ring.util.request
@@ -3886,6 +4117,15 @@
     clojure.string
     yaml.core
     environ.core}]
+ [ring.middleware.json
+  #{ring.util.request
+    ring.util.io
+    clojure.core
+    cheshire.core
+    clojure.java.io
+    ring.core.protocols
+    cheshire.parse
+    ring.util.response}]
  [metabase.server.middleware.json
   #{metabase.util.date-2
     ring.util.io
@@ -3894,16 +4134,30 @@
     ring.middleware.json
     cheshire.core
     ring.util.response}]
+ [clojure.tools.trace #{clojure.core clojure.pprint}]
  [metabase.server.middleware.browser-cookie
   #{schema.core metabase.util.schema clojure.core java-time ring.util.response}]
+ [metabase.async.api-response
+  #{compojure.response
+    clojure.tools.logging
+    clojure.core
+    clojure.core.async
+    metabase.util
+    metabase.server.middleware.exceptions
+    cheshire.core
+    clojure.java.io
+    ring.core.protocols
+    metabase.util.i18n
+    ring.util.response}]
+ [ring.middleware.gzip #{clojure.reflect clojure.core clojure.java.io}]
  [metabase.server.handler
   #{ring.middleware.gzip
     metabase.config
     metabase.server.middleware.ssl
+    metabase.async.api-response
     metabase.server.middleware.browser-cookie
     metabase.server.middleware.session
     metabase.server.middleware.security
-    metabase.plugins.classloader
     ring.middleware.cookies
     ring.middleware.params
     clojure.core
@@ -3914,4 +4168,30 @@
     metabase.server.middleware.log
     metabase.server.middleware.misc
     metabase.server.routes
-    ring.middleware.keyword-params}]]
+    ring.middleware.keyword-params}]
+ [metabase.core
+  #{metabase.config
+    metabase.core.initialization-status
+    metabase.db.data-migrations
+    metabase.server
+    metabase.metabot
+    metabase.server.handler
+    clojure.tools.logging
+    metabase.plugins.classloader
+    metabase.sample-data
+    clojure.core
+    metabase.util
+    metabase.models.user
+    metabase.plugins
+    metabase.driver.mysql
+    metabase.troubleshooting
+    clojure.tools.trace
+    metabase.db
+    metabase.driver.h2
+    toucan.db
+    metabase.task
+    metabase.util.i18n
+    clojure.string
+    metabase.setup
+    metabase.events
+    metabase.driver.postgres}]]

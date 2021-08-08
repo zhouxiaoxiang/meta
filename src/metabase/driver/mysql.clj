@@ -9,6 +9,7 @@
             [metabase.db.spec :as dbspec]
             [metabase.driver :as driver]
             [metabase.driver.common :as driver.common]
+            metabase.driver.sql-jdbc
             [metabase.driver.sql-jdbc.common :as sql-jdbc.common]
             [metabase.driver.sql-jdbc.connection :as sql-jdbc.conn]
             [metabase.driver.sql-jdbc.execute :as sql-jdbc.execute]
@@ -22,6 +23,8 @@
             [metabase.util.ssh :as ssh])
   (:import [java.sql DatabaseMetaData ResultSet ResultSetMetaData Types]
            [java.time LocalDateTime OffsetDateTime OffsetTime ZonedDateTime]))
+
+(comment metabase.driver.sql-jdbc/keep-me)
 
 (driver/register! :mysql, :parent :sql-jdbc)
 

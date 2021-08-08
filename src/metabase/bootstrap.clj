@@ -152,4 +152,38 @@
       (pprint/pprint (Throwable->map e))
       (System/exit 1))))
 
-#_(load-core!)
+;; time clojure -A:user:dev -e "(require 'metabase.core) (System/exit 0)"
+;;
+;; real    0m25.534s
+;; user    1m7.067s
+;; sys     0m3.262s
+
+;; n = 1  => 27.928s
+;; n = 2  => 22.331s
+;; n = 4  => 17.421s
+;; n = 8  => 15.021s
+;; n = 16 => 13.483s
+;; n = 32 => 13.656s
+;; n = 64 => 13.683s
+(defn fast-profile [num-threads]
+  (.bindRoot #'pool-size num-threads)
+  (load-core)
+  (dotimes [_ 5]
+    (println))
+  (System/exit 0))
+
+;; time clojure -A:user:dev -e "((requiring-resolve 'metabase.bootstrap/profile))"
+;;
+;; real    0m16.595s
+;; user    2m21.020s
+;; sys     0m12.651s
+(defn profile []
+  (load-core)
+  ((requiring-resolve 'metabase.cmd/profile))
+  (System/exit 0))
+
+;; time clojure -A:user:dev -e "(require 'metabase.core) ((requiring-resolve 'metabase.cmd/profile)) (System/exit 0)"
+;;
+;; real    0m28.039s
+;; user    1m17.168s
+;; sys     0m4.428s
