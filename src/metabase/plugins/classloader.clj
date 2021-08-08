@@ -45,6 +45,8 @@
       (log/tracef "Using NEWLY CREATED classloader as shared context classloader: %s" new-classloader)
       new-classloader))))
 
+@shared-context-classloader
+
 (defn- has-classloader-as-ancestor?
   "True if `classloader` and `ancestor` are the same object, or if `classloader` has `ancestor` as an ancestor in its
   parent chain, e.g. as a parent, its parent's parent, etc."

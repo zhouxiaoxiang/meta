@@ -112,15 +112,18 @@
                      n)))
                (ns.deps/transitive-dependencies graph lib)))))
 
-(defn write-deps-graph! []
-  (let [deps (transitive-deps 'metabase.core)]
-    (spit
-     "resources/deps-graph.edn"
-     (with-out-str
-       (pprint/pprint
-        (mapv (fn [lib]
-                (let [deps (get @namespace->deps lib)]
-                  (if deps
-                    [lib deps]
-                    [lib])))
-              (concat deps ['metabase.core])))))))
+(defn write-deps-graph!
+  ([]
+   (write-deps-graph! 'metabase.core "resources/deps-graph.edn"))
+  ([lib file]
+   (let [deps (transitive-deps lib)]
+     (spit
+      file
+      (with-out-str
+        (pprint/pprint
+         (mapv (fn [lib]
+                 (let [deps (get @namespace->deps lib)]
+                   (if deps
+                     [lib deps]
+                     [lib])))
+               (concat deps [lib]))))))))
