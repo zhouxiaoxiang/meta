@@ -21,17 +21,20 @@
         (.namingPattern "parallel-loader-%d")
         (.daemon true))))))
 
-(def ordered-deps
+(def ordered-deps*
   (delay
-    (let [loaded @@#'clojure.core/*loaded-libs*]
-      (printf "%d deps already loaded\n" (count loaded))
-      (into
-       []
-       (comp (remove (fn [[lib]] (loaded lib)))
-             (map (fn [[lib deps]]
-                    [lib (set/difference deps loaded)])))
-       (with-open [r (java.io.PushbackReader. (java.io.FileReader. (java.io.File. "resources/deps-graph.edn")))]
-         (edn/read r))))))
+    (with-open [r (java.io.PushbackReader. (java.io.FileReader. (java.io.File. "resources/deps-graph.edn")))]
+      (edn/read r))))
+
+(defn ordered-deps []
+  (let [loaded @@#'clojure.core/*loaded-libs*]
+    (printf "%d deps already loaded\n" (count loaded))
+    (into
+     []
+     (comp (remove (fn [[lib]] (loaded lib)))
+           (map (fn [[lib deps]]
+                  [lib (set/difference deps loaded)])))
+     @ordered-deps*)))
 
 (defn- thread-pool ^ThreadPoolExecutor []
   @pool*)
@@ -76,7 +79,7 @@
 
 (defn- init-messages []
   (assoc (zipmap (range 1 (inc pool-size)) (repeat (colorize/magenta "WAITING FOR JOB")))
-         ::bar (pr/progress-bar (count @ordered-deps))))
+         ::bar (pr/progress-bar (count (ordered-deps)))))
 
 (defn- thread-printf*
   [messages thread-num s]

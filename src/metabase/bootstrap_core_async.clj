@@ -1,6 +1,5 @@
 (ns metabase.bootstrap-core-async
   (:require [clojure.core.async :as a]
-            [clojure.set :as set]
             [clojure.tools.logging :as log]
             [metabase.bootstrap-common :as c]))
 
@@ -17,14 +16,7 @@
     result))
 
 (defn parallel-require [libs]
-  (let [loaded       @@#'clojure.core/*loaded-libs*
-        _            (println (count loaded) "LIBS ALREADY LOADED.")
-        libs         (vec (remove (fn [[lib]] (loaded lib)) libs))
-        libs         (mapv (fn [[lib deps]]
-                             [lib (set/difference deps loaded)])
-                           libs)
-        ;; lib->job (atom {})
-        lib->chan    (into {}
+  (let [lib->chan    (into {}
                            (map (fn [[lib]]
                                   [lib (a/promise-chan)]))
                            libs)

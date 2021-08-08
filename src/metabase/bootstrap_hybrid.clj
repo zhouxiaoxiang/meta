@@ -202,12 +202,12 @@
 (defmethod bootstrapper :simple
   [_]
   (^:once fn* []
-   ((requiring-resolve 'metabase.bootstrap/parallel-require) @c/ordered-deps)))
+   ((requiring-resolve 'metabase.bootstrap/parallel-require) (c/ordered-deps))))
 
 (defmethod bootstrapper :core-async
   [_]
   (^:once fn* []
-   ((requiring-resolve 'metabase.bootstrap-core-async/parallel-require) @c/ordered-deps)))
+   ((requiring-resolve 'metabase.bootstrap-core-async/parallel-require) (c/ordered-deps))))
 
 (defmethod bootstrapper :hybrid
   [_]
@@ -222,6 +222,11 @@
   (^:once fn* []
    (require 'metabase.core)))
 
+(defmethod bootstrapper :simple-2
+  [_]
+  (^:once fn* []
+   ((requiring-resolve 'metabase.bootstrap-simple-2/parallel-require) (c/ordered-deps))))
+
 ;; time clojure -A:user:dev -e "(require 'metabase.core) (System/exit 0)"
 ;;
 ;; real    0m25.534s
@@ -230,19 +235,20 @@
 
 ;; time clojure -A:user:dev -e "((requiring-resolve 'metabase.bootstrap-hybrid/bootstrap) :hybrid 32)"
 ;;
-;;   n    no-op       simple      core.async  :hybrid
-;;   1    25.644s     27.928s     27.556s     28.122s
-;;   2      -         22.331s     18.997s     19.105s
-;;   4      -         17.421s     14.972s     14.918s
-;;   8      -         15.021s     15.391s     14.855s
-;;  16      -         13.394s     15.196s     14.448s
-;;  32      -         13.524s     15.597s     15.065s
-;;  64      -         13.017s     15.713s     14.839s
-;; 128      -         13.113s        -           -
+;;   n    no-op       simple      core.async  hybrid      simple-2
+;;   1    25.644s     27.928s     27.556s     28.122s     28.011s
+;;   2      -         22.331s     18.997s     19.105s     18.035s
+;;   4      -         17.421s     14.972s     14.918s     14.066s
+;;   8      -         15.021s     15.391s     14.855s     13.819s
+;;  16      -         13.394s     15.196s     14.448s     13.497s
+;;  32      -         13.524s     15.597s     14.935s     13.827s
+;;  64      -         13.017s     15.713s     14.839s     14.000s
+;; 128      -         13.113s        -           -        14.467s
 (defn bootstrap [strategy num-threads]
   (.bindRoot #'c/pool-size num-threads)
   (try
     ((bootstrapper strategy))
+    (require 'metabase.core)
     (c/thread-printf c/+done+)
     (shutdown-agents)
     (println c/+clear-to-end-of-screen+)
