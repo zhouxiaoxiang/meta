@@ -399,6 +399,8 @@
   :create-test-graph
   {:exec-fn metabase.test-runner.bootstrap.graph-2/write-graph}
 
+  :experimental/cache
+  {:extra-paths [".cache"]}
 
   ;; TODO -- consider creating an alias that includes the `./bin` build-drivers & release code as well so we can work
   ;; on them all from a single REPL process.

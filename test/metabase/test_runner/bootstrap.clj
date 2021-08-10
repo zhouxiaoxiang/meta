@@ -3,9 +3,12 @@
             [metabase.bootstrap-common :as c]
             [metabase.bootstrap-hybrid :as b]))
 
-(let [m (doto (.getDeclaredMethod java.lang.ClassLoader$ParallelLoaders "register" (into-array Class [Class]))
-          (.setAccessible true))]
-  (.invoke m java.lang.ClassLoader$ParallelLoaders (into-array Object [clojure.lang.DynamicClassLoader])))
+(try
+  (let [m (doto (.getDeclaredMethod java.lang.ClassLoader$ParallelLoaders "register" (into-array Class [Class]))
+            (.setAccessible true))]
+    (.invoke m java.lang.ClassLoader$ParallelLoaders (into-array Object [clojure.lang.DynamicClassLoader])))
+  (catch Throwable _
+    (println "Unable to register DynamicClassLoader as parallel")))
 
 #_(.isRegisteredAsParallelCapable @(clojure.lang.Compiler/LOADER))
 

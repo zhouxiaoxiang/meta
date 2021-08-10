@@ -199,6 +199,16 @@
 
 (defmulti bootstrapper keyword)
 
+(defmethod bootstrapper :serial
+  [_]
+  (^:once fn* [libs]
+   (.bindRoot #'c/pool-size 1)
+   (c/init-messages-agent! (count libs))
+   (doseq [[lib] libs]
+     (c/thread-printf "%s %s" c/+load+ lib)
+     (c/tick)
+     (require lib))))
+
 (defmethod bootstrapper :debug
   [_]
   (^:once fn* [libs]
