@@ -197,35 +197,50 @@
        clojure.string
        progrock.core}]])
 
-(defmulti ^:private bootstrapper keyword)
+(defmulti bootstrapper keyword)
+
+(defmethod bootstrapper :debug
+  [_]
+  (^:once fn* [libs]
+   ((requiring-resolve 'metabase.debug/parallel-require) libs)))
 
 (defmethod bootstrapper :simple
   [_]
-  (^:once fn* []
-   ((requiring-resolve 'metabase.bootstrap/parallel-require) (c/ordered-deps))))
+  (^:once fn* [libs]
+   ((requiring-resolve 'metabase.bootstrap/parallel-require) libs)))
 
 (defmethod bootstrapper :core-async
   [_]
-  (^:once fn* []
-   ((requiring-resolve 'metabase.bootstrap-core-async/parallel-require) (c/ordered-deps))))
+  (^:once fn* [libs]
+   ((requiring-resolve 'metabase.bootstrap-core-async/parallel-require) libs)))
 
 (defmethod bootstrapper :hybrid
   [_]
-  (^:once fn* []
+  (^:once fn* [libs]
    (c/thread-printf "BOOTSTRAP STAGE 1: LOAD BASIC BOOTSTRAPPER")
    ((requiring-resolve 'metabase.bootstrap/parallel-require) deps)
    (c/thread-printf "BOOTSTRAP STAGE 3: BOOTSTRAP METABASE.CORE")
-   ((bootstrapper :core-async))))
+   ((bootstrapper :core-async) libs)))
 
 (defmethod bootstrapper :no-op
   [_]
-  (^:once fn* []
+  (^:once fn* [libs]
    (require 'metabase.core)))
 
 (defmethod bootstrapper :simple-2
   [_]
-  (^:once fn* []
-   ((requiring-resolve 'metabase.bootstrap-simple-2/parallel-require) (c/ordered-deps))))
+  (^:once fn* [libs]
+   ((requiring-resolve 'metabase.bootstrap-simple-2/parallel-require) libs)))
+
+(defmethod bootstrapper :simple-3
+  [_]
+  (^:once fn* [libs]
+   ((requiring-resolve 'metabase.bootstrap-simple-3/parallel-require) libs)))
+
+(defmethod bootstrapper :simple-4
+  [_]
+  (^:once fn* [libs]
+   ((requiring-resolve 'metabase.bootstrap-simple-4/parallel-require) libs)))
 
 ;; time clojure -A:user:dev -e "(require 'metabase.core) (System/exit 0)"
 ;;

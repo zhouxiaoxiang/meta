@@ -19,14 +19,8 @@
         result))))
 
 (defn parallel-require [libs]
-  (let [loaded   @@#'clojure.core/*loaded-libs*
-        _        (println (count loaded) "LIBS ALREADY LOADED.")
-        libs     (vec (remove (fn [[lib]]
-                                (when (loaded lib)
-                                  (c/tick)
-                                  true))
-                              libs))
-        lib->job (atom {})]
+  (c/init-messages-agent! (count libs))
+  (let [lib->job (atom {})]
     (with-redefs [clojure.core/load-one (fn [lib _ _]
                                           (binding [c/*path* (conj c/*path* lib)]
                                             (await-job lib (get @lib->job lib))))]

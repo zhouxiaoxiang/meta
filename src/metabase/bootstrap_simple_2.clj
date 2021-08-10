@@ -19,9 +19,11 @@
         result))))
 
 (defn parallel-require [libs]
-  (let [ready?                (fn [[_ deps]]
-                                (empty? deps))
-        ready-libs            (filter ready? libs)
+  {:pre [(sequential? libs)]}
+  (c/init-messages-agent! (count libs))
+  (let [ready-libs            (filterv (fn [[_ deps]]
+                                         (empty? deps))
+                                       libs)
         lib->deps             (into {} libs)
         lib->unsatisfied-deps (atom lib->deps)
         lib->dependents       (reduce
@@ -33,34 +35,48 @@
                                   deps))
                                {}
                                libs)
-        lib->job              (atom {})]
+        lib->job              (atom {})
+        submitted             (atom #{})
+        error                 (promise)]
     (with-redefs [clojure.core/load-one (fn [lib _ _]
-                                          (binding [c/*path* (conj c/*path* lib)]
-                                            (await-job lib (get @lib->job lib))))]
+                                          (try
+                                            (binding [c/*path* (conj c/*path* lib)]
+                                              (await-job lib (get @lib->job lib)))
+                                            (catch Throwable e
+                                              (deliver error e)
+                                              (throw e))))]
       ;; create the jobs
       (letfn [(submit-job! [lib]
-                (let [deps (get lib->deps lib)
-                      job (c/submit!
-                           (^:once fn* []
-                            (binding [c/*path* [lib]]
-                              (doseq [dep deps]
-                                (await-job dep (get @lib->job dep)))
-                              (c/thread-printf "%s %s" c/+load+ lib)
-                              (let [result (try
-                                             (assert (not (get @@#'clojure.core/*loaded-libs* lib))
-                                                     (str "ALREADY LOADED: " lib))
-                                             (c/orig-load-one lib true true)
-                                             (catch Throwable e
-                                               (c/thread-printf "%s %s %s" c/+error+ lib (c/error-message e))
-                                               (throw (ex-info (format "Error loading %s: %s" lib (ex-message e))
-                                                               {:lib lib}
-                                                               e))))]
-                                (c/thread-printf c/+ready+)
-                                (c/tick)
-                                (submit-jobs-for-dependents! lib)
-                                result))))]
-                  (swap! lib->job assoc lib job)
-                  job))
+                (try
+                  (when (get @submitted lib)
+                    (throw (ex-info (format "ALREADY SUBMITTED! %s" lib) {:lib lib})))
+                  (let [deps (get lib->deps lib)
+                        job  (c/submit!
+                              (^:once fn* []
+                               (binding [c/*path* [lib]]
+                                 (doseq [dep deps]
+                                   (await-job dep (get @lib->job dep)))
+                                 (c/thread-printf "%s %s" c/+load+ lib)
+                                 (let [result (try
+                                                (assert (not (get @@#'clojure.core/*loaded-libs* lib))
+                                                        (str "ALREADY LOADED: " lib))
+                                                (c/orig-load-one lib true true)
+                                                (catch Throwable e
+                                                  (let [e (throw (ex-info (format "Error loading %s: %s" lib (ex-message e))
+                                                                          {:lib lib}
+                                                                          e))]
+                                                    (c/thread-printf "%s %s %s" c/+error+ lib (c/error-message e))
+                                                    (deliver error e)
+                                                    (throw e))))]
+                                   (c/thread-printf c/+ready+)
+                                   (c/tick)
+                                   (submit-jobs-for-dependents! lib)
+                                   result))))]
+                    (swap! lib->job assoc lib job)
+                    job)
+                  (catch Throwable e
+                    (deliver error e)
+                    (throw e))))
               (submit-jobs-for-dependents! [lib]
                 (when-let [deps (not-empty (get lib->dependents lib))]
                   (let [lib->unsatisfied (swap! lib->unsatisfied-deps (fn [lib->unsatisfied]
@@ -78,4 +94,8 @@
           (submit-job! lib)))
       ;; now wait for all of the jobs to finish.
       (doseq [[lib] libs]
-        (await-job lib (get @lib->job lib))))))
+        (when (realized? error)
+          (throw @error))
+        (await-job lib (get @lib->job lib)))
+      (when (realized? error)
+        (throw @error)))))

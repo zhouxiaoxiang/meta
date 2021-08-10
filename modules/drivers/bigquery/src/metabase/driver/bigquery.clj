@@ -8,6 +8,7 @@
             [metabase.driver.bigquery.params :as bigquery.params]
             [metabase.driver.bigquery.query-processor :as bigquery.qp]
             [metabase.driver.google :as google]
+            metabase.driver.sql
             [metabase.query-processor.error-type :as error-type]
             [metabase.query-processor.store :as qp.store]
             [metabase.query-processor.timezone :as qp.timezone]
@@ -21,6 +22,8 @@
            [com.google.api.services.bigquery Bigquery Bigquery$Builder BigqueryScopes]
            [com.google.api.services.bigquery.model GetQueryResultsResponse QueryRequest QueryResponse Table TableCell TableFieldSchema TableList TableList$Tables TableReference TableRow TableSchema]
            java.util.Collections))
+
+(comment metabase.driver.sql/keep-me)
 
 (driver/register! :bigquery, :parent #{:google :sql})
 

@@ -16,7 +16,7 @@
    (comp (mapcat rest)
          (map last)
          (mapcat (fn [libspec]
-                   (#'clojure.tools.namespace.parse/deps-from-libspec nil libspec))))
+                   (#'ns.parse/deps-from-libspec nil libspec))))
    require-forms))
 
 (defn- parse-jar-source [^java.util.jar.JarFile jarfile ^String entry-name]
@@ -42,7 +42,7 @@
                :in-ns   in-ns-form
                :require require-forms}})))
 
-(defonce ^:private clojure-core-requires
+(defonce clojure-core-requires
   (delay
     (binding [*read-eval* false]
       (let [jarfile (java.util.jar.JarFile. (io/file "/home/cam/.m2/repository/org/clojure/clojure/1.10.3/clojure-1.10.3.jar"))]
@@ -61,23 +61,21 @@
 (def classpath-decls
   (delay (ns.find/find-ns-decls (classpath/system-classpath))))
 
-(def ^:private namespace->deps
+(def namespace->deps
   (delay
     (into
      {}
      (map (fn [ns-decl]
             (let [lib (ns.parse/name-from-ns-decl ns-decl)]
               [lib
-               (not-empty
-                (set
-                 (cond-> (set/union
-                          (ns.parse/deps-from-ns-decl ns-decl)
-                          (@clojure-core-requires lib)
-                          (get extra-deps lib))
-                   (not= lib 'clojure.core) (conj 'clojure.core))))])))
+               (when-let [deps (not-empty (set/union
+                                           (ns.parse/deps-from-ns-decl ns-decl)
+                                           (@clojure-core-requires lib)
+                                           (get extra-deps lib)))]
+                 (apply sorted-set deps))])))
      @classpath-decls)))
 
-(def ^:private deps-graph
+(def deps-graph
   (delay
     (reduce
      (fn [graph [ns-symbol deps]]
@@ -89,28 +87,13 @@
      (ns.deps/graph)
      @namespace->deps)))
 
-(defn transitive-deps [lib]
+(defn transitive-deps [& libs]
   (let [graph @deps-graph]
-    (vec (sort (let [topo-comp (ns.deps/topo-comparator graph)]
-                 topo-comp
-                 #_(fn [x y]
-                   (let [dep-type        (fn [lib]
-                                           (cond
-                                             (str/starts-with? lib "clojure")  :clojure
-                                             (str/starts-with? lib "metabase") :metabase
-                                             :else                             :lib))
-                         [x-type y-type] (mapv dep-type [x y])
-                         type->val       {:clojure 0, :lib 1, :metabase 2}
-                         n               (if (= x-type y-type)
-                                           (let [n (topo-comp x y)]
-                                             (when (zero? n)
-                                               (println "x" x "y" y "x-type" x-type "y-type" y-type) ; NOCOMMIT
-                                               )
-                                             n)
-                                           (apply compare (map type->val [x-type y-type])))]
-                     #_(println "x y n:" x y n 'x-clojure? x-clojure? 'y-clojure? y-clojure? 'x-lib? x-lib? 'y-lib? y-lib?) ; NOCOMMIT
-                     n)))
-               (ns.deps/transitive-dependencies graph lib)))))
+    (vec (sort (ns.deps/topo-comparator graph)
+               (into
+                #{}
+                (mapcat (partial ns.deps/transitive-dependencies graph))
+                libs)))))
 
 (defn write-deps-graph!
   ([]

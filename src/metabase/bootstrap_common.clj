@@ -21,12 +21,12 @@
         (.namingPattern "parallel-loader-%d")
         (.daemon true))))))
 
-(def ordered-deps*
+(def core-deps*
   (delay
     (with-open [r (java.io.PushbackReader. (java.io.FileReader. (java.io.File. "resources/deps-graph.edn")))]
       (edn/read r))))
 
-(defn ordered-deps []
+(defn remove-already-loaded [ordered-deps]
   (let [loaded @@#'clojure.core/*loaded-libs*]
     (printf "%d deps already loaded\n" (count loaded))
     (into
@@ -34,12 +34,15 @@
      (comp (remove (fn [[lib]] (loaded lib)))
            (map (fn [[lib deps]]
                   [lib (set/difference deps loaded)])))
-     @ordered-deps*)))
+     ordered-deps)))
+
+(defn core-deps []
+  (remove-already-loaded @core-deps*))
 
 (defn- thread-pool ^ThreadPoolExecutor []
   @pool*)
 
-(defn submit! [^Callable f]
+(defn submit! ^java.util.concurrent.Future [^Callable f]
   (.submit (thread-pool) ^Callable (#'clojure.core/binding-conveyor-fn f)))
 
 (defn thread-number
@@ -77,15 +80,20 @@
   ;;   (print (str +csi+ "2K\n")))
   (flush))
 
-(defn- init-messages []
+(defn- messages-init-value [num-libs]
   (assoc (zipmap (range 1 (inc pool-size)) (repeat (colorize/magenta "WAITING FOR JOB")))
-         ::bar (pr/progress-bar (count (ordered-deps)))))
+         ::bar (pr/progress-bar num-libs)
+         ::first-message? true))
+
+(defn init-messages-agent! [num-libs]
+  (send thread-print-agent (constantly (messages-init-value num-libs))))
 
 (defn- thread-printf*
   [messages thread-num s]
-  (let [first-message? (not messages)
-        messages       (-> (or messages (init-messages))
-                           (assoc thread-num s))]
+  (let [first-message? (::first-message? messages)
+        messages       (-> messages
+                           (assoc thread-num s)
+                           (dissoc ::first-message))]
     (redisplay messages first-message?)
     messages))
 
@@ -103,9 +111,10 @@
    (thread-printf (apply format format-string args))))
 
 (defn- tick* [messages]
-  (let [first-message? (not messages)
-        messages       (-> (or messages (init-messages))
-                           (update ::bar pr/tick))]
+  (let [first-message? (::first-message? messages)
+        messages       (-> messages
+                           (update ::bar pr/tick)
+                           (dissoc ::first-message?))]
     (redisplay messages first-message?)
     messages))
 
@@ -116,7 +125,7 @@
 (def ^:const +load+  (colorize/green   "LOAD "))
 (def ^:const +ready+ (colorize/blue    "READY"))
 (def ^:const +error+ (colorize/red     "ERROR"))
-(def ^:const +done+  (colorize/magenta "DONE "))
+(def ^:const +done+  (colorize/yellow  "DONE "))
 
 (defn error-message [e]
   (str/join " => " (distinct (filter some? (map :message (:via (Throwable->map e)))))))

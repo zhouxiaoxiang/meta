@@ -1,0 +1,1358 @@
+[[clojure.walk nil]
+ [clojure.tools.analyzer.env nil]
+ [clojure.core.async.impl.protocols nil]
+ [clojure.core.async.impl.concurrent nil]
+ [clojure.set nil]
+ [ring.util.parsing nil]
+ [clojure.string nil]
+ [clojure.java.io nil]
+ [riddley.compiler nil]
+ [potemkin.walk nil]
+ [dynapath.dynamic-classpath nil]
+ [clojure.math.numeric-tower nil]
+ [medley.core nil]
+ [clojure.tools.reader.default-data-readers nil]
+ [clojure.edn nil]
+ [clojure.tools.logging.impl nil]
+ [clj-tuple nil]
+ [clojure.tools.reader.impl.inspect nil]
+ [clojure.tools.reader.impl.utils nil]
+ [cheshire.generate nil]
+ [potemkin.namespaces nil]
+ [flatland.ordered.common nil]
+ [buddy.core.nonce nil]
+ [buddy.core.bytes nil]
+ [metabase.shared.util nil]
+ [clojure.data.priority-map nil]
+ [clojure.core.protocols nil]
+ [clojure.tools.analyzer.passes.cleanup nil]
+ [clj-http.multipart nil]
+ [java-time.core nil]
+ [java-time.seqs nil]
+ [java-time.potemkin.namespaces nil]
+ [cheshire.parse nil]
+ [honeysql.types nil]
+ [cemerick.friend.credentials nil]
+ [cheshire.factory nil]
+ [honeysql.util nil]
+ [honeysql.helpers nil]
+ [instaparse.viz nil]
+ [instaparse.util nil]
+ [metabase.query-processor.error-type nil]
+ [clojure.core.match.protocols nil]
+ [instaparse.macros nil]
+ [net.cgrand.macrovich nil]
+ [clj-http.links nil]
+ [metabase.mbql.util.match.impl nil]
+ [ring.middleware.head nil]
+ [clojure.stacktrace nil]
+ [metabase.connection-pool nil]
+ [redux.utils nil]
+ [kixi.stats.math nil]
+ [kixi.stats.protocols nil]
+ [clojure.test.check.random nil]
+ [clj-time.core nil]
+ [metabase.query-processor.interface nil]
+ [clojure.math.combinatorics nil]
+ [bigml.histogram.core nil]
+ [metabase.core.initialization-status nil]
+ [clojure.spec.alpha nil]
+ [metabase.query-processor.middleware.constraints nil]
+ [scout.core nil]
+ [arrangement.core nil]
+ [puget.color nil]
+ [postal.date nil]
+ [io.aviso.writer nil]
+ [clojure.core.rrb-vector.parameters nil]
+ [stencil.re-utils nil]
+ [quoin.map-access nil]
+ [quoin.text nil]
+ [clojure.zip nil]
+ [clojure.instant nil]
+ [clojurewerkz.quartzite.conversion nil]
+ [fipp.util nil]
+ [clojure.core.rrb-vector.protocols nil]
+ [metabase.util.ui-logic nil]
+ [metabase.util.quotation nil]
+ [clojure.main nil]
+ [dk.ative.docjure.spreadsheet nil]
+ [metabase.driver.sql-jdbc.execute.diagnostic nil]
+ [ring.middleware.keyword-params nil]
+ [buddy.util.deflate nil]
+ [buddy.util.ecdsa nil]
+ [manifold.debug nil]
+ [primitive-math nil]
+ [byte-streams.char-sequence nil]
+ [clojure.spec.gen.alpha nil]
+ [metabase.automagic-dashboards.visualization-macros nil]
+ [metabase.server.middleware.util nil]
+ [metabase.test.mock.util nil]
+ [clojurewerkz.quartzite.schedule.cron nil]
+ [robert.hooke nil]
+ [metabase.pulse.render.test-util nil]
+ [clojure.core.logic.protocols nil]
+ [clojure.test.check.rose-tree nil]
+ [clojure.test.check.results nil]
+ [clojure.test.check.impl nil]
+ [clojure.template #{clojure.walk}]
+ [clojure.tools.analyzer.utils #{clojure.tools.analyzer.env}]
+ [clojure.tools.analyzer.ast #{clojure.tools.analyzer.utils}]
+ [clojure.tools.analyzer.passes.jvm.validate-recur #{clojure.tools.analyzer.ast}]
+ [clojure.core.async.impl.mutex #{clojure.core.async.impl.protocols}]
+ [clojure.core.async.impl.exec.threadpool #{clojure.core.async.impl.concurrent clojure.core.async.impl.protocols}]
+ [clojure.core.async.impl.dispatch #{clojure.core.async.impl.exec.threadpool}]
+ [clojure.core.async.impl.channels #{clojure.core.async.impl.dispatch clojure.core.async.impl.mutex}]
+ [clojure.core.async.impl.timers #{clojure.core.async.impl.channels}]
+ [metabase.types.coercion-hierarchies #{clojure.set}]
+ [metabase.types #{metabase.types.coercion-hierarchies}]
+ [ring.util.time #{clojure.string}]
+ [ring.util.io #{clojure.java.io}]
+ [ring.util.response #{ring.util.io ring.util.parsing ring.util.time}]
+ [ring.core.protocols #{ring.util.response}]
+ [ring.util.servlet #{ring.core.protocols}]
+ [riddley.walk #{riddley.compiler}]
+ [potemkin.macros #{potemkin.walk riddley.walk}]
+ [potemkin.types #{clojure.set clojure.string potemkin.macros}]
+ [metabase.server.protocols #{potemkin.types ring.util.servlet}]
+ [dynapath.defaults #{dynapath.dynamic-classpath}]
+ [environ.core #{clojure.edn clojure.java.io clojure.string}]
+ [clojure.tools.namespace.dependency #{clojure.set}]
+ [clojure.tools.namespace.track #{clojure.tools.namespace.dependency}]
+ [schema.utils #{clojure.string}]
+ [clojure.data #{clojure.set}]
+ [schema.macros #{schema.utils}]
+ [schema.spec.core #{schema.macros}]
+ [schema.spec.leaf #{schema.spec.core}]
+ [clojure.pprint #{clojure.walk}]
+ [schema.spec.variant #{schema.spec.core}]
+ [dynapath.util #{dynapath.defaults}]
+ [clojure.tools.reader.reader-types #{clojure.tools.reader.impl.utils}]
+ [clojure.tools.reader.impl.errors #{clojure.tools.reader.impl.inspect clojure.tools.reader.reader-types}]
+ [clojure.tools.reader.impl.commons #{clojure.tools.reader.impl.errors}]
+ [clojure.tools.reader #{clojure.tools.reader.default-data-readers clojure.tools.reader.impl.commons}]
+ [clojure.tools.logging #{clojure.pprint clojure.string clojure.tools.logging.impl}]
+ [metabase.plugins.classloader #{clojure.tools.logging dynapath.util}]
+ [potemkin.utils #{clj-tuple potemkin.macros}]
+ [potemkin.collections #{potemkin.types potemkin.utils}]
+ [potemkin #{potemkin.collections potemkin.namespaces}]
+ [clojure.tools.reader.edn #{clojure.tools.reader}]
+ [schema.spec.collection #{schema.spec.core}]
+ [schema.core #{clojure.pprint schema.spec.collection schema.spec.leaf schema.spec.variant}]
+ [metabase.util.i18n.impl #{clojure.java.io clojure.tools.reader.edn metabase.plugins.classloader potemkin.types}]
+ [metabase.util.i18n #{cheshire.generate metabase.util.i18n.impl potemkin schema.core}]
+ [flatland.ordered.set #{clojure.string flatland.ordered.common}]
+ [buddy.core.codecs #{clojure.string}]
+ [buddy.core.hash #{buddy.core.codecs clojure.java.io}]
+ [buddy.core.kdf #{buddy.core.hash}]
+ [buddy.core.padding #{buddy.core.bytes}]
+ [buddy.core.mac #{buddy.core.bytes buddy.core.hash}]
+ [buddy.core.crypto #{buddy.core.mac buddy.core.nonce buddy.core.padding}]
+ [clojure.tools.namespace.parse #{clojure.set clojure.tools.reader}]
+ [flatland.ordered.map #{flatland.ordered.set}]
+ [clojure.java.classpath #{clojure.java.io}]
+ [colorize.core #{clojure.pprint}]
+ [weavejester.dependency #{clojure.set}]
+ [clojure.tools.namespace.file #{clojure.java.io clojure.tools.namespace.parse clojure.tools.namespace.track}]
+ [ring.util.codec #{clojure.string}]
+ [metabase.config #{environ.core metabase.plugins.classloader}]
+ [clojure.tools.namespace.find #{clojure.java.classpath clojure.tools.namespace.file}]
+ [metabase.util
+  #{clojure.data
+    clojure.math.numeric-tower
+    clojure.tools.namespace.find
+    colorize.core
+    flatland.ordered.map
+    medley.core
+    metabase.config
+    metabase.shared.util
+    metabase.util.i18n
+    ring.util.codec
+    weavejester.dependency}]
+ [metabase.util.encryption #{buddy.core.crypto buddy.core.kdf metabase.util}]
+ [taoensso.truss.impl #{clojure.set}]
+ [clojure.tools.analyzer.passes #{clojure.tools.analyzer.ast}]
+ [clojure.tools.analyzer.passes.source-info #{clojure.tools.analyzer.ast}]
+ [clojure.core.cache #{clojure.data.priority-map}]
+ [clojure.datafy #{clojure.core.protocols}]
+ [clojure.reflect #{clojure.datafy clojure.set clojure.string}]
+ [clojure.core.memoize #{clojure.core.cache}]
+ [clojure.tools.analyzer.jvm.utils
+  #{clojure.core.memoize clojure.java.io clojure.reflect clojure.tools.analyzer.utils}]
+ [clojure.tools.analyzer.passes.elide-meta #{clojure.tools.analyzer.passes.source-info}]
+ [clojure.tools.analyzer.passes.constant-lifter #{clojure.tools.analyzer.utils}]
+ [clojure.tools.analyzer #{clojure.tools.analyzer.utils}]
+ [clojure.tools.analyzer.passes.jvm.analyze-host-expr #{clojure.tools.analyzer clojure.tools.analyzer.jvm.utils}]
+ [clojure.tools.analyzer.passes.jvm.constant-lifter
+  #{clojure.tools.analyzer.passes.constant-lifter
+    clojure.tools.analyzer.passes.elide-meta
+    clojure.tools.analyzer.passes.jvm.analyze-host-expr}]
+ [clojure.tools.analyzer.passes.jvm.annotate-tag #{clojure.tools.analyzer.passes.jvm.constant-lifter}]
+ [clojure.tools.analyzer.passes.uniquify #{clojure.tools.analyzer.ast}]
+ [clojure.tools.analyzer.passes.add-binding-atom #{clojure.tools.analyzer.passes.uniquify}]
+ [clojure.tools.analyzer.passes.jvm.annotate-loops #{clojure.tools.analyzer.ast}]
+ [clojure.tools.analyzer.passes.jvm.fix-case-test #{clojure.tools.analyzer.passes.add-binding-atom}]
+ [clojure.tools.analyzer.passes.jvm.annotate-host-info
+  #{clojure.tools.analyzer
+    clojure.tools.analyzer.jvm.utils
+    clojure.tools.analyzer.passes.cleanup
+    clojure.tools.analyzer.passes.elide-meta}]
+ [clojure.tools.analyzer.passes.trim #{clojure.tools.analyzer.passes.elide-meta}]
+ [clojure.tools.analyzer.passes.jvm.infer-tag
+  #{clojure.tools.analyzer.passes.jvm.annotate-host-info
+    clojure.tools.analyzer.passes.jvm.annotate-tag
+    clojure.tools.analyzer.passes.jvm.fix-case-test
+    clojure.tools.analyzer.passes.trim}]
+ [clojure.tools.analyzer.passes.jvm.validate
+  #{clojure.tools.analyzer.passes.jvm.infer-tag clojure.tools.analyzer.passes.jvm.validate-recur}]
+ [clojure.tools.analyzer.passes.jvm.classify-invoke #{clojure.tools.analyzer.passes.jvm.validate}]
+ [clojure.tools.analyzer.passes.jvm.validate-loop-locals #{clojure.tools.analyzer.passes.jvm.classify-invoke}]
+ [clojure.tools.analyzer.passes.jvm.box #{clojure.tools.analyzer.passes.jvm.validate}]
+ [clojure.core.async.impl.buffers #{clojure.core.async.impl.protocols}]
+ [clojure.tools.analyzer.passes.emit-form #{clojure.tools.analyzer.passes.uniquify}]
+ [clojure.tools.analyzer.passes.jvm.emit-form #{clojure.tools.analyzer.passes.emit-form}]
+ [clojure.tools.analyzer.passes.jvm.warn-on-reflection #{clojure.tools.analyzer.passes.jvm.validate-loop-locals}]
+ [clojure.tools.analyzer.passes.warn-earmuff #{clojure.tools.analyzer.utils}]
+ [clojure.tools.analyzer.jvm
+  #{clojure.tools.analyzer.passes
+    clojure.tools.analyzer.passes.jvm.box
+    clojure.tools.analyzer.passes.jvm.emit-form
+    clojure.tools.analyzer.passes.jvm.warn-on-reflection
+    clojure.tools.analyzer.passes.warn-earmuff
+    clojure.tools.reader}]
+ [clojure.core.async.impl.ioc-macros
+  #{clojure.core.async.impl.dispatch
+    clojure.pprint
+    clojure.tools.analyzer.jvm
+    clojure.tools.analyzer.passes.jvm.annotate-loops}]
+ [clojure.core.async
+  #{clojure.core.async.impl.buffers clojure.core.async.impl.ioc-macros clojure.core.async.impl.timers}]
+ [metabase.events #{clojure.core.async metabase.util}]
+ [metabase.db.spec #{metabase.config}]
+ [clj-http.util #{clojure.string clojure.walk}]
+ [clj-http.headers #{potemkin}]
+ [clj-http.conn-mgr #{clj-http.util clojure.java.io}]
+ [clj-http.core #{clj-http.conn-mgr clj-http.headers clj-http.multipart clojure.pprint}]
+ [java-time.util #{clojure.string}]
+ [java-time.potemkin.util #{clj-tuple}]
+ [java-time.format #{java-time.core java-time.util}]
+ [java-time.properties #{java-time.core java-time.util}]
+ [java-time.graph #{clojure.set java-time.potemkin.util java-time.util}]
+ [java-time.clock #{java-time.core}]
+ [java-time.defconversion #{java-time.graph}]
+ [java-time.temporal #{java-time.clock java-time.defconversion java-time.format java-time.properties}]
+ [java-time.local #{java-time.temporal}]
+ [java-time.convert #{java-time.local}]
+ [java-time.amount #{java-time.convert}]
+ [java-time.zone #{java-time.amount}]
+ [java-time.single-field #{java-time.zone}]
+ [java-time.sugar #{java-time.core java-time.util}]
+ [java-time.chrono #{java-time.core}]
+ [java-time.adjuster #{java-time.single-field}]
+ [java-time.pre-java8 #{java-time.convert}]
+ [java-time.interval #{java-time.amount}]
+ [java-time.mock #{java-time.zone}]
+ [java-time.joda #{java-time.zone}]
+ [java-time
+  #{java-time.adjuster
+    java-time.chrono
+    java-time.interval
+    java-time.joda
+    java-time.mock
+    java-time.potemkin.namespaces
+    java-time.pre-java8
+    java-time.seqs
+    java-time.sugar}]
+ [metabase.util.date-2.common #{java-time metabase.util}]
+ [metabase.util.date-2.parse.builder #{metabase.util.date-2.common}]
+ [metabase.util.password #{cemerick.friend.credentials metabase.util}]
+ [cheshire.generate-seq #{cheshire.generate}]
+ [cheshire.core #{cheshire.factory cheshire.generate-seq cheshire.parse}]
+ [honeysql.format #{clojure.string honeysql.types}]
+ [honeysql.core #{honeysql.format honeysql.helpers honeysql.util}]
+ [clojure.java.jdbc #{clojure.set clojure.string clojure.walk}]
+ [toucan.util #{clojure.string}]
+ [toucan.models #{clojure.walk honeysql.format potemkin.types toucan.util}]
+ [toucan.db #{clojure.java.jdbc clojure.tools.logging honeysql.core toucan.models}]
+ [metabase.db.env #{metabase.db.spec metabase.util}]
+ [metabase.db.connection #{metabase.db.env}]
+ [metabase.util.schema #{cheshire.core metabase.types metabase.util.password}]
+ [pretty.core #{clojure.pprint}]
+ [metabase.util.honeysql-extensions #{honeysql.core metabase.util.schema pretty.core}]
+ [metabase.util.date-2.parse #{metabase.util.date-2.parse.builder}]
+ [clojure.data.csv #{clojure.string}]
+ [metabase.util.date-2 #{metabase.util.date-2.parse}]
+ [metabase.models.setting.cache #{metabase.db.connection metabase.util.honeysql-extensions toucan.db}]
+ [metabase.models.setting #{clojure.data.csv metabase.events metabase.models.setting.cache metabase.util.date-2}]
+ [metabase.models.humanization #{metabase.models.setting}]
+ [toucan.hydrate #{toucan.db}]
+ [instaparse.print #{clojure.string}]
+ [instaparse.failure #{instaparse.print}]
+ [instaparse.auto-flatten-seq #{clojure.core.protocols}]
+ [instaparse.reduction #{instaparse.auto-flatten-seq instaparse.util}]
+ [instaparse.combinators-source #{instaparse.reduction}]
+ [instaparse.gll #{instaparse.combinators-source instaparse.failure}]
+ [instaparse.repeat #{instaparse.gll instaparse.viz}]
+ [slingshot.support #{clojure.walk}]
+ [slingshot.slingshot #{slingshot.support}]
+ [instaparse.cfg #{instaparse.gll}]
+ [instaparse.transform #{instaparse.gll}]
+ [instaparse.abnf #{clojure.walk instaparse.cfg instaparse.transform}]
+ [instaparse.line-col #{instaparse.transform}]
+ [instaparse.core #{instaparse.abnf instaparse.line-col instaparse.macros instaparse.repeat}]
+ [clojure.core.match #{clojure.core.match.protocols clojure.set}]
+ [metabase.models.permissions.parse #{clojure.core.match instaparse.core}]
+ [metabase.shared.util.log #{net.cgrand.macrovich}]
+ [metabase.models.permissions.delete-sandboxes #{metabase.util pretty.core}]
+ [taoensso.truss #{taoensso.truss.impl}]
+ [taoensso.encore #{clojure.java.io clojure.string clojure.tools.reader.edn clojure.walk taoensso.truss}]
+ [taoensso.nippy.crypto #{taoensso.encore}]
+ [metabase.driver.impl #{metabase.util}]
+ [metabase.driver #{metabase.driver.impl metabase.models.setting}]
+ [metabase.driver.util #{metabase.driver}]
+ [metabase.mbql.schema.helpers #{metabase.types schema.core}]
+ [metabase.mbql.schema.macros #{metabase.mbql.schema.helpers}]
+ [metabase.mbql.schema #{metabase.mbql.schema.macros}]
+ [ring.util.mime-type #{clojure.string}]
+ [metabase.async.streaming-response.thread-pool #{metabase.config}]
+ [metabase.async.util #{clojure.core.async clojure.tools.logging schema.core}]
+ [compojure.response #{ring.util.mime-type ring.util.response}]
+ [metabase.async.streaming-response
+  #{cheshire.core
+    compojure.response
+    metabase.async.streaming-response.thread-pool
+    metabase.async.util
+    metabase.server.protocols
+    metabase.util
+    pretty.core}]
+ [metabase.api.common.internal #{metabase.async.streaming-response metabase.util.schema}]
+ [metabase.util.cron #{metabase.util.schema}]
+ [taoensso.nippy.utils #{taoensso.encore}]
+ [taoensso.nippy.encryption #{taoensso.nippy.crypto}]
+ [taoensso.nippy.compression #{taoensso.encore}]
+ [taoensso.nippy #{taoensso.nippy.compression taoensso.nippy.encryption taoensso.nippy.utils}]
+ [metabase.shared.util.i18n #{net.cgrand.macrovich}]
+ [metabase.mbql.util.match #{clojure.core.match clojure.walk metabase.mbql.util.match.impl net.cgrand.macrovich}]
+ [metabase.mbql.util #{metabase.mbql.schema metabase.mbql.util.match metabase.shared.util.i18n metabase.util.i18n}]
+ [metabase.mbql.normalize #{medley.core metabase.mbql.util metabase.shared.util.log}]
+ [clout.core #{clojure.set instaparse.core}]
+ [clojure.tools.macro #{clojure.string}]
+ [compojure.core #{clojure.tools.macro clout.core compojure.response medley.core ring.middleware.head ring.util.codec}]
+ [clj-http.cookies #{clj-http.util}]
+ [clj-http.client
+  #{cheshire.core
+    clj-http.cookies
+    clj-http.core
+    clj-http.links
+    clojure.stacktrace
+    clojure.tools.reader.edn
+    ring.util.codec
+    slingshot.slingshot}]
+ [metabase.public-settings.metastore #{clj-http.client metabase.models.setting}]
+ [metabase.models.interface
+  #{clojure.core.memoize
+    metabase.db.connection
+    metabase.mbql.normalize
+    metabase.util.cron
+    metabase.util.encryption
+    taoensso.nippy
+    toucan.models}]
+ [metabase.public-settings #{metabase.driver.util metabase.public-settings.metastore}]
+ [metabase.api.common
+  #{compojure.core metabase.api.common.internal metabase.models.interface metabase.public-settings}]
+ [metabase.models.permissions-group #{metabase.models.setting}]
+ [metabase.util.regex #{clojure.string}]
+ [metabase.models.permissions-revision #{metabase.util toucan.db}]
+ [metabase.models.permissions
+  #{metabase.api.common
+    metabase.models.permissions-group
+    metabase.models.permissions-revision
+    metabase.models.permissions.delete-sandboxes
+    metabase.models.permissions.parse
+    metabase.util.regex}]
+ [metabase.db.util #{metabase.util.schema toucan.db}]
+ [metabase.models.dimension #{metabase.util toucan.models}]
+ [metabase.models.field-values #{metabase.util.schema toucan.db}]
+ [metabase.models.field
+  #{metabase.models.dimension
+    metabase.models.field-values
+    metabase.models.humanization
+    metabase.models.permissions
+    toucan.hydrate}]
+ [metabase.models.params.field-values #{metabase.models.field}]
+ [metabase.models.params #{metabase.db.util metabase.models.params.field-values}]
+ [metabase.driver.common.parameters.dates #{metabase.models.params metabase.query-processor.error-type}]
+ [metabase.db.liquibase #{clojure.java.jdbc metabase.util}]
+ [metabase.models.database #{metabase.db.util metabase.models.permissions}]
+ [metabase.util.ssh #{metabase.public-settings}]
+ [metabase.driver.sql-jdbc.connection
+  #{metabase.connection-pool metabase.models.database metabase.query-processor.error-type metabase.util.ssh}]
+ [metabase.db.setup #{metabase.db.liquibase metabase.driver.sql-jdbc.connection}]
+ [metabase.db.jdbc-protocols #{clojure.java.jdbc metabase.db.connection metabase.util.date-2}]
+ [metabase.db.connection-pool-setup
+  #{metabase.connection-pool metabase.db.jdbc-protocols metabase.util.schema toucan.db}]
+ [metabase.db #{metabase.db.connection-pool-setup metabase.db.setup}]
+ [user-agent #{clojure.string}]
+ [metabase.server.request.util #{metabase.public-settings user-agent}]
+ [metabase.server.middleware.misc #{metabase.db metabase.server.request.util}]
+ [metabase.models.session #{metabase.server.middleware.misc}]
+ [metabase.models.collection.root #{metabase.models.permissions}]
+ [metabase.models.permissions-group-membership #{metabase.models.permissions-group}]
+ [metabase.models.collection #{metabase.models.collection.root toucan.hydrate}]
+ [metabase.models.user
+  #{metabase.models.collection metabase.models.permissions-group-membership metabase.models.session}]
+ [metabase.models.revision.diff #{clojure.core.match clojure.string}]
+ [metabase.models.revision #{metabase.models.revision.diff metabase.models.user}]
+ [metabase.models.segment #{metabase.models.revision}]
+ [metabase.models.dependency #{toucan.db}]
+ [metabase.models.metric #{metabase.models.dependency metabase.models.revision}]
+ [metabase.models.table #{metabase.models.field metabase.models.metric metabase.models.segment}]
+ [metabase.query-processor.store #{metabase.models.table}]
+ [metabase.query-processor.middleware.binning #{metabase.query-processor.store}]
+ [metabase.query-processor.timezone #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.wrap-value-literals #{metabase.query-processor.timezone}]
+ [kixi.stats.distribution #{clojure.test.check.random kixi.stats.math kixi.stats.protocols}]
+ [kixi.stats.digest #{kixi.stats.distribution}]
+ [metabase.sync.interface #{clj-time.core metabase.models.table}]
+ [metabase.models.task-history #{java-time metabase.models.interface toucan.db}]
+ [metabase.sync.util #{metabase.models.task-history metabase.query-processor.interface metabase.sync.interface}]
+ [metabase.sync.analyze.classifiers.name #{metabase.sync.util}]
+ [kixi.stats.test #{clojure.math.combinatorics kixi.stats.math kixi.stats.protocols}]
+ [redux.core #{redux.utils}]
+ [kixi.stats.core #{kixi.stats.digest kixi.stats.test redux.core}]
+ [metabase.sync.analyze.fingerprint.fingerprinters
+  #{bigml.histogram.core kixi.stats.core metabase.sync.analyze.classifiers.name}]
+ [metabase.query-processor.context #{metabase.async.util}]
+ [metabase.query-processor.context.default
+  #{metabase.driver metabase.query-processor.context metabase.query-processor.error-type}]
+ [metabase.query-processor.reducible #{metabase.query-processor.context.default}]
+ [clj-time.format #{clj-time.core clojure.set}]
+ [clj-time.coerce #{clj-time.format}]
+ [metabase.moderation #{metabase.util toucan.db}]
+ [metabase.driver.common #{clj-time.coerce metabase.query-processor.context.default metabase.query-processor.store}]
+ [metabase.mbql.predicates #{metabase.mbql.schema}]
+ [metabase.query-processor.middleware.annotate
+  #{metabase.driver.common
+    metabase.mbql.predicates
+    metabase.query-processor.reducible
+    metabase.sync.analyze.fingerprint.fingerprinters}]
+ [metabase.driver.sql.query-processor
+  #{metabase.query-processor.middleware.annotate metabase.query-processor.middleware.wrap-value-literals}]
+ [metabase.server.middleware.session #{metabase.core.initialization-status metabase.driver.sql.query-processor}]
+ [metabase.models.query #{metabase.db}]
+ [metabase.query-processor.util #{buddy.core.hash metabase.driver}]
+ [metabase.models.card
+  #{metabase.models.params
+    metabase.models.query
+    metabase.moderation
+    metabase.query-processor.util
+    metabase.server.middleware.session}]
+ [metabase.query-processor.middleware.resolve-source-table #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.resolve-fields #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.resolve-referenced
+  #{metabase.models.card
+    metabase.query-processor.middleware.resolve-fields
+    metabase.query-processor.middleware.resolve-source-table}]
+ [metabase.models.query.permissions #{metabase.models.table metabase.query-processor.util}]
+ [metabase.query-processor.middleware.permissions
+  #{metabase.models.query.permissions metabase.query-processor.middleware.resolve-referenced}]
+ [metabase.query-processor.middleware.fetch-source-query #{metabase.query-processor.middleware.permissions}]
+ [metabase.models.query-cache #{metabase.util toucan.models}]
+ [metabase.query-processor.middleware.desugar #{medley.core metabase.mbql.predicates metabase.mbql.util}]
+ [metabase.shared.models.visualization-settings #{cheshire.core clojure.spec.alpha metabase.mbql.normalize}]
+ [metabase.query-processor.middleware.visualization-settings
+  #{metabase.models.card metabase.shared.models.visualization-settings}]
+ [metabase.query-processor.middleware.cumulative-aggregations #{metabase.mbql.util}]
+ [metabase.query-processor.middleware.store #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.cache-backend.interface #{buddy.core.codecs potemkin.types}]
+ [metabase.driver.common.parameters #{metabase.models.setting metabase.query-processor.error-type}]
+ [metabase.automagic-dashboards.filters #{metabase.models.field}]
+ [metabase.query-processor.middleware.add-default-temporal-unit #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.cache.impl #{metabase.public-settings taoensso.nippy}]
+ [metabase.query-processor.middleware.add-source-metadata
+  #{metabase.query-processor.interface metabase.query-processor.store}]
+ [metabase.models.query-execution #{metabase.mbql.schema metabase.util toucan.models}]
+ [metabase.models.pulse-card #{metabase.util.schema toucan.db}]
+ [metabase.query-processor.middleware.resolve-joined-fields #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.large-int-id #{metabase.models.field}]
+ [metabase.sync.analyze.fingerprint.insights #{metabase.sync.analyze.fingerprint.fingerprinters}]
+ [metabase.sync.analyze.query-results #{metabase.mbql.predicates metabase.sync.analyze.fingerprint.insights}]
+ [metabase.query-processor.middleware.upgrade-field-literals #{metabase.mbql.util metabase.util}]
+ [metabase.query-processor.middleware.limit
+  #{metabase.mbql.util metabase.query-processor.interface metabase.query-processor.util}]
+ [metabase.models.dashboard-card-series #{toucan.models}]
+ [metabase.models.dashboard-card
+  #{metabase.models.card metabase.models.dashboard-card-series metabase.models.pulse-card}]
+ [metabase.driver.common.parameters.operators #{metabase.models.params metabase.query-processor.error-type}]
+ [metabase.query-processor.middleware.add-rows-truncated
+  #{metabase.query-processor.interface metabase.query-processor.util}]
+ [metabase.models.pulse-channel-recipient #{toucan.models}]
+ [metabase.query-processor.middleware.add-timezone-info #{metabase.query-processor.timezone}]
+ [metabase.query-processor.middleware.parameters.mbql
+  #{metabase.driver.common.parameters
+    metabase.driver.common.parameters.dates
+    metabase.driver.common.parameters.operators}]
+ [metabase.query-processor.middleware.parameters.native #{metabase.driver}]
+ [metabase.query-processor.middleware.parameters
+  #{metabase.query-processor.interface
+    metabase.query-processor.middleware.parameters.mbql
+    metabase.query-processor.middleware.parameters.native}]
+ [metabase.models.pulse-channel #{metabase.models.pulse-channel-recipient metabase.models.user}]
+ [metabase.query-processor.middleware.auto-bucket-datetimes #{metabase.mbql.predicates metabase.models.field}]
+ [metabase.models.pulse #{metabase.models.dashboard-card metabase.models.pulse-channel}]
+ [metabase.query-processor.middleware.results-metadata
+  #{metabase.query-processor.reducible metabase.sync.analyze.query-results}]
+ [metabase.query-processor.middleware.mbql-to-native #{metabase.driver metabase.query-processor.context}]
+ [metabase.query-processor.middleware.auto-parse-filter-values
+  #{metabase.mbql.util metabase.query-processor.error-type metabase.util.schema}]
+ [metabase.query-processor.middleware.add-dimension-projections #{metabase.models.field}]
+ [metabase.query-processor.middleware.cache-backend.db
+  #{metabase.models.query-cache
+    metabase.query-processor.middleware.cache-backend.interface
+    metabase.util.date-2
+    toucan.db}]
+ [metabase.query-processor.middleware.check-features
+  #{metabase.driver metabase.mbql.util metabase.query-processor.error-type}]
+ [metabase.query-processor.middleware.add-implicit-clauses
+  #{metabase.query-processor.interface metabase.query-processor.store}]
+ [metabase.query-processor.middleware.resolve-database-and-driver #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.cache
+  #{metabase.query-processor.context
+    metabase.query-processor.middleware.cache-backend.db
+    metabase.query-processor.middleware.cache.impl
+    metabase.query-processor.util}]
+ [metabase.query-processor.middleware.reconcile-breakout-and-order-by-bucketing #{metabase.mbql.util}]
+ [metabase.query-processor.middleware.process-userland-query
+  #{metabase.models.query metabase.models.query-execution metabase.query-processor.util}]
+ [metabase.query-processor.middleware.validate #{metabase.mbql.schema}]
+ [metabase.query-processor.middleware.normalize-query
+  #{metabase.mbql.normalize metabase.query-processor.error-type metabase.util}]
+ [metabase.query-processor.middleware.pre-alias-aggregations #{metabase.query-processor.middleware.annotate}]
+ [metabase.query-processor.middleware.add-implicit-joins #{metabase.query-processor.middleware.add-implicit-clauses}]
+ [metabase.query-processor.middleware.format-rows #{metabase.query-processor.timezone}]
+ [metabase.query-processor.middleware.splice-params-in-response #{metabase.driver}]
+ [metabase.query-processor.middleware.catch-exceptions #{metabase.query-processor.middleware.permissions}]
+ [metabase.query-processor.middleware.resolve-joins #{metabase.query-processor.middleware.add-implicit-clauses}]
+ [metabase.query-processor.middleware.optimize-temporal-filters #{metabase.mbql.util metabase.util.date-2}]
+ [metabase.query-processor.middleware.validate-temporal-bucketing #{metabase.query-processor.store}]
+ [metabase.query-processor.middleware.expand-macros #{metabase.models.metric metabase.models.segment}]
+ [metabase.query-processor
+  #{metabase.query-processor.middleware.add-default-temporal-unit
+    metabase.query-processor.middleware.add-dimension-projections
+    metabase.query-processor.middleware.add-implicit-joins
+    metabase.query-processor.middleware.add-rows-truncated
+    metabase.query-processor.middleware.add-source-metadata
+    metabase.query-processor.middleware.add-timezone-info
+    metabase.query-processor.middleware.auto-bucket-datetimes
+    metabase.query-processor.middleware.auto-parse-filter-values
+    metabase.query-processor.middleware.binning
+    metabase.query-processor.middleware.cache
+    metabase.query-processor.middleware.catch-exceptions
+    metabase.query-processor.middleware.check-features
+    metabase.query-processor.middleware.constraints
+    metabase.query-processor.middleware.cumulative-aggregations
+    metabase.query-processor.middleware.desugar
+    metabase.query-processor.middleware.expand-macros
+    metabase.query-processor.middleware.fetch-source-query
+    metabase.query-processor.middleware.format-rows
+    metabase.query-processor.middleware.large-int-id
+    metabase.query-processor.middleware.limit
+    metabase.query-processor.middleware.mbql-to-native
+    metabase.query-processor.middleware.normalize-query
+    metabase.query-processor.middleware.optimize-temporal-filters
+    metabase.query-processor.middleware.parameters
+    metabase.query-processor.middleware.pre-alias-aggregations
+    metabase.query-processor.middleware.process-userland-query
+    metabase.query-processor.middleware.reconcile-breakout-and-order-by-bucketing
+    metabase.query-processor.middleware.resolve-database-and-driver
+    metabase.query-processor.middleware.resolve-joined-fields
+    metabase.query-processor.middleware.resolve-joins
+    metabase.query-processor.middleware.results-metadata
+    metabase.query-processor.middleware.splice-params-in-response
+    metabase.query-processor.middleware.store
+    metabase.query-processor.middleware.upgrade-field-literals
+    metabase.query-processor.middleware.validate
+    metabase.query-processor.middleware.validate-temporal-bucketing
+    metabase.query-processor.middleware.visualization-settings}]
+ [metabase.query-processor.async #{metabase.query-processor}]
+ [metabase.automagic-dashboards.populate #{metabase.automagic-dashboards.filters metabase.models.card}]
+ [metabase.models.dashboard
+  #{metabase.automagic-dashboards.populate metabase.models.pulse metabase.query-processor.async}]
+ [metabase.sync.sync-metadata.sync-timezone #{metabase.sync.interface}]
+ [progrock.core #{clojure.string}]
+ [metabase.models.moderation-review #{metabase.models.permissions metabase.moderation}]
+ [metabase.query-processor.streaming.interface #{potemkin.types}]
+ [metabase.test-runner.init #{metabase.config}]
+ [metabase.test.initialize #{metabase.test-runner.init metabase.util}]
+ [metabase.test.fixtures #{metabase.test.initialize}]
+ [postal.support #{clojure.java.io}]
+ [postal.message #{clojure.set postal.date postal.support}]
+ [io.aviso.ansi #{clojure.string}]
+ [io.aviso.columns #{io.aviso.ansi io.aviso.writer}]
+ [io.aviso.exception #{clojure.pprint clojure.set io.aviso.columns}]
+ [metabase.pulse.render.style #{metabase.public-settings}]
+ [metabase.sync.sync-metadata.fields.common #{metabase.sync.util}]
+ [metabase.sync.fetch-metadata #{metabase.sync.interface}]
+ [metabase.sync.sync-metadata.fields.fetch-metadata
+  #{metabase.sync.fetch-metadata metabase.sync.sync-metadata.fields.common}]
+ [metabase.sync.sync-metadata.fields.sync-instances #{metabase.sync.sync-metadata.fields.fetch-metadata}]
+ [metabase.sync.sync-metadata.fields.sync-metadata #{metabase.sync.sync-metadata.fields.common}]
+ [metabase.sync.sync-metadata.fields
+  #{metabase.sync.sync-metadata.fields.sync-instances metabase.sync.sync-metadata.fields.sync-metadata}]
+ [metabase.sync.sync-metadata.metabase-metadata #{metabase.sync.fetch-metadata metabase.sync.util}]
+ [metabase.sync.sync-metadata.tables #{metabase.sync.sync-metadata.metabase-metadata}]
+ [metabase.sync.field-values #{metabase.sync.util}]
+ [metabase.sync.analyze.classifiers.category #{metabase.sync.util}]
+ [metabase.sync.analyze.classifiers.text-fingerprint #{metabase.sync.util}]
+ [metabase.db.metadata-queries #{metabase.query-processor}]
+ [metabase.sync.analyze.fingerprint #{metabase.db.metadata-queries}]
+ [metabase.sync.analyze.classifiers.no-preview-display #{metabase.sync.interface}]
+ [metabase.sync.analyze.classify
+  #{metabase.sync.analyze.classifiers.category
+    metabase.sync.analyze.classifiers.name
+    metabase.sync.analyze.classifiers.no-preview-display
+    metabase.sync.analyze.classifiers.text-fingerprint}]
+ [metabase.sync.sync-metadata.fks #{metabase.sync.fetch-metadata metabase.sync.util}]
+ [metabase.sync.analyze #{metabase.sync.analyze.classify metabase.sync.analyze.fingerprint}]
+ [metabase.sync.sync-metadata
+  #{metabase.sync.sync-metadata.fields
+    metabase.sync.sync-metadata.fks
+    metabase.sync.sync-metadata.sync-timezone
+    metabase.sync.sync-metadata.tables}]
+ [metabase.sync #{metabase.sync.analyze metabase.sync.field-values metabase.sync.sync-metadata}]
+ [clojure.core.rrb-vector.nodes #{clojure.core.rrb-vector.parameters}]
+ [clojure.core.rrb-vector.transients #{clojure.core.rrb-vector.nodes}]
+ [stencil.utils #{clojure.string quoin.map-access}]
+ [stencil.ast #{clojure.zip stencil.utils}]
+ [stencil.parser #{clojure.pprint scout.core stencil.ast stencil.re-utils}]
+ [stencil.loader #{clojure.core.cache clojure.java.io quoin.text stencil.parser}]
+ [clojure.repl #{clojure.spec.alpha}]
+ [toucan.util.test #{toucan.db}]
+ [clojurewerkz.quartzite.triggers #{clojurewerkz.quartzite.conversion}]
+ [clojurewerkz.quartzite.jobs #{clojurewerkz.quartzite.conversion}]
+ [clojurewerkz.quartzite.scheduler #{clojurewerkz.quartzite.jobs clojurewerkz.quartzite.triggers}]
+ [metabase.task #{clojurewerkz.quartzite.scheduler metabase.db}]
+ [metabase.test.data.interface #{metabase.query-processor metabase.test.initialize}]
+ [metabase.test.data.dataset-definitions #{metabase.test.data.interface}]
+ [metabase.models.activity #{metabase.models.dashboard}]
+ [puget.color.html #{clojure.string puget.color}]
+ [clojure.core.reducers #{clojure.walk}]
+ [clojure.core.rrb-vector.fork-join #{clojure.core.reducers}]
+ [clojure.core.rrb-vector.rrbt
+  #{clojure.core.protocols
+    clojure.core.rrb-vector.fork-join
+    clojure.core.rrb-vector.protocols
+    clojure.core.rrb-vector.transients}]
+ [puget.color.ansi #{clojure.string puget.color}]
+ [fipp.ednize #{clojure.instant fipp.util}]
+ [clojure.core.rrb-vector.interop #{clojure.core.rrb-vector.rrbt}]
+ [clojure.core.rrb-vector #{clojure.core.rrb-vector.interop}]
+ [fipp.deque #{clojure.core.rrb-vector}]
+ [fipp.engine #{fipp.deque}]
+ [puget.dispatch #{clojure.string}]
+ [fipp.visit #{fipp.ednize}]
+ [puget.printer #{arrangement.core fipp.engine fipp.visit puget.color.ansi puget.color.html puget.dispatch}]
+ [hiccup.util #{clojure.string}]
+ [hiccup.compiler #{hiccup.util}]
+ [hiccup.core #{hiccup.compiler}]
+ [metabase.pulse.render.datetime #{metabase.util.date-2 metabase.util.schema}]
+ [stencil.core #{stencil.loader}]
+ [metabase.pulse.render.js-engine #{metabase.util}]
+ [metabase.pulse.render.color #{cheshire.core metabase.pulse.render.js-engine}]
+ [postal.sendmail #{postal.message}]
+ [metabase.util.urls #{metabase.public-settings}]
+ [metabase.pulse.render.image-bundle #{clojure.java.io}]
+ [postal.smtp #{postal.message}]
+ [postal.stress #{postal.smtp}]
+ [postal.core #{postal.sendmail postal.stress}]
+ [metabase.pulse.render.common #{hiccup.util metabase.util.ui-logic potemkin.types schema.core}]
+ [metabase.pulse.render.png #{hiccup.core metabase.pulse.render.common metabase.pulse.render.style}]
+ [metabase.pulse.render.sparkline
+  #{metabase.pulse.render.common metabase.pulse.render.image-bundle metabase.pulse.render.style}]
+ [metabase.pulse.render.table
+  #{hiccup.core metabase.pulse.render.color metabase.pulse.render.common metabase.pulse.render.style}]
+ [metabase.pulse.render.body
+  #{metabase.pulse.render.datetime metabase.pulse.render.sparkline metabase.pulse.render.table}]
+ [metabase.pulse.render #{metabase.pulse.render.body metabase.pulse.render.png metabase.util.urls}]
+ [metabase.email #{metabase.models.setting postal.core}]
+ [metabase.email.messages
+  #{metabase.email
+    metabase.pulse.render
+    metabase.query-processor.store
+    metabase.query-processor.streaming.interface
+    metabase.util.quotation
+    stencil.core}]
+ [metabase.models.login-history #{metabase.email.messages}]
+ [metabase.models.dashboard-favorite #{toucan.models}]
+ [clojure.test #{clojure.stacktrace clojure.string clojure.template}]
+ [eftest.report #{clojure.java.io clojure.test}]
+ [eftest.output-capture #{clojure.string}]
+ [io.aviso.repl #{clojure.edn clojure.main clojure.repl clojure.stacktrace io.aviso.exception}]
+ [eftest.report.pretty #{clojure.data eftest.output-capture eftest.report io.aviso.repl puget.printer}]
+ [eftest.report.progress #{eftest.report.pretty progrock.core}]
+ [eftest.runner #{clojure.tools.namespace.find eftest.report.progress}]
+ [metabase.test-runner.parallel #{eftest.runner}]
+ [metabase.test.data.mbql-query-impl #{metabase.models.field}]
+ [metabase.models.native-query-snippet.permissions #{clojure.tools.logging potemkin.types pretty.core}]
+ [metabase.models.native-query-snippet #{metabase.models.collection metabase.models.native-query-snippet.permissions}]
+ [metabase.models.card-favorite #{metabase.util toucan.models}]
+ [metabase.test.util.timezone #{metabase.driver metabase.test-runner.parallel metabase.test.initialize}]
+ [metabase.models.metric-important-field #{metabase.models.interface}]
+ [metabase.models.collection-permission-graph-revision #{metabase.util toucan.db}]
+ [metabase.models.view-log #{metabase.models.interface}]
+ [metabase.models
+  #{metabase.models.activity
+    metabase.models.card-favorite
+    metabase.models.collection-permission-graph-revision
+    metabase.models.dashboard-favorite
+    metabase.models.login-history
+    metabase.models.metric-important-field
+    metabase.models.moderation-review
+    metabase.models.native-query-snippet
+    metabase.models.view-log}]
+ [metabase.test.data.impl.verify #{metabase.models metabase.test.data.interface}]
+ [metabase.test.data.impl
+  #{metabase.sync metabase.test.data.dataset-definitions metabase.test.data.impl.verify metabase.test.util.timezone}]
+ [metabase.test.data #{metabase.test.data.impl metabase.test.data.mbql-query-impl}]
+ [metabase.query-processor.test-util #{metabase.test.data}]
+ [metabase.test.data.env.impl #{metabase.util}]
+ [metabase.test.data.env #{metabase.test.data.env.impl metabase.test.initialize}]
+ [metabase.test.data.datasets #{clojure.test metabase.test.data.env metabase.test.data.interface}]
+ [metabase.test.redefs #{metabase.plugins.classloader metabase.test-runner.parallel toucan.util.test}]
+ [pjstadig.print #{clojure.pprint}]
+ [metabase.test.util.log #{clojure.tools.logging metabase.test-runner.parallel}]
+ [metabase.http-client #{metabase.server.middleware.session metabase.test.initialize metabase.test.util.log}]
+ [pjstadig.util #{clojure.test pjstadig.print}]
+ [pjstadig.humane-test-output #{clojure.data pjstadig.util}]
+ [metabase.util.files #{metabase.util}]
+ [metabase.test.util
+  #{metabase.task
+    metabase.test.data
+    metabase.test.fixtures
+    metabase.test.util.log
+    metabase.util.files
+    toucan.util.test}]
+ [metabase.driver.sql-jdbc.test-util #{metabase.test.data.env metabase.test.data.interface}]
+ [metabase.test.data.users #{metabase.http-client toucan.util.test}]
+ [metabase.test.util.async #{clojure.core.async}]
+ [metabase.query-processor-test #{metabase.test.data.env metabase.test.util}]
+ [metabase.email-test #{metabase.test.data.users metabase.test.util}]
+ [metabase.test.util.i18n #{clojure.test metabase.util.i18n}]
+ [metabase.test
+  #{metabase.driver.sql-jdbc.test-util
+    metabase.email-test
+    metabase.query-processor-test
+    metabase.query-processor.test-util
+    metabase.test.data.datasets
+    metabase.test.redefs
+    metabase.test.util.async
+    metabase.test.util.i18n
+    pjstadig.humane-test-output}]
+ [metabase.sync.util-test #{metabase.test}]
+ [metabase.sync.sync-metadata.sync-database-type-test #{metabase.sync.util-test}]
+ [metabase.cmd.compare-h2-dbs #{metabase.db.jdbc-protocols}]
+ [metabase.query-processor.streaming.common #{metabase.query-processor.timezone}]
+ [metabase.query-processor.streaming.json
+  #{metabase.query-processor.streaming.common metabase.query-processor.streaming.interface}]
+ [metabase.query-processor.streaming.csv
+  #{metabase.query-processor.streaming.common metabase.query-processor.streaming.interface}]
+ [metabase.query-processor.streaming.xlsx
+  #{dk.ative.docjure.spreadsheet
+    metabase.query-processor.streaming.common
+    metabase.query-processor.streaming.interface}]
+ [metabase.query-processor.streaming
+  #{metabase.query-processor.context
+    metabase.query-processor.streaming.csv
+    metabase.query-processor.streaming.json
+    metabase.query-processor.streaming.xlsx
+    metabase.shared.models.visualization-settings}]
+ [metabase.query-processor-test.string-extracts-test #{metabase.test}]
+ [yaml.reader #{flatland.ordered.map}]
+ [yaml.writer #{flatland.ordered.map}]
+ [yaml.core #{clojure.java.io yaml.reader yaml.writer}]
+ [schema.coerce #{clojure.edn schema.core}]
+ [metabase.util.yaml #{metabase.util.files yaml.core}]
+ [metabase.automagic-dashboards.rules #{metabase.automagic-dashboards.populate metabase.util.yaml schema.coerce}]
+ [metabase.automagic-dashboards.rules-test #{metabase.automagic-dashboards.rules metabase.test.util}]
+ [metabase.driver.sql.parameters.substitution
+  #{metabase.driver.common.parameters
+    metabase.driver.common.parameters.dates
+    metabase.driver.common.parameters.operators
+    metabase.driver.sql.query-processor}]
+ [metabase.driver.common.parameters.parse #{metabase.driver.common.parameters}]
+ [metabase.driver.sql.util #{metabase.driver.sql.query-processor}]
+ [metabase.driver.sql.util.unprepare #{metabase.driver.sql.util}]
+ [metabase.driver.sql.parameters.substitute #{metabase.driver.sql.parameters.substitution}]
+ [metabase.driver.common.parameters.values #{metabase.models.native-query-snippet metabase.query-processor}]
+ [metabase.driver.sql
+  #{metabase.driver.common.parameters.parse
+    metabase.driver.common.parameters.values
+    metabase.driver.sql.parameters.substitute
+    metabase.driver.sql.util.unprepare}]
+ [metabase.driver.sql-jdbc.sync.interface #{metabase.driver}]
+ [metabase.driver.sql-jdbc.execute.old-impl #{metabase.driver}]
+ [metabase.driver.sql-jdbc.execute
+  #{metabase.driver.sql-jdbc.execute.diagnostic
+    metabase.driver.sql-jdbc.execute.old-impl
+    metabase.driver.sql-jdbc.sync.interface
+    metabase.query-processor.interface
+    metabase.query-processor.reducible
+    metabase.query-processor.timezone
+    metabase.query-processor.util}]
+ [metabase.driver.sql-jdbc.common #{clojure.string}]
+ [metabase.driver.sql-jdbc.sync.common #{metabase.driver.sql-jdbc.execute}]
+ [metabase.driver.sql-jdbc.sync.describe-table
+  #{metabase.driver.sql-jdbc.sync.common metabase.driver.sql.query-processor}]
+ [metabase.driver.sql-jdbc.sync.describe-database
+  #{metabase.driver.sql-jdbc.sync.common metabase.driver.sql.query-processor}]
+ [metabase.driver.sql-jdbc.sync
+  #{metabase.driver.sql-jdbc.sync.describe-database metabase.driver.sql-jdbc.sync.describe-table}]
+ [metabase.driver.sql-jdbc #{metabase.driver.sql metabase.driver.sql-jdbc.sync}]
+ [metabase.driver.postgres #{metabase.driver.sql-jdbc metabase.driver.sql-jdbc.common metabase.models}]
+ [metabase.query-processor.reducible-test #{metabase.test}]
+ [buddy.core.codecs.base64 #{buddy.core.codecs}]
+ [buddy.core.keys.jwk.proto #{buddy.core.codecs.base64}]
+ [buddy.core.keys.pem #{clojure.java.io}]
+ [buddy.core.dsa #{buddy.core.codecs clojure.java.io}]
+ [buddy.core.keys.jwk.ec #{buddy.core.hash buddy.core.keys.jwk.proto cheshire.core}]
+ [buddy.core.keys.jwk.rsa #{buddy.core.hash buddy.core.keys.jwk.proto cheshire.core}]
+ [buddy.core.keys.jwk.okp #{buddy.core.hash buddy.core.keys.jwk.proto cheshire.core}]
+ [buddy.core.keys.jwk.eddsa #{buddy.core.keys.jwk.okp}]
+ [buddy.core.keys #{buddy.core.keys.jwk.ec buddy.core.keys.jwk.eddsa buddy.core.keys.jwk.rsa buddy.core.keys.pem}]
+ [buddy.sign.jwe.cek #{buddy.core.keys buddy.core.nonce}]
+ [buddy.sign.util #{buddy.core.codecs}]
+ [buddy.sign.jws
+  #{buddy.core.codecs.base64 buddy.core.dsa buddy.core.mac buddy.sign.util buddy.util.ecdsa cheshire.core}]
+ [buddy.sign.jwe #{buddy.core.crypto buddy.sign.jwe.cek buddy.sign.jws buddy.util.deflate}]
+ [buddy.sign.jwt #{buddy.sign.jwe}]
+ [metabase.util.embed #{buddy.sign.jwt hiccup.core metabase.public-settings}]
+ [metabase.api.geojson #{metabase.api.common}]
+ [metabase.api.testing #{metabase.api.common}]
+ [metabase.query-processor.pivot #{metabase.query-processor}]
+ [manifold.executor #{clojure.tools.logging}]
+ [manifold.utils #{manifold.executor}]
+ [manifold.time #{manifold.utils}]
+ [manifold.stream.core #{manifold.utils}]
+ [manifold.deferred #{clojure.set manifold.debug manifold.time riddley.walk}]
+ [manifold.stream.graph #{manifold.deferred manifold.stream.core}]
+ [manifold.stream.deferred #{manifold.stream.graph}]
+ [metabase.related #{metabase.models.dashboard}]
+ [manifold.stream.queue #{manifold.stream.graph}]
+ [byte-streams.utils #{clj-tuple}]
+ [manifold.stream.seq #{manifold.stream.graph}]
+ [manifold.stream.async #{clojure.core.async manifold.stream.graph}]
+ [manifold.stream.random-access #{manifold.stream.graph}]
+ [manifold.stream.iterator #{manifold.stream.graph}]
+ [manifold.stream.default #{manifold.stream.graph}]
+ [manifold.stream
+  #{manifold.stream.async
+    manifold.stream.default
+    manifold.stream.deferred
+    manifold.stream.iterator
+    manifold.stream.queue
+    manifold.stream.random-access
+    manifold.stream.seq}]
+ [byte-streams.pushback-stream #{byte-streams.utils manifold.stream primitive-math}]
+ [byte-streams.protocols #{byte-streams.utils}]
+ [byte-streams.graph #{byte-streams.protocols manifold.stream}]
+ [byte-streams #{byte-streams.char-sequence byte-streams.graph byte-streams.pushback-stream}]
+ [aleph.netty #{byte-streams potemkin}]
+ [aleph.http.core #{aleph.netty}]
+ [aleph.flow #{manifold.deferred potemkin}]
+ [aleph.http.server #{aleph.flow aleph.http.core}]
+ [metabase.api.dataset #{metabase.query-processor.pivot metabase.query-processor.streaming}]
+ [metabase.models.revision.last-edit #{clj-time.core metabase.util.schema toucan.db}]
+ [metabase.integrations.slack #{clj-http.client metabase.models.setting}]
+ [metabase.metabot.slack #{metabase.integrations.slack}]
+ [metabase.pulse.interface #{potemkin}]
+ [metabase.api.card
+  #{metabase.api.dataset
+    metabase.email.messages
+    metabase.models.card-favorite
+    metabase.models.revision.last-edit
+    metabase.models.view-log
+    metabase.related}]
+ [metabase.pulse #{metabase.api.card metabase.integrations.slack metabase.pulse.interface}]
+ [metabase.metabot.command #{metabase.metabot.slack metabase.pulse}]
+ [throttle.core #{clojure.math.numeric-tower}]
+ [metabase.metabot.events #{metabase.metabot.command}]
+ [aleph.http.client-middleware #{aleph.http.core cheshire.core clojure.edn clojure.stacktrace}]
+ [aleph.http.encoding #{byte-streams potemkin}]
+ [aleph.http.multipart #{aleph.http.encoding}]
+ [aleph.http.client #{aleph.http.core aleph.http.multipart}]
+ [aleph.http #{aleph.http.client aleph.http.client-middleware aleph.http.server}]
+ [metabase.server.middleware.security #{metabase.server.request.util}]
+ [metabase.server.middleware.offset-paging #{metabase.server.middleware.security}]
+ [metabase.api.permission-graph #{clojure.spec.alpha clojure.spec.gen.alpha clojure.walk}]
+ [metabase.metabot.instance #{metabase.models.setting}]
+ [metabase.metabot.websocket #{aleph.http metabase.metabot.events metabase.metabot.instance throttle.core}]
+ [metabase.metabot #{metabase.metabot.websocket}]
+ [metabase.api.permissions #{metabase.api.permission-graph metabase.metabot metabase.server.middleware.offset-paging}]
+ [metabase.search.config #{metabase.models}]
+ [metabase.setup #{metabase.models.setting}]
+ [metabase.sync.analyze.classifiers.name-test #{metabase.test}]
+ [metabase.api.revision-test #{metabase.test}]
+ [metabase.util.password-test #{metabase.test}]
+ [metabase.models.permissions-group-membership-test #{metabase.test}]
+ [metabase.sync.analyze.fingerprint.insights-test #{metabase.test.util}]
+ [metabase.automagic-dashboards.core
+  #{clojure.zip
+    metabase.automagic-dashboards.rules
+    metabase.automagic-dashboards.visualization-macros
+    metabase.related
+    metabase.sync.analyze.classify}]
+ [metabase.automagic-dashboards.comparison #{metabase.automagic-dashboards.core}]
+ [metabase.api.activity #{metabase.models.activity metabase.models.view-log}]
+ [metabase.api.activity-test #{metabase.api.activity metabase.test}]
+ [metabase.cmd.reset-password #{metabase.models.user}]
+ [metabase.cmd.reset-password-test #{metabase.cmd.reset-password metabase.test}]
+ [metabase.query-processor.middleware.reconcile-breakout-and-order-by-bucketing-test #{metabase.test}]
+ [metabase.integrations.common #{metabase.models.permissions-group-membership}]
+ [metabase.integrations.common-test #{metabase.integrations.common metabase.test}]
+ [metabase.api.metric-test #{metabase.server.middleware.util metabase.test}]
+ [metabase.query-processor.middleware.parameters.mbql-test #{metabase.test}]
+ [metabase.pulse.render.style-test #{metabase.test.util}]
+ [metabase.query-processor.middleware.format-rows-test #{metabase.test}]
+ [metabase.driver.sql.parameters.substitution-test #{metabase.driver.sql.parameters.substitution metabase.test}]
+ [metabase.db.data-migrations #{metabase.models.dashboard}]
+ [metabase.cmd.copy #{metabase.db.data-migrations metabase.models}]
+ [metabase.cmd.copy.h2 #{metabase.db.spec metabase.util}]
+ [metabase.cmd.load-from-h2 #{metabase.cmd.copy metabase.cmd.copy.h2}]
+ [metabase.cmd.rotate-encryption-key #{metabase.models}]
+ [metabase.cmd.dump-to-h2 #{metabase.cmd.copy metabase.cmd.copy.h2 metabase.cmd.rotate-encryption-key}]
+ [metabase.cmd.test-util #{metabase.util.files}]
+ [metabase.cmd.load-and-dump-test
+  #{metabase.cmd.compare-h2-dbs
+    metabase.cmd.dump-to-h2
+    metabase.cmd.load-from-h2
+    metabase.cmd.test-util
+    metabase.test}]
+ [metabase.api.query-description
+  #{metabase.mbql.predicates metabase.models.field metabase.models.metric metabase.models.segment}]
+ [metabase.api.query-description-test #{metabase.api.query-description metabase.test}]
+ [clj-ldap.client #{clojure.pprint clojure.string}]
+ [metabase.integrations.ldap.interface #{metabase.util.schema}]
+ [metabase.integrations.ldap.default-implementation
+  #{clj-ldap.client metabase.integrations.common metabase.integrations.ldap.interface metabase.models.user}]
+ [metabase.events-test #{metabase.test.util}]
+ [metabase.driver.sql.query-processor-test #{metabase.driver.sql metabase.test}]
+ [metabase.models.native-query-snippet-test #{metabase.test}]
+ [metabase.models.permissions-test #{metabase.test}]
+ [metabase.query-processor.middleware.resolve-source-table-test #{metabase.test}]
+ [metabase.cmd.load-from-h2-test #{metabase.cmd.load-from-h2 metabase.cmd.test-util metabase.test}]
+ [ring.mock.request #{cheshire.core ring.util.codec}]
+ [ring.util.request #{ring.util.parsing}]
+ [ring.middleware.params #{ring.util.codec ring.util.request}]
+ [metabase.server.middleware.offset-paging-test
+  #{metabase.server.middleware.offset-paging
+    metabase.test.util
+    ring.middleware.keyword-params
+    ring.middleware.params
+    ring.mock.request}]
+ [metabase.util.i18n.impl-test #{metabase.test}]
+ [metabase.sync.analyze.classifiers.category-test #{metabase.test.util}]
+ [metabase.api.util-test #{metabase.test}]
+ [metabase.test.mock.toucanery #{metabase.driver metabase.test.mock.util}]
+ [metabase.sync.sync-metadata.fields.sync-instances-test #{metabase.test.mock.toucanery metabase.test.util}]
+ [metabase.email.messages-test #{metabase.email-test}]
+ [metabase.models.setting.multi-setting #{metabase.models.setting}]
+ [metabase.models.setting.multi-setting-test #{metabase.models.setting.multi-setting metabase.test.util}]
+ [metabase.task.task-history-cleanup
+  #{clojurewerkz.quartzite.schedule.cron metabase.models.task-history metabase.task}]
+ [metabase.models.task-history-test #{metabase.test}]
+ [metabase.task.task-history-cleanup-test #{metabase.models.task-history-test metabase.task.task-history-cleanup}]
+ [metabase.query-processor.middleware.auto-parse-filter-values-test #{metabase.test}]
+ [metabase.test.data.one-off-dbs #{metabase.test.util}]
+ [metabase.sync.sync-metadata.fields-test #{metabase.sync.util-test metabase.test.data.one-off-dbs}]
+ [clj-http.fake #{clj-http.core clojure.math.combinatorics ring.util.codec robert.hooke}]
+ [metabase.task.follow-up-emails
+  #{clojurewerkz.quartzite.schedule.cron
+    metabase.email.messages
+    metabase.models.activity
+    metabase.models.view-log
+    metabase.task}]
+ [metabase.mbql.util.match-test #{metabase.test.util}]
+ [metabase.domain-entities.specs #{metabase.mbql.normalize metabase.util.yaml schema.coerce}]
+ [metabase.api.common.internal-test #{metabase.test}]
+ [metabase.events.last-login #{metabase.models.user}]
+ [ring.adapter.jetty #{ring.util.servlet}]
+ [metabase.server #{metabase.server.protocols metabase.util ring.adapter.jetty}]
+ [metabase.server.middleware.log
+  #{metabase.async.streaming-response
+    metabase.driver.sql-jdbc.execute.diagnostic
+    metabase.server
+    metabase.server.request.util}]
+ [metabase.models.card-test #{metabase.test}]
+ [metabase.models.dashboard-card-test #{metabase.models.card-test}]
+ [metabase.query-processor.middleware.resolve-joined-fields-test #{metabase.test}]
+ [metabase.driver.sql.query-processor.empty-string-is-null #{metabase.driver.sql.query-processor}]
+ [metabase.query-processor-test.share-test #{metabase.test}]
+ [metabase.pulse.render.table-test #{metabase.pulse.render.test-util metabase.test.util}]
+ [metabase.pulse.test-util #{metabase.pulse metabase.test}]
+ [metabase.pulse-test #{metabase.pulse.test-util}]
+ [metabase.api.notify #{metabase.sync}]
+ [metabase.api.notify-test #{metabase.api.notify metabase.server.middleware.util metabase.test}]
+ [metabase.models.field-test #{metabase.test}]
+ [metabase.events.revision #{metabase.models.dashboard}]
+ [metabase.events.revision-test #{metabase.events.revision metabase.test}]
+ [metabase.server.middleware.auth #{metabase.models.setting metabase.server.middleware.util}]
+ [clojure.core.logic #{clojure.core.logic.protocols clojure.set clojure.string}]
+ [metabase.models.params.chain-filter.dedupe-joins #{clojure.core.logic}]
+ [metabase.models.params.chain-filter #{metabase.models metabase.models.params.chain-filter.dedupe-joins}]
+ [metabase.models.params.chain-filter-test #{metabase.models.params.chain-filter metabase.test}]
+ [metabase.db.spec-test #{metabase.test.util}]
+ [metabase.test.integrations.ldap #{metabase.test.util}]
+ [metabase.integrations.ldap #{metabase.integrations.ldap.default-implementation}]
+ [metabase.integrations.ldap-test #{metabase.integrations.ldap metabase.test metabase.test.integrations.ldap}]
+ [metabase.driver.mysql #{metabase.driver.sql-jdbc metabase.driver.sql-jdbc.common}]
+ [metabase.driver.mysql-test #{metabase.driver.mysql metabase.query-processor-test.string-extracts-test}]
+ [metabase.sync-test #{metabase.test metabase.test.mock.util}]
+ [metabase.mbql.normalize-test #{metabase.test.util}]
+ [metabase.public-settings-test #{metabase.test}]
+ [metabase.driver.h2 #{metabase.driver.sql-jdbc}]
+ [metabase.driver.h2-test #{metabase.driver.h2 metabase.test}]
+ [metabase.api.native-query-snippet-test #{metabase.test}]
+ [metabase.server.middleware.ssl #{metabase.server.request.util ring.util.request ring.util.response}]
+ [metabase.server.middleware.ssl-test #{metabase.server.middleware.ssl metabase.test.util ring.mock.request}]
+ [metabase.timeseries-query-processor-test.util #{metabase.test}]
+ [metabase.timeseries-query-processor-test #{metabase.timeseries-query-processor-test.util}]
+ [metabase.db.metadata-queries-test #{metabase.test}]
+ [metabase.query-processor.middleware.add-rows-truncated-test #{metabase.test}]
+ [metabase.models.collection.graph #{metabase.models.collection metabase.models.collection-permission-graph-revision}]
+ [metabase.api.collection
+  #{metabase.api.card
+    metabase.models.collection.graph
+    metabase.models.native-query-snippet
+    metabase.server.middleware.offset-paging}]
+ [metabase.pulse.render.datetime-test #{metabase.test.util}]
+ [metabase.api.moderation-review-test #{metabase.test}]
+ [metabase.query-processor.store-test #{metabase.test.util}]
+ [metabase.query-processor.middleware.permissions-test #{metabase.test}]
+ [metabase.sync.analyze.fingerprint-test #{metabase.test}]
+ [metabase.metabot.test-util #{metabase.metabot.slack metabase.pulse}]
+ [metabase.metabot.events-test #{metabase.metabot.events metabase.metabot.test-util metabase.test.util}]
+ [metabase.test.sync #{metabase.test}]
+ [metabase.transforms.materialize #{metabase.query-processor}]
+ [metabase.domain-entities.core #{metabase.domain-entities.specs metabase.models.card}]
+ [metabase.transforms.specs #{metabase.domain-entities.specs metabase.util.schema}]
+ [metabase.transforms.core #{metabase.domain-entities.core metabase.transforms.materialize metabase.transforms.specs}]
+ [clj-time.predicates #{clj-time.coerce}]
+ [metabase.task.send-pulses #{clj-time.predicates clojurewerkz.quartzite.schedule.cron metabase.pulse metabase.task}]
+ [clojure.test.check.generators #{clojure.string clojure.test.check.random clojure.test.check.rose-tree}]
+ [clojure.test.check.properties #{clojure.test.check.generators clojure.test.check.results}]
+ [metabase.driver.sql-jdbc.execute.diagnostic-test #{metabase.driver.sql-jdbc.execute.diagnostic metabase.test}]
+ [metabase.query-processor.streaming.xlsx-test #{dk.ative.docjure.spreadsheet metabase.test.util}]
+ [metabase.cmd #{metabase.mbql.util metabase.util}]
+ [metabase.util.encryption-test #{metabase.test.util}]
+ [metabase.cmd.rotate-encryption-key-test
+  #{metabase.cmd
+    metabase.cmd.load-from-h2
+    metabase.cmd.rotate-encryption-key
+    metabase.cmd.test-util
+    metabase.test
+    metabase.util.encryption-test}]
+ [metabase.models.permissions-group-test #{metabase.test}]
+ [ring.middleware.json #{cheshire.core ring.core.protocols ring.util.request}]
+ [metabase.server.middleware.json #{metabase.util.date-2 ring.middleware.json}]
+ [metabase.server.middleware.exceptions #{metabase.server.middleware.security}]
+ [metabase.api.common-test #{metabase.server.middleware.exceptions metabase.test.util}]
+ [metabase.query-processor-test.expressions-test #{metabase.test metabase.test.data.one-off-dbs}]
+ [metabase.api.table #{metabase.related metabase.sync}]
+ [metabase.sample-data #{metabase.sync}]
+ [metabase.sync.schedules #{metabase.util.cron}]
+ [metabase.api.database #{metabase.api.table metabase.sample-data metabase.sync.schedules}]
+ [metabase.integrations.slack-test #{clj-http.fake metabase.integrations.slack metabase.test.util}]
+ [metabase.driver.util-test #{metabase.test.util}]
+ [metabase.query-processor.middleware.annotate-test #{metabase.test}]
+ [metabase.api.dashboard #{metabase.models.params.chain-filter metabase.models.revision.last-edit metabase.related}]
+ [metabase.api.field #{metabase.db.metadata-queries metabase.related metabase.server.middleware.offset-paging}]
+ [metabase.api.public #{metabase.api.card metabase.api.dashboard metabase.api.field metabase.util.embed}]
+ [metabase.query-processor.middleware.add-implicit-joins-test #{metabase.test}]
+ [metabase.domain-entities.specs-test #{metabase.domain-entities.specs metabase.test.util}]
+ [metabase.sync.sync-metadata.comments-test #{metabase.test}]
+ [metabase.query-processor-test.fields-test #{metabase.test}]
+ [crypto.random #{clojure.string}]
+ [metabase.util.embed-test #{crypto.random metabase.test metabase.util.embed}]
+ [metabase.automagic-dashboards.filters-test #{metabase.test.util}]
+ [metabase.models.pulse-test #{metabase.test metabase.test.mock.util}]
+ [metabase.test.domain-entities #{clojure.test metabase.domain-entities.specs}]
+ [metabase.domain-entities.core-test #{metabase.domain-entities.core metabase.test.domain-entities metabase.test.util}]
+ [metabase.api.pivots #{metabase.test}]
+ [metabase.api.card-test
+  #{metabase.api.card metabase.api.pivots metabase.driver.sql-jdbc.execute metabase.server.middleware.util}]
+ [metabase.driver.sql.query-processor.empty-string-is-null-test
+  #{metabase.driver.sql metabase.driver.sql.query-processor.empty-string-is-null metabase.test.util}]
+ [metabase.events.activity-feed #{metabase.models.activity}]
+ [metabase.events.activity-feed-test #{metabase.events.activity-feed metabase.test}]
+ [metabase.api.field-test #{metabase.api.field metabase.timeseries-query-processor-test.util}]
+ [metabase.sync.sync-metadata.fields.fetch-metadata-test #{metabase.test metabase.test.mock.toucanery}]
+ [metabase.api.table-test
+  #{metabase.api.table
+    metabase.server.middleware.util
+    metabase.test.mock.util
+    metabase.timeseries-query-processor-test.util}]
+ [metabase.search.scoring #{metabase.search.config}]
+ [metabase.api.search #{metabase.search.scoring metabase.server.middleware.offset-paging}]
+ [metabase.api.search-test #{metabase.api.search metabase.test}]
+ [clojure.test.check #{clojure.test.check.generators clojure.test.check.impl clojure.test.check.results}]
+ [clojure.test.check.clojure-test.assertions #{clojure.test}]
+ [clojure.test.check.clojure-test #{clojure.test.check clojure.test.check.clojure-test.assertions}]
+ [metabase.cmd.copy-test #{metabase.cmd.copy metabase.test.util}]
+ [metabase.integrations.google.interface #{metabase.models.setting.multi-setting metabase.public-settings.metastore}]
+ [metabase.integrations.google #{metabase.integrations.google.interface metabase.models.user}]
+ [metabase.api.session
+  #{metabase.integrations.google
+    metabase.integrations.ldap
+    metabase.models.login-history
+    metabase.server.middleware.session
+    throttle.core}]
+ [metabase.api.session-test #{metabase.api.session metabase.driver.h2 metabase.test metabase.test.integrations.ldap}]
+ [metabase.pulse.render.sparkline-test #{metabase.test}]
+ [metabase.pulse.render.body-test #{metabase.pulse.render.test-util metabase.test.util}]
+ [metabase.test.automagic-dashboards #{metabase.test}]
+ [metabase.automagic-dashboards.core-test #{metabase.automagic-dashboards.core metabase.test.automagic-dashboards}]
+ [metabase.query-processor.middleware.constraints-test #{metabase.test}]
+ [metabase.sync.field-values-test #{metabase.sync.util-test metabase.test.data.one-off-dbs}]
+ [metabase.query-processor.middleware.cache.impl-test #{metabase.test.util}]
+ [metabase.sync.analyze.classifiers.no-preview-display-test #{metabase.test.util}]
+ [metabase.pulse.render.png-test #{metabase.test}]
+ [metabase.query-processor-test.parameters-test #{metabase.test}]
+ [metabase.query-processor-test.nested-field-test #{metabase.test}]
+ [metabase.models.dashboard-test #{metabase.automagic-dashboards.core metabase.test}]
+ [metabase.api.dashboard-test
+  #{metabase.api.card-test
+    metabase.api.dashboard
+    metabase.models.dashboard-test
+    metabase.models.params.chain-filter-test}]
+ [metabase.api.public-test #{metabase.api.dashboard-test metabase.api.public}]
+ [metabase.api.embed #{metabase.api.public}]
+ [metabase.api.embed-test #{crypto.random metabase.api.embed metabase.api.public-test}]
+ [metabase.api.preview-embed-test #{metabase.api.embed-test}]
+ [metabase.api.pulse #{metabase.pulse}]
+ [metabase.api.pulse-test #{metabase.api.card-test metabase.api.pulse metabase.models.pulse-test}]
+ [metabase.api.tiles-test #{metabase.test}]
+ [metabase.sync.analyze.query-results-test #{metabase.test.mock.util metabase.test.sync}]
+ [metabase.models.dependency-test #{metabase.test}]
+ [metabase.query-processor-test.alternative-date-test #{metabase.test}]
+ [metabase.query-processor-test.field-visibility-test #{metabase.test}]
+ [metabase.driver.common.parameters.dates-test #{metabase.test}]
+ [metabase.api.setup #{metabase.api.database metabase.email metabase.integrations.slack metabase.setup}]
+ [metabase.models.permissions.parse-test #{metabase.test.util}]
+ [metabase.db.connection-pool-setup-test #{metabase.test}]
+ [metabase.query-processor-test.failure-test #{metabase.test}]
+ [metabase.metabot.command-test #{metabase.metabot.command metabase.metabot.test-util metabase.test}]
+ [metabase.plugins.classloader-test #{metabase.test.util}]
+ [metabase.util.cron-test #{metabase.test.util}]
+ [metabase.test.transforms #{clojure.test metabase.transforms.specs}]
+ [metabase.sync.analyze.classify-test #{metabase.test.util}]
+ [metabase.query-processor.middleware.splice-params-in-response-test #{metabase.test}]
+ [metabase.query-processor.middleware.process-userland-query-test #{metabase.test}]
+ [metabase.query-processor.middleware.validate-temporal-bucketing-test #{metabase.test}]
+ [metabase.query-processor-test.case-test #{metabase.test}]
+ [metabase.types-test #{metabase.test.util}]
+ [metabase.query-processor.streaming.csv-test #{metabase.test}]
+ [metabase.driver.common.parameters.operators-test #{metabase.test.util}]
+ [metabase.query-processor.middleware.add-dimension-projections-test #{metabase.test}]
+ [metabase.server.middleware.security-test #{metabase.server.middleware.security metabase.test.util}]
+ [metabase.task-test #{clojurewerkz.quartzite.schedule.cron metabase.test}]
+ [metabase.util.stats #{metabase.integrations.google metabase.integrations.slack metabase.models}]
+ [metabase.query-processor.middleware.expand-macros-test #{metabase.test}]
+ [metabase.public-settings.metastore-test #{clj-http.fake metabase.test.util}]
+ [metabase.driver.postgres-test #{metabase.driver.postgres metabase.test}]
+ [metabase.query-processor-test.constraints-test #{metabase.test}]
+ [metabase.integrations.google-test #{metabase.integrations.google metabase.test}]
+ [metabase.query-processor.middleware.parameters-test #{metabase.test}]
+ [metabase.query-processor.middleware.resolve-referenced-test #{metabase.query-processor.middleware.parameters-test}]
+ [metabase.driver.common.parameters.values-test #{metabase.driver.common.parameters.values metabase.test}]
+ [metabase.server.routes.index
+  #{metabase.core.initialization-status metabase.util.embed ring.util.response stencil.core}]
+ [metabase.server.routes.index-test #{metabase.server.routes.index metabase.test}]
+ [metabase.events.dependencies #{metabase.models.card}]
+ [metabase.events.dependencies-test #{metabase.events.dependencies metabase.test}]
+ [metabase.driver-test #{metabase.test.util}]
+ [metabase.test.data.sql #{metabase.driver.sql.util metabase.test.data}]
+ [metabase.sync.analyze.fingerprint.fingerprinters-test #{metabase.test}]
+ [metabase.db.schema-migrations-test.impl #{metabase.test}]
+ [metabase.db.schema-migrations-test #{metabase.db.schema-migrations-test.impl}]
+ [metabase.models.revision-test #{metabase.test}]
+ [metabase.sync.sync-metadata-test #{metabase.test.sync}]
+ [metabase.models.interface-test #{metabase.test.util}]
+ [metabase.util.schema-test #{metabase.test}]
+ [metabase.events.last-login-test #{metabase.events.last-login metabase.test}]
+ [metabase.query-processor.middleware.fetch-source-query-test #{metabase.test}]
+ [metabase.cmd.dump-to-h2-test
+  #{metabase.cmd
+    metabase.cmd.dump-to-h2
+    metabase.cmd.load-from-h2
+    metabase.cmd.test-util
+    metabase.test
+    metabase.util.encryption-test}]
+ [metabase.models.login-history-test #{metabase.test}]
+ [metabase.query-processor.util-test #{metabase.test.util}]
+ [metabase.driver.sql-jdbc-test #{metabase.test}]
+ [metabase.task.follow-up-emails-test #{metabase.email-test metabase.task.follow-up-emails}]
+ [metabase.sync.analyze.classifiers.text-fingerprint-test #{metabase.test.util}]
+ [metabase.query-processor-test.order-by-test #{metabase.test}]
+ [metabase.plugins.driver-deprecation-test #{metabase.test}]
+ [metabase.query-processor.middleware.catch-exceptions-test #{metabase.test}]
+ [metabase.driver.common.parameters.parse-test #{metabase.driver.common.parameters.parse metabase.test.util}]
+ [metabase.server.request.util-test #{metabase.test ring.mock.request}]
+ [metabase.models.table-test #{metabase.test metabase.test.data.one-off-dbs}]
+ [metabase.api.task-test #{metabase.test}]
+ [metabase.pulse.render.color-test #{metabase.test.util}]
+ [metabase.driver.common-test #{metabase.test.util}]
+ [metabase.transforms.specs-test #{metabase.test metabase.transforms.specs}]
+ [metabase.server.middleware.misc-test #{metabase.test ring.mock.request}]
+ [metabase.util.stats-test #{metabase.test.util metabase.util.stats}]
+ [metabase.query-processor-test.breakout-test #{metabase.test}]
+ [metabase.query-processor.pivot-test #{metabase.api.pivots metabase.query-processor.pivot}]
+ [metabase.query-processor-test.date-bucketing-test
+  #{metabase.driver.sql-jdbc.sync metabase.driver.sql.query-processor-test}]
+ [metabase.config-test #{metabase.test.util}]
+ [metabase.server.middleware.session-test #{metabase.test ring.mock.request}]
+ [metabase.task.sync-databases
+  #{clojurewerkz.quartzite.schedule.cron
+    metabase.sync.analyze
+    metabase.sync.field-values
+    metabase.sync.schedules
+    metabase.sync.sync-metadata
+    metabase.task}]
+ [metabase.models.database-test #{metabase.driver.h2 metabase.task.sync-databases metabase.test}]
+ [metabase.transforms.core-test
+  #{metabase.test metabase.test.domain-entities metabase.test.transforms metabase.transforms.core}]
+ [metabase.api.email-test #{metabase.test}]
+ [metabase.driver.sql.util-test #{metabase.driver.sql.util metabase.test.util}]
+ [metabase.api.segment-test #{metabase.server.middleware.util metabase.test}]
+ [metabase.models.collection-test #{metabase.test}]
+ [metabase.models.user-test #{metabase.models.collection-test}]
+ [metabase.api.database-test #{metabase.api.database metabase.driver.sql-jdbc metabase.test}]
+ [clojure.spec.test.alpha #{clojure.pprint clojure.spec.alpha clojure.spec.gen.alpha clojure.string}]
+ [metabase.query-processor.middleware.add-implicit-clauses-test #{metabase.test}]
+ [metabase.query-processor.middleware.results-metadata-test #{metabase.test metabase.test.mock.util}]
+ [metabase.events.view-log #{metabase.events metabase.models.view-log toucan.db}]
+ [metabase.events.view-log-test #{metabase.events.view-log metabase.test}]
+ [metabase.sample-dataset-test #{metabase.sample-data metabase.test}]
+ [metabase.shared.models.visualization-settings-test #{clojure.spec.test.alpha metabase.test.util}]
+ [metabase.api.transform-test #{metabase.test metabase.test.domain-entities metabase.test.transforms}]
+ [metabase.db.fix-mysql-utf8-test #{metabase.test}]
+ [metabase.db.setup-test #{metabase.test}]
+ [metabase.util-test #{clojure.test.check.clojure-test clojure.test.check.properties metabase.test}]
+ [metabase.driver.sql.parameters.substitute-test
+  #{metabase.driver.common.parameters.parse metabase.driver.sql.parameters.substitute metabase.test}]
+ [metabase.models.on-demand-test #{metabase.test}]
+ [metabase.models.setting-test #{metabase.test metabase.util.encryption-test}]
+ [metabase.models.setting.cache-test #{metabase.models.setting-test}]
+ [metabase.query-processor.middleware.cache-test
+  #{metabase.driver.sql-jdbc.execute
+    metabase.query-processor.middleware.cache.impl-test
+    metabase.query-processor.streaming
+    metabase.test}]
+ [metabase.util.honeysql-extensions-test #{metabase.test}]
+ [metabase.query-processor.query-to-expected-cols-test #{metabase.test}]
+ [metabase.models.params.chain-filter.dedupe-joins-test
+  #{metabase.models.params.chain-filter.dedupe-joins metabase.test.util}]
+ [metabase.test.mock.moviedb #{metabase.driver}]
+ [metabase.query-processor.middleware.wrap-value-literals-test #{metabase.test}]
+ [metabase.query-processor-test.nested-queries-test #{metabase.test}]
+ [metabase.api.login-history-test #{metabase.test}]
+ [metabase.query-processor.middleware.binning-test #{metabase.test}]
+ [metabase.api.permissions-test #{metabase.api.permissions metabase.test}]
+ [metabase.query-processor.middleware.add-default-temporal-unit-test #{metabase.test}]
+ [metabase.query-processor-test.native-test #{metabase.test}]
+ [metabase.models.revision.diff-test #{metabase.test.util}]
+ [metabase.async.util-test #{metabase.test.util metabase.test.util.async}]
+ [metabase.api.alert-test #{metabase.models.pulse-test metabase.server.middleware.util}]
+ [metabase.query-processor-test.implicit-joins-test #{metabase.test}]
+ [metabase.query-processor.middleware.pre-alias-aggregations-test #{metabase.driver.sql metabase.test}]
+ [metabase.api.setting-test #{metabase.models.setting-test}]
+ [metabase.models.session-test #{metabase.test}]
+ [metabase.db.env-test #{metabase.test.util}]
+ [metabase.task.sync-databases-test #{metabase.task.sync-databases metabase.test}]
+ [metabase.query-processor.middleware.add-source-metadata-test #{metabase.test}]
+ [metabase.query-processor.middleware.optimize-temporal-filters-test #{metabase.test}]
+ [metabase.query-processor-test.timezones-test #{metabase.test metabase.test.data.sql}]
+ [metabase.query-processor-test.explicit-joins-test #{metabase.query-processor-test.timezones-test}]
+ [metabase.query-processor.streaming.json-test #{metabase.query-processor.streaming.json metabase.test.util}]
+ [metabase.api.automagic-dashboards-test
+  #{metabase.automagic-dashboards.core
+    metabase.test.automagic-dashboards
+    metabase.test.domain-entities
+    metabase.test.transforms
+    metabase.transforms.core}]
+ [metabase.query-processor-test.sum-where-test #{metabase.test}]
+ [metabase.util.regex-test #{metabase.test.util}]
+ [metabase.api.user-test #{metabase.models.user-test metabase.server.middleware.util}]
+ [metabase.db.data-migrations-test #{metabase.db.data-migrations metabase.test}]
+ [metabase.driver.impl-test #{metabase.test.util metabase.test.util.async}]
+ [metabase.query-processor.middleware.desugar-test #{metabase.test}]
+ [metabase.query-processor.middleware.resolve-joins-test #{metabase.test}]
+ [metabase.models.metric-test #{metabase.test}]
+ [metabase.models.pulse-card-test #{metabase.test.util}]
+ [metabase.models.query.permissions-test #{metabase.test}]
+ [metabase.async.api-response #{compojure.response metabase.server.middleware.exceptions ring.core.protocols}]
+ [metabase.mbql.schema-test #{metabase.test.util}]
+ [metabase.query-processor.middleware.limit-test #{metabase.test}]
+ [metabase.server.middleware.log-test #{metabase.server.middleware.log metabase.test.util}]
+ [metabase.async.streaming-response-test #{metabase.test}]
+ [metabase.models.field-values-test #{metabase.test}]
+ [metabase.task.send-pulses-test #{metabase.pulse.test-util metabase.task.send-pulses}]
+ [metabase.driver.sql-jdbc.connection-test #{metabase.test}]
+ [metabase.query-processor.async-test #{metabase.test}]
+ [metabase.metabot.instance-test #{metabase.metabot.instance metabase.test.util}]
+ [metabase.driver.sql.util.unprepare-test #{metabase.driver.sql metabase.test.util}]
+ [metabase.db.liquibase-test #{metabase.test}]
+ [metabase.models.collection.graph-test #{metabase.models.collection.graph metabase.test}]
+ [metabase.driver.sql-jdbc.sync.describe-table-test #{metabase.driver.sql-jdbc.sync.describe-table metabase.test}]
+ [metabase.api.setup-test #{metabase.api.setup metabase.models.setting.cache-test}]
+ [metabase.query-processor.middleware.upgrade-field-literals-test #{metabase.test}]
+ [metabase.query-processor.middleware.auto-bucket-datetimes-test #{metabase.test}]
+ [metabase.dashboard-subscription-test #{metabase.pulse.test-util}]
+ [metabase.sync.sync-metadata.tables-test #{metabase.test}]
+ [metabase.query-processor-test.count-where-test #{metabase.test}]
+ [metabase.server.middleware.auth-test #{metabase.server.middleware.auth metabase.test ring.mock.request}]
+ [metabase.query-processor-test.aggregation-test #{metabase.test}]
+ [metabase.query-processor-test.time-field-test #{metabase.test}]
+ [metabase.query-processor.middleware.large-int-id-test #{metabase.test}]
+ [metabase.query-processor.middleware.parameters.native-test #{metabase.test}]
+ [metabase.driver.sql-jdbc.sync.describe-database-test
+  #{metabase.driver.sql-jdbc.sync.describe-database metabase.test metabase.test.data.one-off-dbs}]
+ [metabase.sync.analyze-test #{metabase.api.table metabase.test.sync}]
+ [metabase.driver.sql-jdbc.native-test #{metabase.test.util}]
+ [metabase.query-processor.middleware.visualization-settings-test #{metabase.test}]
+ [metabase.models.humanization-test #{metabase.test.util}]
+ [metabase.server-test #{metabase.server metabase.test.util}]
+ [metabase.util.i18n-test #{metabase.test}]
+ [metabase.query-processor.middleware.add-timezone-info-test #{metabase.test}]
+ [metabase.query-processor.streaming-test #{metabase.query-processor.streaming metabase.test}]
+ [metabase.query-processor.middleware.cumulative-aggregations-test #{metabase.test}]
+ [metabase.query-processor-test.query-to-native-test #{metabase.test}]
+ [metabase.sync.sync-dynamic-test #{metabase.test metabase.test.mock.toucanery}]
+ [metabase.models.query-test #{metabase.test}]
+ [metabase.models.params-test #{metabase.api.public-test}]
+ [metabase.async.api-response-test #{metabase.async.api-response metabase.test.util metabase.test.util.async}]
+ [metabase.pulse.render-test #{metabase.pulse metabase.test}]
+ [metabase.related-test #{metabase.related metabase.test metabase.test.data.one-off-dbs}]
+ [metabase.api.dataset-test #{metabase.api.pivots}]
+ [metabase.automagic-dashboards.comparison-test
+  #{metabase.automagic-dashboards.comparison metabase.test.automagic-dashboards}]
+ [metabase.util.ssh-test #{metabase.test}]
+ [metabase.sync.schedules-test #{metabase.sync.schedules metabase.test.util}]
+ [metabase.util.date-2-test #{metabase.test}]
+ [metabase.server.middleware.json-test #{metabase.server.middleware.json metabase.test.util}]
+ [metabase.models.pulse-channel-test #{metabase.test}]
+ [metabase.search.scoring-test #{metabase.search.scoring metabase.test.util}]
+ [metabase.models.segment-test #{metabase.test}]
+ [metabase.query-processor-test.advanced-math-test #{metabase.test}]
+ [metabase.api.testing-test #{metabase.api.testing metabase.test}]
+ [metabase.mbql.util-test #{metabase.test.util}]
+ [metabase.query-processor-test.page-test #{metabase.test}]
+ [metabase.api.collection-test
+  #{metabase.api.collection metabase.models.collection-test metabase.models.collection.graph-test}]
+ [metabase.api.geojson-test #{metabase.api.geojson metabase.server.middleware.security metabase.test}]
+ [metabase.sync.sync-metadata.fields.sync-metadata-test #{metabase.test.util}]
+ [metabase.cmd.copy.h2-test #{metabase.cmd.copy.h2 metabase.test.util}]
+ [metabase.query-processor-test.filter-test #{metabase.test}]
+ [metabase.sync.sync-metadata.metabase-metadata-test #{metabase.test metabase.test.mock.moviedb}]
+ [metabase.sync.sync-metadata.sync-timezone-test #{metabase.sync.util-test}]
+ [metabase.query-processor-test.expression-aggregations-test #{metabase.test}]
+ [metabase.test.util-test #{metabase.test}]
+ [metabase.query-processor-test.remapping-test #{metabase.test}]]

@@ -3,9 +3,12 @@
             [clojure.test :refer :all]
             [java-time :as t]
             [metabase.driver :as driver]
+            metabase.driver.sql
             [metabase.driver.sql.util.unprepare :as unprepare]
             [metabase.util.date-2 :as u.date])
   (:import java.time.OffsetDateTime))
+
+(comment metabase.driver.sql/keep-me)
 
 (deftest unprepare-string-test
   (testing "check simple unprepare with only one string arg"

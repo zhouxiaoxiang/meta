@@ -11,10 +11,13 @@
             [metabase.query-processor.interface :as qp.i]
             [metabase.test :as mt]
             [metabase.util :as u]
+            metabase.driver.sql
             [metabase.util.honeysql-extensions :as hx]
             [pretty.core :refer [PrettyPrintable]]
             [schema.core :as s])
   (:import metabase.util.honeysql_extensions.Identifier))
+
+(comment metabase.driver.sql/keep-me)
 
 (deftest process-mbql-query-keys-test
   (testing "make sure our logic for deciding which order to process keys in the query works as expected"

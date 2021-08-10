@@ -5,6 +5,7 @@
             [metabase.api.database :as database-api]
             [metabase.api.table :as table-api]
             [metabase.driver :as driver]
+            metabase.driver.sql-jdbc
             [metabase.driver.util :as driver.u]
             [metabase.mbql.schema :as mbql.s]
             [metabase.models :refer [Card Collection Database Field FieldValues Table]]
@@ -24,6 +25,8 @@
             [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :as hydrate]))
+
+(comment metabase.driver.sql-jdbc/keep-me)
 
 (use-fixtures :once (fixtures/initialize :db :plugins))
 

@@ -12,8 +12,11 @@
             [metabase.task :as task]
             [metabase.task.sync-databases :as task.sync-databases]
             [metabase.test :as mt]
+            metabase.driver.h2
             [schema.core :as s]
             [toucan.db :as db]))
+
+(comment metabase.driver.h2/keep-me)
 
 (defn- trigger-for-db [db-id]
   (some (fn [{trigger-key :key, :as trigger}]

@@ -265,17 +265,18 @@
 
 (def score-impl
   "Default scoring implementation, using ee if present, or oss otherwise"
-  (u/prog1 (or (u/ignore-exceptions
-                (classloader/require 'metabase-enterprise.search.scoring)
-                (some-> (resolve 'metabase-enterprise.search.scoring/ee-scoring)
-                        var-get))
-               oss-score-impl)
-           (log/debugf "Scoring implementation set to %s" <>)))
+  (delay
+    (u/prog1 (or (u/ignore-exceptions
+                   (classloader/require 'metabase-enterprise.search.scoring)
+                   (some-> (resolve 'metabase-enterprise.search.scoring/ee-scoring)
+                           var-get))
+                 oss-score-impl)
+      (log/debugf "Scoring implementation set to %s" <>))))
 
 (defn score-and-result
   "Returns a map with the `:score` and `:result`—or nil. The score is a vector of comparable things in priority order."
   ([raw-search-string result]
-   (score-and-result score-impl raw-search-string result))
+   (score-and-result @score-impl raw-search-string result))
   ([scorer raw-search-string result]
    (let [text-score (text-score-with-match raw-search-string result)
          scores     (->> (conj (score-result scorer result)

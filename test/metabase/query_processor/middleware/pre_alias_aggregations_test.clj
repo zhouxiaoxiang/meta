@@ -6,7 +6,10 @@
             [metabase.driver :as driver]
             [metabase.query-processor.middleware.pre-alias-aggregations :as pre-alias-aggregations]
             [metabase.test :as mt]
+            metabase.driver.sql
             [metabase.test.data :as data]))
+
+(comment metabase.driver.sql/keep-me)
 
 (defn- pre-alias [query]
   (driver/with-driver (or driver/*driver* :h2)

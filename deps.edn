@@ -204,6 +204,14 @@
                  ;; TODO -- figure out how to do a random port like in the old project.clj?
                  "-Dmb.jetty.port=3001"]}
 
+  :find-tests
+  {:extra-paths ["test_config"]
+   :exec-fn     metabase.test-runner.bootstrap/find-tests}
+
+  :fast-find-tests
+  {:extra-paths ["test_config"]
+   :exec-fn     metabase.test-runner.bootstrap/fast-find-tests}
+
   ;; run the dev server with
   ;; clojure -M:run
   ;; clojure -M:run:drivers (include all drivers)
@@ -386,6 +394,11 @@
   :nrepl
   {:extra-deps {nrepl/nrepl {:mvn/version "0.8.3"}}
    :main-opts  ["-m" "nrepl.cmdline"]}
+
+  ;; clojure -X:dev:create-test-graph
+  :create-test-graph
+  {:exec-fn metabase.test-runner.bootstrap.graph-2/write-graph}
+
 
   ;; TODO -- consider creating an alias that includes the `./bin` build-drivers & release code as well so we can work
   ;; on them all from a single REPL process.
