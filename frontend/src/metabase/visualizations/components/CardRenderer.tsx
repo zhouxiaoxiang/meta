@@ -36,7 +36,7 @@ export default class CardRenderer extends Component {
     isDashboard: PropTypes.bool,
   };
 
-  _deregister: ?DeregisterFunction;
+  _deregister: DeregisterFunction | null;
 
   shouldComponentUpdate(nextProps: Props) {
     // a chart only needs re-rendering when the result itself changes OR the chart type is different
