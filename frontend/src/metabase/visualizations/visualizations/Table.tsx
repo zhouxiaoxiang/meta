@@ -44,7 +44,7 @@ type Props = {
   isDashboard: boolean,
 };
 type State = {
-  data: ?DatasetData,
+  data: DatasetData | null,
 };
 
 export default class Table extends Component {
@@ -371,7 +371,7 @@ export default class Table extends Component {
 
   // shared helpers for table implementations
 
-  getColumnTitle = (columnIndex: number): ?string => {
+  getColumnTitle = (columnIndex: number): string | null => {
     const cols = this.state.data && this.state.data.cols;
     if (!cols) {
       return null;

@@ -54,8 +54,8 @@ type ForeignKeyCountInfo = {
 };
 
 type Props = VisualizationProps & {
-  table: ?Table,
-  tableForeignKeys: ?(ForeignKey[]),
+  table: Table | null,
+  tableForeignKeys: (ForeignKey[]) | null,
   tableForeignKeyReferences: { [id: ForeignKeyId]: ForeignKeyCountInfo },
   fetchTableFks: () => void,
   loadObjectDetailFKReferences: () => void,

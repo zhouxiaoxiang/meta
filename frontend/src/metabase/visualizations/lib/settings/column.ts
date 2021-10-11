@@ -312,7 +312,7 @@ export const NUMBER_COLUMN_SETTINGS = {
     props: {
       // FIXME: rest of these options
       options: currency.map(
-        ([_, currency: { name: string, code: string }]) => ({
+        ([_, currency]: [any, { name: string, code: string }]) => ({
           name: currency.name,
           value: currency.code,
         }),

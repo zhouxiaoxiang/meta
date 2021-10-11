@@ -80,7 +80,7 @@ export default class Gauge extends Component {
     mounted: false,
   };
 
-  _label: ?HTMLElement;
+  _label: HTMLElement | null;
 
   static settings = {
     ...columnSettings({

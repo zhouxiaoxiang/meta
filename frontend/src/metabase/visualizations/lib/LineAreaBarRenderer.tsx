@@ -930,7 +930,8 @@ export default function lineAreaBar(
   if (onRender) {
     onRender({
       yAxisSplit: yAxisProps.yAxisSplit,
-      warnings: (Object.values(warnings): string[]),
+      warnins: Object.values(warnings) as string[]
+      // warnings: Object.values(warnings),
     });
   }
 
