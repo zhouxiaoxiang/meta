@@ -17,7 +17,7 @@ import type {
 } from "metabase-types/types/Query";
 
 // returns canonical list of Filters
-export function getFilters(filter: ?FilterClause): Filter[] {
+export function getFilters(filter: FilterClause | null): Filter[] {
   if (!filter || (Array.isArray(filter) && filter.length === 0)) {
     return [];
   } else if (op(filter) === "and") {
@@ -28,42 +28,42 @@ export function getFilters(filter: ?FilterClause): Filter[] {
 }
 
 // turns a list of Filters into the canonical FilterClause, either `undefined`, `filter`, or `["and", filter...]`
-function getFilterClause(filters: Filter[]): ?FilterClause {
+function getFilterClause(filters: Filter[]): FilterClause | null {
   if (filters.length === 0) {
     return undefined;
   } else if (filters.length === 1) {
     return filters[0];
   } else {
-    return (["and", ...filters]: any);
+    return ["and", ...filters] as any;
   }
 }
 
 export function addFilter(
-  filter: ?FilterClause,
+  filter: FilterClause | null,
   newFilter: FilterClause,
-): ?FilterClause {
+): FilterClause | null {
   return getFilterClause(add(getFilters(filter), newFilter));
 }
 export function updateFilter(
-  filter: ?FilterClause,
+  filter: FilterClause | null,
   index: number,
   updatedFilter: FilterClause,
-): ?FilterClause {
+): FilterClause | null {
   return getFilterClause(update(getFilters(filter), index, updatedFilter));
 }
 export function removeFilter(
-  filter: ?FilterClause,
+  filter: FilterClause | null,
   index: number,
-): ?FilterClause {
+): FilterClause | null {
   return getFilterClause(remove(getFilters(filter), index));
 }
-export function clearFilters(filter: ?FilterClause): ?FilterClause {
+export function clearFilters(filter: FilterClause | null): FilterClause | null {
   return getFilterClause(clear());
 }
 
 // MISC
 
-export function canAddFilter(filter: ?FilterClause): boolean {
+export function canAddFilter(filter: FilterClause | null): boolean {
   const filters = getFilters(filter);
   if (filters.length > 0) {
     return noNullValues(filters[filters.length - 1]);
@@ -136,7 +136,7 @@ export function getFilterOptions(filter: Filter): FilterOptions {
   }
 }
 
-export function setFilterOptions<T: Filter>(
+export function setFilterOptions<T extends Filter>(
   filter: T,
   options: FilterOptions,
 ): T {

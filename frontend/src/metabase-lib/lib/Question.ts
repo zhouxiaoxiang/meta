@@ -75,7 +75,7 @@ import {
   ALERT_TYPE_TIMESERIES_GOAL,
 } from "metabase-lib/lib/Alert";
 
-type QuestionUpdateFn = (q: Question) => ?Promise<void>;
+type QuestionUpdateFn = (q: Question) => (Promise<void> | null);
 
 /**
  * This is a wrapper around a question/card object, which may contain one or more Query objects
@@ -102,7 +102,7 @@ export default class Question {
   /**
    * Bound update function, if any
    */
-  _update: ?QuestionUpdateFn;
+  _update?: QuestionUpdateFn | null;
 
   /**
    * Question constructor
@@ -111,7 +111,7 @@ export default class Question {
     card: CardObject,
     metadata?: Metadata,
     parameterValues?: ParameterValues,
-    update?: ?QuestionUpdateFn,
+    update?: QuestionUpdateFn | null,
   ) {
     this._card = card;
     this._metadata =
@@ -504,7 +504,7 @@ export default class Question {
   aggregate(a): Question {
     return aggregate(this, a) || this;
   }
-  breakout(b): ?Question {
+  breakout(b): Question | null {
     return breakout(this, b) || this;
   }
   filter(operator, column, value): Question {
@@ -526,7 +526,7 @@ export default class Question {
     return distribution(this, column) || this;
   }
 
-  composeThisQuery(): ?Question {
+  composeThisQuery(): Question | null {
     if (this.id()) {
       const card = {
         display: "table",
@@ -542,7 +542,7 @@ export default class Question {
     }
   }
 
-  drillPK(field: Field, value: Value): ?Question {
+  drillPK(field: Field, value: Value): Question | null {
     const query = this.query();
 
     if (!(query instanceof StructuredQuery)) {
@@ -733,7 +733,7 @@ export default class Question {
   }
 
   @memoize
-  mode(): ?Mode {
+  mode(): Mode | null {
     return Mode.forQuestion(this);
   }
 
@@ -760,16 +760,16 @@ export default class Question {
   /**
    * A user-defined name for the question
    */
-  displayName(): ?string {
-    return this._card && this._card.name;
+  displayName(): string | null {
+    return this._card && this._card.name || null;
   }
 
-  setDisplayName(name: String) {
+  setDisplayName(name: string) {
     return this.setCard(assoc(this.card(), "name", name));
   }
 
-  collectionId(): ?number {
-    return this._card && this._card.collection_id;
+  collectionId(): number | null {
+    return this._card && this._card.collection_id || null;
   }
   setCollectionId(collectionId: number) {
     return this.setCard(assoc(this.card(), "collection_id", collectionId));
@@ -785,8 +785,8 @@ export default class Question {
     );
   }
 
-  description(): ?string {
-    return this._card && this._card.description;
+  description(): string | null {
+    return this._card && this._card.description || null;
   }
 
   lastEditInfo() {
@@ -801,21 +801,21 @@ export default class Question {
     return this._card && this._card.public_uuid;
   }
 
-  database(): ?Database {
+  database(): Database | null {
     const query = this.query();
     return query && typeof query.database === "function"
       ? query.database()
       : null;
   }
-  databaseId(): ?DatabaseId {
+  databaseId(): DatabaseId | null {
     const db = this.database();
     return db ? db.id : null;
   }
-  table(): ?Table {
+  table(): Table | null {
     const query = this.query();
     return query && typeof query.table === "function" ? query.table() : null;
   }
-  tableId(): ?TableId {
+  tableId(): TableId | null {
     const table = this.table();
     return table ? table.id : null;
   }
@@ -1021,7 +1021,7 @@ export default class Question {
   }
 
   parametersList(): ParameterObject[] {
-    return (Object.values(this.parameters()): ParameterObject[]);
+    return Object.values(this.parameters()) as ParameterObject[];
   }
 
   // predicate function that dermines if the question is "dirty" compared to the given question

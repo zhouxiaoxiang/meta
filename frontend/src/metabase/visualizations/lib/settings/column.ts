@@ -98,7 +98,7 @@ function getInhertiedSettingsForColumn(column: Column): Settings {
 const EXAMPLE_DATE = moment("2018-01-07 17:24");
 
 function getDateStyleOptionsForUnit(
-  unit: ?DatetimeUnit,
+  unit: DatetimeUnit | null,
   abbreviate?: boolean = false,
   separator?: string,
 ) {
@@ -149,8 +149,8 @@ function getDateStyleOptionsForUnit(
 
 function dateStyleOption(
   style: DateStyle,
-  unit: ?DatetimeUnit,
-  description?: ?string,
+  unit: DatetimeUnit | null,
+  description?: string | null,
   abbreviate?: boolean = false,
   separator?: string,
 ) {
@@ -165,7 +165,7 @@ function dateStyleOption(
   };
 }
 
-function timeStyleOption(style: TimeStyle, description?: ?string) {
+function timeStyleOption(style: TimeStyle, description?: string | null) {
   const format = style;
   return {
     name:

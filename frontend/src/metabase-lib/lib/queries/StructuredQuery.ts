@@ -1,3 +1,6 @@
+/* eslint-disable prefer-rest-params */
+/* eslint-disable @typescript-eslint/no-this-alias */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 /**
  * Represents a structured MBQL query.
  */
@@ -88,7 +91,7 @@ export default class StructuredQuery extends AtomicQuery {
   ) {
     super(question, datasetQuery);
 
-    this._structuredDatasetQuery = (datasetQuery: StructuredDatasetQuery);
+    this._structuredDatasetQuery = datasetQuery as StructuredDatasetQuery;
   }
 
   /* Query superclass methods */
@@ -126,7 +129,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @returns all tables in the currently selected database that can be used.
    */
-  tables(): ?(Table[]) {
+  tables(): Table[] | null {
     const database = this.database();
     return (database && database.tables) || null;
   }
@@ -134,7 +137,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @returns the currently selected database ID, if any is selected.
    */
-  databaseId(): ?DatabaseId {
+  databaseId(): DatabaseId | null {
     // same for both structured and native
     return this._structuredDatasetQuery.database;
   }
@@ -142,7 +145,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @returns the currently selected database metadata, if a database is selected and loaded.
    */
-  database(): ?Database {
+  database(): Database | null {
     const databaseId = this.databaseId();
     return databaseId != null ? this._metadata.database(databaseId) : null;
   }
@@ -150,7 +153,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @returns the database engine object, if a database is selected and loaded.
    */
-  engine(): ?DatabaseEngine {
+  engine(): DatabaseEngine | null {
     const database = this.database();
     return database && database.engine;
   }
@@ -220,7 +223,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @returns the table ID, if a table is selected.
    */
-  sourceTableId(): ?TableId {
+  sourceTableId(): TableId | null {
     return this.query()["source-table"];
   }
   /**
@@ -243,7 +246,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * @deprecated: use sourceTableId
    */
-  tableId(): ?TableId {
+  tableId(): TableId | null {
     return this.sourceTableId();
   }
   /**
@@ -798,7 +801,7 @@ export default class StructuredQuery extends AtomicQuery {
   }
 
   filterFieldOptionSections(
-    filter?: ?(Filter | FilterWrapper),
+    filter?: Filter | FilterWrapper | null,
     { includeSegments = true } = {},
   ) {
     const filterDimensionOptions = this.filterDimensionOptions();
@@ -982,7 +985,7 @@ export default class StructuredQuery extends AtomicQuery {
 
   // LIMIT
 
-  limit(): ?number {
+  limit(): number | null {
     return Q.getLimit(this.query());
   }
   updateLimit(limit: LimitClause) {
@@ -1318,7 +1321,7 @@ export default class StructuredQuery extends AtomicQuery {
   }
 
   // TODO: better name may be parseDimension?
-  parseFieldReference(fieldRef): ?Dimension {
+  parseFieldReference(fieldRef): Dimension | null {
     return Dimension.parseMBQL(fieldRef, this._metadata, this);
   }
 
@@ -1351,7 +1354,7 @@ export default class StructuredQuery extends AtomicQuery {
    * The (wrapped) source query, if any
    */
   @memoize
-  sourceQuery(): ?StructuredQuery {
+  sourceQuery(): StructuredQuery | null {
     const sourceQuery = this.query()["source-query"];
     if (sourceQuery) {
       return new NestedStructuredQuery(
@@ -1377,7 +1380,7 @@ export default class StructuredQuery extends AtomicQuery {
    * Returns the "last" nested query that is already summarized, or `null` if none are
    * */
   @memoize
-  lastSummarizedQuery(): ?StructuredQuery {
+  lastSummarizedQuery(): StructuredQuery | null {
     if (this.hasAggregations() || !this.canNest()) {
       return this;
     } else {
@@ -1402,7 +1405,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * Returns the corresponding {Dimension} in the "top-level" {StructuredQuery}
    */
-  topLevelDimension(dimension: Dimension): ?Dimension {
+  topLevelDimension(dimension: Dimension): Dimension | null {
     const topQuery = this.topLevelQuery();
     let query = this;
     while (query) {
@@ -1419,7 +1422,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * Returns the corresponding {Column} in the "top-level" {StructuredQuery}
    */
-  topLevelColumn(column: Column): ?Column {
+  topLevelColumn(column: Column): Column | null {
     const dimension = this.dimensionForColumn(column);
     if (dimension) {
       const topDimension = this.topLevelDimension(dimension);
@@ -1433,7 +1436,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * returns the corresponding {Dimension} in the sourceQuery, if any
    */
-  dimensionForSourceQuery(dimension: Dimension): ?Dimension {
+  dimensionForSourceQuery(dimension: Dimension): Dimension | null {
     if (dimension instanceof FieldDimension && dimension.isStringFieldName()) {
       const sourceQuery = this.sourceQuery();
       if (sourceQuery) {
@@ -1458,7 +1461,7 @@ export default class StructuredQuery extends AtomicQuery {
   /**
    * returns the original Table ID at the beginning of the nested queries
    */
-  rootTableId(): ?TableId {
+  rootTableId(): TableId | null {
     return this.rootQuery().sourceTableId();
   }
 

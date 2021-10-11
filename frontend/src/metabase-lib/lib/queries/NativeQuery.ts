@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import Database from "metabase-lib/lib/metadata/Database";
 import Table from "metabase-lib/lib/metadata/Table";
 
@@ -73,7 +74,7 @@ export default class NativeQuery extends AtomicQuery {
   ) {
     super(question, datasetQuery);
 
-    this._nativeDatasetQuery = (datasetQuery: NativeDatasetQuery);
+    this._nativeDatasetQuery = datasetQuery as NativeDatasetQuery;
   }
 
   static isDatasetQueryType(datasetQuery: DatasetQuery) {
@@ -112,20 +113,20 @@ export default class NativeQuery extends AtomicQuery {
 
   /* AtomicQuery superclass methods */
 
-  tables(): ?(Table[]) {
+  tables(): Table[] | null {
     const database = this.database();
     return (database && database.tables) || null;
   }
 
-  databaseId(): ?DatabaseId {
+  databaseId(): DatabaseId | null {
     // same for both structured and native
     return this._nativeDatasetQuery.database;
   }
-  database(): ?Database {
+  database(): Database | null {
     const databaseId = this.databaseId();
     return databaseId != null ? this._metadata.database(databaseId) : null;
   }
-  engine(): ?DatabaseEngine {
+  engine(): DatabaseEngine | null {
     const database = this.database();
     return database && database.engine;
   }
@@ -180,7 +181,7 @@ export default class NativeQuery extends AtomicQuery {
     );
   }
 
-  table(): ?Table {
+  table(): Table | null {
     const database = this.database();
     const collection = this.collection();
     if (!database || !collection) {
@@ -206,7 +207,7 @@ export default class NativeQuery extends AtomicQuery {
     );
   }
 
-  collection(): ?string {
+  collection(): string | null {
     return getIn(this.datasetQuery(), ["native", "collection"]);
   }
 
