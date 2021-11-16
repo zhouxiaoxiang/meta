@@ -1,0 +1,4 @@
+
+# We keep putting off the prettier upgrade, so this is to fix syntax errors due
+# to `import type {..} from "..";` and elvis operators
+*.ts
