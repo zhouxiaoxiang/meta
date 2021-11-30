@@ -20,11 +20,14 @@ import Utils from "metabase/lib/utils";
 
 import Question from "metabase-lib/lib/Question";
 import NativeQuery from "metabase-lib/lib/queries/NativeQuery";
+import { isVirtualCardId } from "metabase/lib/saved-questions";
 
 import Databases from "metabase/entities/databases";
 
 import { getMetadata } from "metabase/selectors/metadata";
 import { getAlerts } from "metabase/alert/selectors";
+
+import { isAdHocDatasetQuestion } from "./utils";
 
 export const getUiControls = state => state.qb.uiControls;
 
@@ -60,9 +63,8 @@ export const getDatabaseId = createSelector(
   card => card && card.dataset_query && card.dataset_query.database,
 );
 
-export const getTableId = createSelector(
-  [getCard],
-  card => getIn(card, ["dataset_query", "query", "source-table"]),
+export const getTableId = createSelector([getCard], card =>
+  getIn(card, ["dataset_query", "query", "source-table"]),
 );
 
 export const getTableForeignKeyReferences = state =>
@@ -147,23 +149,41 @@ const getLastRunParameterValues = createSelector(
   [getLastRunParameters],
   parameters => parameters.map(parameter => parameter.value),
 );
-const getNextRunParameterValues = createSelector(
-  [getParameters],
-  parameters =>
-    parameters
-      .filter(
-        // parameters with an empty value get filtered out before a query run,
-        // so in order to compare current parameters to previously-used parameters we need
-        // to filter them here as well
-        parameter => parameter.value != null,
-      )
-      .map(parameter =>
-        // parameters are "normalized" immediately before a query run, so in order
-        // to compare current parameters to previously-used parameters we need
-        // to run parameters through this normalization function
-        normalizeParameterValue(parameter.type, parameter.value),
-      )
-      .filter(p => p !== undefined),
+const getNextRunParameterValues = createSelector([getParameters], parameters =>
+  parameters
+    .filter(
+      // parameters with an empty value get filtered out before a query run,
+      // so in order to compare current parameters to previously-used parameters we need
+      // to filter them here as well
+      parameter => parameter.value != null,
+    )
+    .map(parameter =>
+      // parameters are "normalized" immediately before a query run, so in order
+      // to compare current parameters to previously-used parameters we need
+      // to run parameters through this normalization function
+      normalizeParameterValue(parameter.type, parameter.value),
+    )
+    .filter(p => p !== undefined),
+);
+
+export const getOriginalQuestion = createSelector(
+  [getMetadata, getOriginalCard],
+  (metadata, card) => metadata && card && new Question(card, metadata),
+);
+
+export const getQuestion = createSelector(
+  [getMetadata, getCard, getParameterValues],
+  (metadata, card, parameterValues) => {
+    if (!metadata || !card) {
+      return;
+    }
+    const question = new Question(card, metadata, parameterValues);
+
+    // When opening a dataset, we swap it's `dataset_query`
+    // with clean query using the dataset as a source table,
+    // to enable "simple mode" like features
+    return question.isDataset() ? question.composeDataset() : question;
+  },
 );
 
 function normalizeClause(clause) {
@@ -207,6 +227,8 @@ export function normalizeQuery(query, tableMetadata) {
 
 export const getIsResultDirty = createSelector(
   [
+    getQuestion,
+    getOriginalQuestion,
     getLastRunDatasetQuery,
     getNextRunDatasetQuery,
     getLastRunParameterValues,
@@ -214,12 +236,23 @@ export const getIsResultDirty = createSelector(
     getTableMetadata,
   ],
   (
+    question,
+    originalQuestion,
     lastDatasetQuery,
     nextDatasetQuery,
     lastParameters,
     nextParameters,
     tableMetadata,
   ) => {
+    // When viewing a dataset, its dataset_query is swapped with a clean query using the dataset as a source table
+    // (it's necessary for datasets to behave like tables opened in simple mode)
+    // We need to escape the isDirty check as it will always be true in this case,
+    // and the page will always be covered with a 'rerun' overlay.
+    // Once the dataset_query changes, the question will loose the "dataset" flag and it'll work normally
+    if (question && isAdHocDatasetQuestion(question, originalQuestion)) {
+      return false;
+    }
+
     lastDatasetQuery = normalizeQuery(lastDatasetQuery, tableMetadata);
     nextDatasetQuery = normalizeQuery(nextDatasetQuery, tableMetadata);
     return (
@@ -229,23 +262,10 @@ export const getIsResultDirty = createSelector(
   },
 );
 
-export const getQuestion = createSelector(
-  [getMetadata, getCard, getParameterValues],
-  (metadata, card, parameterValues) =>
-    metadata && card && new Question(card, metadata, parameterValues),
-);
-
 export const getLastRunQuestion = createSelector(
   [getMetadata, getLastRunCard, getParameterValues],
   (metadata, card, parameterValues) =>
     card && metadata && new Question(card, metadata, parameterValues),
-);
-
-export const getOriginalQuestion = createSelector(
-  [getMetadata, getOriginalCard],
-  (metadata, card) =>
-    // NOTE Atte Keinänen 5/31/17 Should the originalQuestion object take parameterValues or not? (currently not)
-    metadata && card && new Question(card, metadata),
 );
 
 export const getMode = createSelector(
@@ -264,8 +284,17 @@ export const getIsObjectDetail = createSelector(
 
 export const getIsDirty = createSelector(
   [getQuestion, getOriginalQuestion],
-  (question, originalQuestion) =>
-    question && question.isDirtyComparedToWithoutParameters(originalQuestion),
+  (question, originalQuestion) => {
+    // When viewing a dataset, its dataset_query is swapped with a clean query using the dataset as a source table
+    // (it's necessary for datasets to behave like tables opened in simple mode)
+    // We need to escape the isDirty check as it will always be true in this case,
+    // and the page will always be covered with a 'rerun' overlay.
+    // Once the dataset_query changes, the question will loose the "dataset" flag and it'll work normally
+    if (!question || isAdHocDatasetQuestion(question, originalQuestion)) {
+      return false;
+    }
+    return question.isDirtyComparedToWithoutParameters(originalQuestion);
+  },
 );
 
 export const getQuery = createSelector(
@@ -491,4 +520,22 @@ export const getIsLiveResizable = createSelector(
 export const getQuestionDetailsTimelineDrawerState = createSelector(
   [getUiControls],
   uiControls => uiControls && uiControls.questionDetailsTimelineDrawerState,
+);
+
+export const getSourceTable = createSelector([getQuestion], question => {
+  const query = question.isStructured()
+    ? question.query().rootQuery()
+    : question.query();
+  return query.table();
+});
+
+export const isBasedOnExistingQuestion = createSelector(
+  [getSourceTable, getOriginalQuestion],
+  (sourceTable, originalQuestion) => {
+    if (sourceTable != null) {
+      return isVirtualCardId(sourceTable.id);
+    } else {
+      return originalQuestion != null;
+    }
+  },
 );
