@@ -148,12 +148,12 @@ export function lexify(expression: string) {
 
 
 export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
-  const { maxIterations = 10000, hooks = {}, throwOnError = false } = opts;
+  const { maxIterations = 1000000, hooks = {}, throwOnError = false } = opts;
   const errors: CompileError[] = [];
-  let root = createASTNode(null, null, ROOT);
+  let counter = 0;
+  let root = createASTNode(null, null, ROOT, counter);
   root.isRoot = true;
   
-  let counter = 0;
   let node = root;
   hooks.onCreateNode?.(tokens[0], node);
   for (let index = 0; index < tokens.length && counter < maxIterations; index++) {
@@ -188,10 +188,12 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
       );
       
       if (shouldReparent(node.parent.Type, token.Type)) {
+        const parent = node.parent;
         node.parent = createASTNode(
           token,
           node.parent,
           getASType(token.Type, node.parent.Type),
+          counter,
         );
         hooks.onReparentNode?.(token, node);
       } else {
@@ -226,7 +228,7 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
       }
     } else if (token.Type.leftOperands !== 0) {
       if (token.Type === SUB) {
-        node = createASTNode(token, node, NEGATIVE); 
+        node = createASTNode(token, node, NEGATIVE, counter); 
         hooks.onCreateNode?.(token, node);
       } else {
         const err = new CompileError(`Missing children for ${token.Type._name}`, {
@@ -237,10 +239,14 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
         errors.push(err);
       }
     } else {
-      node = createASTNode(token, node, getASType(token.Type, node.Type));
+      node = createASTNode(token, node, getASType(token.Type, node.Type), counter);
       hooks.onCreateNode?.(token, node);
     }
     counter += 1;
+  }
+
+  if (counter >= maxIterations) {
+    throw new Error("Reached max number of iterations");
   }
 
   let CTCViolation = ROOT.checkChildConstraints(root);
@@ -260,18 +266,16 @@ function createASTNode(
   token: Token | null,
   parent: Node | null,
   Type: NodeType,
+  counter: number,
 ): Node {
   return {
     _TYPE: Type._name,
-    alwaysEscapes: false,
     Type,
     children: [],
     complete: Type.expectedChildCount === 0,
-    dropValue: false,
-    meta: null,
     parent,
-    runType: "void",
     token,
+    resolvedType: Type.resolvesAs ? Type.resolvesAs : counter,
   };
 }
 

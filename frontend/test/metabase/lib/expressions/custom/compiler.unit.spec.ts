@@ -1,5 +1,11 @@
+import { getMBQLName } from "metabase/lib/expressions/config";
 import { compile } from "metabase/lib/expressions/custom/compiler";
 import { lexify, parse } from "metabase/lib/expressions/custom/parser";
+import {
+  DEFAULT_PASSES as passes,
+  resolverPass,
+} from "metabase/lib/expressions/custom/compiler_passes";
+import { compare, compareSeed, mockResolve } from "./common";
 
 describe("metabase/lib/expressions/compiler", () => {
   function expr(source: string, throwOnError: boolean = true) {
@@ -8,10 +14,14 @@ describe("metabase/lib/expressions/compiler", () => {
         parse(lexify(source), {
           throwOnError,
         }).root,
+        {
+          getMBQLName,
+          passes: [...passes, resolverPass("expression")],
+          resolve: mockResolve,
+        },
       );
     } catch (err) {
-      // Helps get the error value in wallaby/quokka
-      throw err; //?
+      throw err;
     }
   }
 
@@ -20,6 +30,7 @@ describe("metabase/lib/expressions/compiler", () => {
       expect(expr("42")).toEqual(42);
       expect(expr("'Universe'")).toEqual("Universe");
     });
+    /// TODO: Fix w/ some type info
     it("should compile dimensions", () => {
       expect(expr("[Price]")).toEqual(["dimension", "Price"]);
       expect(expr("([X])")).toEqual(["dimension", "X"]);
@@ -42,10 +53,10 @@ describe("metabase/lib/expressions/compiler", () => {
     it("should logical operators", () => {
       expect(expr("7 or 8")).toEqual(["or", 7, 8]);
       expect(expr("7 and 8")).toEqual(["and", 7, 8]);
-      expect(expr("7 and Size")).toEqual(["and", 7, ["dimension", "Size"]]);
+      expect(expr("7 and Size")).toEqual(["and", 7, ["segment", "Size"]]);
       expect(expr("NOT (7 and Size)")).toEqual([
         "not",
-        ["and", 7, ["dimension", "Size"]],
+        ["and", 7, ["segment", "Size"]],
       ]);
     });
     it("should handle parenthesized expression", () => {
@@ -67,17 +78,6 @@ describe("metabase/lib/expressions/compiler", () => {
   });
 
   describe("Should match the old compiler", () => {
-    //               ( NOT  ( NOT  (NOT  " dD")) -(CijXj_3 OR [_ → i2wDlEd]))', () => {
-    it('seed 59789:  ( NOT  ( NOT   NOT  " dD" ) - CijXj_3 OR [_ → i2wDlEd])', () => {
-      expect(
-        expr('( NOT  ( NOT   NOT  " dD" ) -CijXj_3 OR [_ → i2wDlEd])'),
-      ).toEqual([
-        "or",
-        ["not", ["-", ["not", ["not", " dD"]], ["dimension", "CijXj_3"]]],
-        ["dimension", "_ → i2wDlEd"],
-      ]);
-    });
-
     it("Seed 59793: NOT NOT [p]<0", () => {
       expect(expr("NOT NOT [p] < 0")).toEqual([
         "not",
@@ -90,6 +90,66 @@ describe("metabase/lib/expressions/compiler", () => {
         "not",
         [">=", ["dimension", "gG9_r"], ["dimension", "__"]],
       ]);
+    });
+
+    it(`Seed 10099: CONtAinS ( [OF4wuV], SUbstriNG("_", -872096.613705, lENGtH("s Mfg7" ) ) )`, () => {
+      const { oracle, compiled } = compare(
+        `CONtAinS ( [OF4wuV], SUbstriNG("_", -872096.613705, lENGtH("s Mfg7" ) ) )`,
+        "boolean",
+        true,
+      );
+      expect(compiled).toEqual(oracle);
+    });
+
+    it(`Seed 10092:  NOT ( NOT   (isNUll ([T0q → n_M_O])))`, () => {
+      const { oracle, compiled } = compare(
+        ` NOT ( NOT   (isNUll ([T0q → n_M_O])))`,
+        "expression",
+        true,
+      );
+      expect(compiled).toEqual(oracle);
+    });
+
+    it(`Seed 10082: SUbstriNg( cOncat("BaK2    ", [__m_4], rTrim(coNcAt (replACE ([Av5Wtbz], regeXextRACt( [_1I → g], "H NVB84_"), rEGexextract ( [__8], " _ 2" )  ) , SUbStRiNG("qb0  ", (power( LeNgTh ( rtrim ( "YyCe_2" )) * 0e+77, 1 ) ), 1 + 0e-54 / 374719e-64) , cOncaT( "    F9 _O", "_a5_", " 5 _U_ ", " bE", rEPlACe (BXj3O, " ", [Z → X9]) ) )  )  ), (1), log ( 1E-26 )  ) `, () => {
+      const { oracle, compiled } = compare(
+        `SUbstriNg( cOncat("BaK2    ", [__m_4], rTrim(coNcAt (replACE ([Av5Wtbz], regeXextRACt( [_1I → g], "H NVB84_"), rEGexextract ( [__8], " _ 2" )  ) , SUbStRiNG("qb0  ", (power( LeNgTh ( rtrim ( "YyCe_2" )) * 0e+77, 1 ) ), 1 + 0e-54 / 374719e-64) , cOncaT( "    F9 _O", "_a5_", " 5 _U_ ", " bE", rEPlACe (BXj3O, " ", [Z → X9]) ) )  )  ), (1), log ( 1E-26 )  )`,
+        "expression",
+        true,
+      );
+      expect(compiled).toEqual(oracle);
+    });
+
+    it(`Seed 57808:  (( Abs (  (exP( cEil(  - 1e+48) )) )  * -1e31 ) * ( poWeR( (( - 0e+67) *lengTh ( "8" )  ) ,  ( -1 ) *lengTh( "Q  P2c n" ) / powEr(1, N) ) )  )`, () => {
+      const { oracle, compiled } = compare(
+        `(( Abs (  (exP( cEil(  - 1e+48) )) )  * -1e31 ) * ( poWeR( (( - 0e+67) *lengTh ( "8" )  ) ,  ( -1 ) *lengTh( "Q  P2c n" ) / powEr(1, N) ) )  )`,
+        "expression",
+        true,
+      );
+      expect(compiled).toEqual(oracle);
+    });
+
+    // Checks that `x - (y - z)` doesn't get merged into `x - y -z`
+    it(`seed 10144: eNDsWith( "NTP", replacE( [V2FFf → r_8ZFu], coalescE(repLACe([cf → l], sUbStriNg ( Replace( [A], "L ", "b"), coAlEsCE(953925E-38, 307355.510173e+32 ), pOwEr (1e+15, 0 )) , caSe ( IsEMpTy( [_ → _3H_6b]) , cOncat ("n_F e_B n" ) , isEmptY([E → _3R6p6_]), conCat(" D 2h", " 4 9u ", "A_9_M_9_", " q _")) ) , RegExeXtRact ([_PI9], "K43s 6") ) , sUBstriNg (CaSE (intervAl( [_OU9c], - 632269.595767E-79, CoalESce ("u__0_71", "c ")), CoalesCe( suBstriNG ( "XPHC0 li_", 500924.700063e-10, 341369) )), - 1E+47 - (424024.827478-1 ), - 1) ) )`, () => {
+      const { oracle, compiled } = compare(
+        `(( Abs (  (exP( cEil(  - 1e+48) )) )  * -1e31 ) * ( poWeR( (( - 0e+67) *lengTh ( "8" )  ) ,  ( -1 ) *lengTh( "Q  P2c n" ) / powEr(1, N) ) )  )`,
+        "expression",
+        true,
+      );
+      expect(compiled).toEqual(oracle);
+    });
+
+    it(`seed 59884: NOT  power(pOWeR (coalesce (  -884438.462436E53, lENgTh([p]),  - 892982E-51 ) , [X] ), floOr (1 ) ) +[JD_ → C]>=sqrT(- 82204.544294)  -poweR(coAlEsCe ( 447024.889000E+0, LeNGtH ( rEgexExtRaCt ([TU → Ob48__], "xKk SZfp" ) ), [_n] ), -1E-8) /coAlescE( 547860e98 ) - poWEr( Length ( conCat (Case (IsEMPtY ([i67y] ), "X  ", iSNulL ([m__ErM0 → __2g6] ) , rEgExextract ([MDPqO3], "n" )), CoAlesce( suBStrinG("U t_O", 881507.874667e69, 997902e+63)  )  ) ) ,  ( CaSE (beTween ( [_0__2], conCAt ( " Ip95S_", " gD0 86 ", "K5", "v", "_1O_fK_") , coAlesce(" HH ", " 5lz_ m", "b_9_ _")  ), [A__yz → l_x1PCr], LenGtH (rEPlace ( [F_L → h], "4", " 7 __e___" ) ) ) ))`, () => {
+      const { oracle, compiled } = compare(
+        `NOT  power(pOWeR (coalesce (  -884438.462436E53, lENgTh([p]),  - 892982E-51 ) , [X] ), floOr (1 ) ) +[JD_ → C]>=sqrT(- 82204.544294)  -poweR(coAlEsCe ( 447024.889000E+0, LeNGtH ( rEgexExtRaCt ([TU → Ob48__], "xKk SZfp" ) ), [_n] ), -1E-8) /coAlescE( 547860e98 ) - poWEr( Length ( conCat (Case (IsEMPtY ([i67y] ), "X  ", iSNulL ([m__ErM0 → __2g6] ) , rEgExextract ([MDPqO3], "n" )), CoAlesce( suBStrinG("U t_O", 881507.874667e69, 997902e+63)  )  ) ) ,  ( CaSE (beTween ( [_0__2], conCAt ( " Ip95S_", " gD0 86 ", "K5", "v", "_1O_fK_") , coAlesce(" HH ", " 5lz_ m", "b_9_ _")  ), [A__yz → l_x1PCr], LenGtH (rEPlace ( [F_L → h], "4", " 7 __e___" ) ) ) ))`,
+        "expression",
+        true,
+      );
+      expect(compiled).toEqual(oracle);
+    });
+
+    it(`Merging subtraction`, () => {
+      const { oracle, compiled } = compare(`1 - (0 - -10)`, "expression", true);
+      expect(compiled).toEqual(oracle);
     });
   });
 });
