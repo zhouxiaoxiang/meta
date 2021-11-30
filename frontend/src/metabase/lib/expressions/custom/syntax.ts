@@ -1,4 +1,4 @@
-import { assert, NodeType, Node } from "./types";
+import { assert, NodeType, Node, Type } from "./types";
 
 /*
  * This file specifies most of the syntax for the Metabase handwritten custom
@@ -70,6 +70,8 @@ setAttributes([
 
     precedence: -Infinity,
     rightAssociative: false,
+    resolvesAs: null,
+    expectedTypes: null,
   },
 
   [
@@ -97,6 +99,10 @@ setAttributes([
   ],
 ]);
 
+/*
+ * setExpectedTypes is a shortcut for type inference later on
+ */
+
 setAttributes(
   // Prefix Operators
   [operand(0, 1), [CALL, NEGATIVE, LOGICAL_NOT]],
@@ -116,6 +122,22 @@ setAttributes(
 
   // Skip whitespace
   [{ skip: true }, [WS]],
+
+  // Known types
+  [{ resolvesAs: "string" }, [STRING]],
+  [{ resolvesAs: "number" }, [ADD, NUMBER, NEGATIVE, MULDIV_OP, SUB]],
+  [
+    { resolvesAs: "boolean" },
+    [LOGICAL_AND, EQUALITY, LOGICAL_NOT, LOGICAL_OR, COMPARISON],
+  ],
+
+  // Expected types
+  [
+    { expectedTypes: ["number"] },
+    [ADD, NUMBER, NEGATIVE, MULDIV_OP, SUB, COMPARISON],
+  ],
+  [{ expectedTypes: ["boolean"] }, [LOGICAL_NOT, LOGICAL_AND, LOGICAL_OR]],
+  [{ expectedTypes: ["boolean", "number", "string"] }, [EQUALITY]],
 );
 
 /*

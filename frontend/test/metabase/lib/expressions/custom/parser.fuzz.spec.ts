@@ -1,6 +1,6 @@
 import { lexify, parse } from "metabase/lib/expressions/custom/parser";
 import { Node } from "metabase/lib/expressions/custom/types";
-import { generateExpression } from "./generator";
+import { generateExpression } from "metabase/lib/expressions/generator";
 
 if (process.env.MB_FUZZ) {
   describe("FUZZING custom parser", () => {

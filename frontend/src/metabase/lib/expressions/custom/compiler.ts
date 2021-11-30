@@ -1,3 +1,4 @@
+import { CompilerPass } from "./compiler_passes";
 import {
   /* ALL_ASTYPES */ ADD,
   FIELD,
@@ -17,42 +18,55 @@ import {
   ROOT,
   ARG_LIST,
 } from "./syntax";
-import { assert, NodeType, Token, Node, CompileError } from "./types";
+import { assert, NodeType, Token, Node, CompileError, Type } from "./types";
 
-type Expr = number | string | [string, ...Expr[]];
+export type Expr = number | string | [string, ...Expr[]];
 
-export function compile(node: Node): Expr {
+export interface Options {
+  resolve: (kind: any, name: string) => Expr;
+  getMBQLName(expressionName: string): string;
+  passes?: CompilerPass[];
+}
+
+type CompileFn = (node: Node, opts: Options) => Expr;
+
+export function compile(node: Node, opts: Options): Expr {
   if (node.Type !== ROOT) {
     throw new CompileError("Must be root node", { node });
   }
-  const func = compileUnaryOp(node);
-  return func(node.children[0]);
+  const func = compileUnaryOp(node, opts);
+  let expr = func(node.children[0], opts);
+  const { passes = [] } = opts;
+  for (const pass of passes) {
+    expr = pass(expr);
+  }
+  return expr;
 }
 
 // ----------------------------------------------------------------
 
-function compileField(node: Node): Expr {
+function compileField(node: Node, opts: Options): Expr {
   assert(node.Type === FIELD, "Invalid Node Type");
   assert(node.token?.text, "Empty field name");
   // Slice off the leading and trailing brackets
   const name = node.token.text.slice(1, node.token.text.length - 1);
-  return ["dimension", name];
+  return opts.resolve(undefined, name);
 }
 
-function compileIdentifier(node: Node): Expr {
+function compileIdentifier(node: Node, opts: Options): Expr {
   assert(node.Type === IDENTIFIER, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const name = node.token.text;
-  return ["dimension", name];
+  return opts.resolve(undefined, name);
 }
 
-function compileGroup(node: Node): Expr {
+function compileGroup(node: Node, opts: Options): Expr {
   assert(node.Type === GROUP, "Invalid Node Type");
-  const func = compileUnaryOp(node);
-  return func(node.children[0]);
+  const func = compileUnaryOp(node, opts);
+  return func(node.children[0], opts);
 }
 
-function compileString(node: Node): Expr {
+function compileString(node: Node, opts: Options): Expr {
   assert(node.Type === STRING, "Invalid Node Type");
   assert(typeof node.token?.text === "string", "No token text");
   // Slice off the leading and trailing quotes
@@ -61,69 +75,71 @@ function compileString(node: Node): Expr {
 
 // ----------------------------------------------------------------
 
-function compileLogicalNot(node: Node): Expr {
+function compileLogicalNot(node: Node, opts: Options): Expr {
   assert(node.Type === LOGICAL_NOT, "Invalid Node Type");
-  const func = compileUnaryOp(node);
+  const func = compileUnaryOp(node, opts);
   assert(node.token?.text, "Empty token text");
   const child = node.children[0];
-  return ["not", func(child)];
+  return ["not", func(child, opts)];
 }
 
-function compileLogicalAnd(node: Node): Expr {
+function compileLogicalAnd(node: Node, opts: Options): Expr {
   assert(node.Type === LOGICAL_AND, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
-  const [left, right] = compileInlineInfixOp(node);
+  const [left, right] = compileInlineInfixOp(node, opts);
   return [node.token?.text.toLowerCase(), ...left, ...right];
 }
 
-function compileLogicalOr(node: Node): Expr {
+function compileLogicalOr(node: Node, opts: Options): Expr {
   assert(node.Type === LOGICAL_OR, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
-  const [left, right] = compileInlineInfixOp(node);
+  const [left, right] = compileInlineInfixOp(node, opts);
   return [node.token?.text.toLowerCase(), ...left, ...right];
 }
 
-function compileComparisonOp(node: Node): Expr {
+function compileComparisonOp(node: Node, opts: Options): Expr {
   assert(node.Type === COMPARISON, "Invalid Node Type");
   const text = node.token?.text;
   assert(text, "Empty token text");
-  const [left, right] = compileInlineInfixOp(node);
+  const [left, right] = compileInlineInfixOp(node, opts);
   return [text, ...left, ...right];
 }
 
-function compileEqualityOp(node: Node): Expr {
+function compileEqualityOp(node: Node, opts: Options): Expr {
   assert(node.Type === EQUALITY, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
-  const [left, right] = compileInlineInfixOp(node);
+  const [left, right] = compileInlineInfixOp(node, opts);
   return [node.token?.text, ...left, ...right];
 }
 
 // ----------------------------------------------------------------
 
-function compileFunctionCall(node: Node): Expr {
+function compileFunctionCall(node: Node, opts: Options): Expr {
   assert(node.Type === CALL, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   assert(
     node.children[0].Type === ARG_LIST,
     "First argument must be an arglist",
   );
-  return [node.token?.text, ...compileArgList(node.children[0])];
+  const text = node.token?.text;
+  const fn = opts.getMBQLName(text.trim().toLowerCase());
+  return [fn ? fn : text, ...compileArgList(node.children[0], opts)];
 }
 
-function compileArgList(node: Node): Expr[] {
+function compileArgList(node: Node, opts: Options): Expr[] {
   assert(node.Type === ARG_LIST, "Invalid Node Type");
   return node.children.map(child => {
     const func = COMPILE.get(child.Type);
     if (!func) {
       throw new CompileError("Invalid node type", { node: child });
     }
-    return func(child);
+    return func(child, opts);
   });
 }
 
 // ----------------------------------------------------------------
 
-function compileNumber(node: Node): Expr {
+function compileNumber(node: Node, opts: Options): Expr {
   assert(node.Type === NUMBER, "Invalid Node Type");
   assert(typeof node.token?.text === "string", "No token text");
   try {
@@ -133,41 +149,42 @@ function compileNumber(node: Node): Expr {
   }
 }
 
-function compileNegative(node: Node): Expr {
+function compileNegative(node: Node, opts: Options): Expr {
   assert(node.Type === NEGATIVE, "Invalid Node Type");
-  const func = compileUnaryOp(node);
+  const func = compileUnaryOp(node, opts);
   assert(node.token?.text, "Empty token text");
   const child = node.children[0];
   if (child.Type === NUMBER) {
-    return -func(child);
+    return -func(child, opts);
   }
-  return ["-", func(child)];
+  return ["-", func(child, opts)];
 }
 
-function compileAdditionOp(node: Node): Expr {
+function compileAdditionOp(node: Node, opts: Options): Expr {
   assert(node.Type === ADD, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
-  const [left, right] = compileInlineInfixOp(node);
+  const [left, right] = compileInlineInfixOp(node, opts);
   return [node.token?.text, ...left, ...right];
 }
 
-function compileMulDivOp(node: Node): Expr {
+function compileMulDivOp(node: Node, opts: Options): Expr {
   assert(node.Type === MULDIV_OP, "Invalid Node Type");
-  assert(node.token?.text, "Empty token text");
-  const [left, right] = compileInlineInfixOp(node);
-  return [node.token?.text, ...left, ...right];
+  const text = node.token?.text;
+  assert(text, "Empty token text");
+  const [left, right] = compileInlineInfixOp(node, opts);
+  return [text, ...left, ...right];
 }
 
-function compileSubtractionOp(node: Node): Expr {
+function compileSubtractionOp(node: Node, opts: Options): Expr {
   assert(node.Type === SUB, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
-  const [left, right] = compileInlineInfixOp(node);
+  const [left, right] = compileInlineInfixOp(node, opts);
   return [node.token?.text, ...left, ...right];
 }
 
 // ----------------------------------------------------------------
 
-function compileUnaryOp(node: Node) {
+function compileUnaryOp(node: Node, opts: Options) {
   if (node.children.length > 1) {
     throw new CompileError("Unexpected expression", { node: node.children[1] });
   } else if (node.children.length === 0) {
@@ -180,7 +197,7 @@ function compileUnaryOp(node: Node) {
   return func;
 }
 
-function compileInfixOp(node: Node) {
+function compileInfixOp(node: Node, opts: Options) {
   if (node.children.length > 2) {
     throw new CompileError("Unexpected expression", { node: node.children[2] });
   } else if (node.children.length === 0) {
@@ -197,7 +214,7 @@ function compileInfixOp(node: Node) {
   return [leftFn, rightFn];
 }
 
-function compileInlineInfixOp(node: Node) {
+function compileInlineInfixOp(node: Node, opts: Options) {
   if (node.children.length > 2) {
     throw new CompileError("Unexpected expression", { node: node.children[2] });
   } else if (node.children.length === 0) {
@@ -213,35 +230,22 @@ function compileInlineInfixOp(node: Node) {
   }
 
   const text = node.token?.text;
-  let left: any = leftFn(node.children[0]);
-  if (
-    node.Type === node.children[0].Type &&
-    Array.isArray(left) &&
-    left[0].toUpperCase() === text?.toUpperCase()
-  ) {
+  let left: any = leftFn(node.children[0], opts);
+  if (Array.isArray(left) && left[0].toUpperCase() === text?.toUpperCase()) {
     const [op, ...args] = left;
     left = args;
   } else {
     left = [left];
   }
 
-  let right: any = rightFn(node.children[1]);
-  if (
-    node.Type === node.children[1].Type &&
-    Array.isArray(right) &&
-    right[0].toUpperCase() === text?.toUpperCase()
-  ) {
-    const [op, ...args] = right;
-    right = args;
-  } else {
-    right = [right];
-  }
+  let right: any = rightFn(node.children[1], opts);
+  right = [right];
   return [left, right];
 }
 
 // ----------------------------------------------------------------
 
-const COMPILE = new Map([
+const COMPILE = new Map<NodeType, CompileFn>([
   [FIELD, compileField],
   [ADD, compileAdditionOp],
   [LOGICAL_AND, compileLogicalAnd],

@@ -1,3 +1,13 @@
+export const VOID = Symbol("Unknown Type");
+
+export type VariableKind =
+  | "dimension"
+  | "segment"
+  | "aggregation"
+  | "expression";
+export type Type = VariableKind | "string" | "number" | "boolean";
+export type VariableId = number;
+
 export interface Token {
   Type: NodeType;
   text: string;
@@ -8,14 +18,12 @@ export interface Token {
 export interface Node {
   // For debugging
   _TYPE?: string;
-  alwaysEscapes: boolean;
   Type: NodeType;
   children: Node[];
   complete: boolean;
-  dropValue: boolean;
-  meta: any | null;
+  // TODO: Rename this or NodeType member above
+  resolvedType: Type | VariableId;
   parent: Node | null;
-  runType: string;
   token: Token | null;
   isRoot?: boolean;
 }
@@ -41,17 +49,28 @@ export interface NodeType {
   // Check parent constraints
   checkParentConstraints: (node: Node) => boolean;
 
-  // For open expressions, this is the AST type of tokens that close the expression (e.g. GROUP_CLOSE for GROUP).
+  // For open expressions, this is the AST type of tokens that close the
+  // expression  (e.g. GROUP_CLOSE for GROUP).
   requiresTerminator: NodeType | null;
-  // For open expressions, this is a list of AST types that should be considered a "separator" (e.g. COMMA for ARG_LIST).
+  // For open expressions, this is a list of AST types that should be considered
+  // a  "separator" (e.g. COMMA for ARG_LIST).
   ignoresTerminator: NodeType[];
-  // Does this token type terminate the current expression (unless exempted by .ignoresTerminator)?
+  // Does this token type terminate the current expression (unless exempted by
+  // .ignoresTerminator)?
   isTerminator: boolean;
 
   // The precedence to use for operator parsing conflicts. Higher wins.
   precedence: number;
-  // This sets the associativity rule for operators with equal precedence - see the precedence tiers docs below.
+  // This sets the associativity rule for operators with equal precedence - see
+  // the precedence tiers docs below.
   rightAssociative: boolean;
+
+  // The type this node resolves to, if it can be deduced early on. If null, the
+  // parser assigns an integer value for substitutions instead
+  resolvesAs: Type | null;
+
+  // The expectedType of the child nodes
+  expectedTypes: Type[] | null;
 }
 
 type HookFn = (token: Token, node: Node) => void;
