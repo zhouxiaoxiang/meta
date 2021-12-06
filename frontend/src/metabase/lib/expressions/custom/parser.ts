@@ -151,13 +151,13 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
   const { maxIterations = 1000000, hooks = {}, throwOnError = false } = opts;
   const errors: CompileError[] = [];
   let counter = 0;
-  let root = createASTNode(null, null, ROOT, counter);
+  const root = createASTNode(null, null, ROOT, counter);
   root.isRoot = true;
   
   let node = root;
   hooks.onCreateNode?.(tokens[0], node);
   for (let index = 0; index < tokens.length && counter < maxIterations; index++) {
-    let token = tokens[index];
+    const token = tokens[index];
     hooks.onIteration?.(token, node);
 
     if (token.Type.skip) {
@@ -218,7 +218,7 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
         hooks.onUnexpectedTerminator?.(token, node, err);
         if (throwOnError) { throw err; }
         errors.push(err);
-        if (token.Type === ASTypes.END_OF_INPUT) {
+        if (token.Type === END_OF_INPUT) {
           if (!node.complete) {
             node.complete = true;
             hooks.onCompleteNode?.(token, node);
@@ -249,11 +249,11 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
     throw new Error("Reached max number of iterations");
   }
 
-  let CTCViolation = ROOT.checkChildConstraints(root);
-  if (CTCViolation !== null) {
+  const childViolation = ROOT.checkChildConstraints(root);
+  if (childViolation !== null) {
     const err = new CompileError(
       "Unintelligible Syntax (Child Type Constraint Violation)",
-      { node: root, ...CTCViolation },
+      { node: root, ...childViolation },
     );
     hooks.onChildConstraintViolation?.(node, err);
     if (throwOnError) { throw err; }
@@ -281,13 +281,13 @@ function createASTNode(
 
 function place(node: Node, errors: CompileError[], opts: ParserOptions) {
   const {hooks = {}, throwOnError = false} = opts;
-  let { Type, parent } = node;
+  const { Type, parent } = node;
 
-  let CTCViolation = Type.checkChildConstraints(node);
-  if (CTCViolation !== null) {
+  const childViolation = Type.checkChildConstraints(node);
+  if (childViolation !== null) {
     const err = new CompileError(
       "Child Constraint Violation",
-      { node, ...CTCViolation },
+      { node, ...childViolation },
     );
     hooks.onChildConstraintViolation?.(node, err);
     if (throwOnError) { throw err; }
@@ -318,18 +318,11 @@ function shouldReparent(leftType: NodeType, rightType: NodeType) {
   }
 }
 
-export function getASType(Type: NodeType, parentType: NodeType) {
-  if (Type === GROUP) {
+export function getASType(type: NodeType, parentType: NodeType) {
+  if (type === GROUP) {
     if (parentType === CALL) {
       return ARG_LIST;
     }
   }
-  return Type;
+  return type;
 }
-
-
-import * as ASTypes from "./syntax";
-for (let [key, value] of Object.entries(ASTypes)) {
-  value._name = key;
-}
-
