@@ -455,6 +455,12 @@ export default function StaticVizPage() {
                 },
                 y: {
                   type: "linear",
+                  format: {
+                    number_style: "currency",
+                    currency: "USD",
+                    currency_style: "symbol",
+                    decimals: 2,
+                  },
                 },
                 labels: {
                   right: "Sum",
@@ -515,6 +521,32 @@ export default function StaticVizPage() {
                   ],
                 },
               ],
+            }}
+          />
+        </Box>
+        <Box py={3}>
+          <Subhead>Funnel</Subhead>
+          <StaticChart
+            type="funnel"
+            options={{
+              data: [
+                ["Visitors", 1000],
+                ["Started sign up", 300],
+                ["Finished sign up", 200],
+                ["Opened app", 195],
+                ["Finished onboarding", 150],
+                ["Activated", 25],
+              ],
+              settings: {
+                step: {
+                  name: "Step",
+                },
+                measure: {
+                  format: {
+                    suffix: "k",
+                  },
+                },
+              },
             }}
           />
         </Box>

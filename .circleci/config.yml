@@ -736,6 +736,9 @@ jobs:
       extra-env:
         type: string
         default: ""
+      test-args:
+        type: string
+        default: ""
     executor: << parameters.e >>
     steps:
       - attach-workspace
@@ -749,7 +752,9 @@ jobs:
                 name: Test << parameters.driver >> driver << parameters.description >>
                 environment:
                   DRIVERS: << parameters.driver >>
-                command: << parameters.extra-env >> clojure -X:dev:ci:ee:ee-dev:drivers:drivers-dev:test
+                command: >
+                  << parameters.extra-env >> clojure -X:dev:ci:ee:ee-dev:drivers:drivers-dev:test
+                  << parameters.test-args >>
                 no_output_timeout: << parameters.timeout >>
             - store_test_results:
                 path: /home/circleci/metabase/metabase/target/junit
@@ -1099,6 +1104,15 @@ workflows:
           driver: bigquery-cloud-sdk
 
       - test-driver:
+          name: be-google-related-drivers-classpath-test
+          requires:
+            - be-tests-ee
+          driver: googleanalytics,bigquery,bigquery-cloud-sdk
+          test-args: >-
+            :only "[metabase.query-processor-test.expressions-test metabase.driver.google-test
+                    metabase.driver.googleanalytics-test]"
+
+      - test-driver:
           name: be-tests-druid-ee
           requires:
             - be-tests-ee
@@ -1209,6 +1223,10 @@ workflows:
             - be-tests-ee
           e: postgres-latest
           driver: postgres
+          extra-env: >-
+            MB_POSTGRES_SSL_TEST_SSL=true
+            MB_POSTGRES_SSL_TEST_SSL_MODE=verify-full
+            MB_POSTGRES_SSL_TEST_SSL_ROOT_CERT_PATH=/home/circleci/metabase/metabase/test-resources/certificates/us-east-2-bundle.pem
 
       - test-driver:
           name: be-tests-presto-ee
