@@ -37,7 +37,7 @@ export function compile(node: Node, opts: Options): Expr {
   if (node.children.length > 1) {
     throw new CompileError("Unexpected expression", { node: node.children[1] });
   }
-  const func = compileUnaryOp(node, opts);
+  const func = compileUnaryOp(node);
   let expr = func(node.children[0], opts);
   const { passes = [] } = opts;
   for (const pass of passes) {
@@ -65,11 +65,11 @@ function compileIdentifier(node: Node, opts: Options): Expr {
 
 function compileGroup(node: Node, opts: Options): Expr {
   assert(node.Type === GROUP, "Invalid Node Type");
-  const func = compileUnaryOp(node, opts);
+  const func = compileUnaryOp(node);
   return func(node.children[0], opts);
 }
 
-function compileString(node: Node, opts: Options): Expr {
+function compileString(node: Node): Expr {
   assert(node.Type === STRING, "Invalid Node Type");
   assert(typeof node.token?.text === "string", "No token text");
   // Slice off the leading and trailing quotes
@@ -80,7 +80,7 @@ function compileString(node: Node, opts: Options): Expr {
 
 function compileLogicalNot(node: Node, opts: Options): Expr {
   assert(node.Type === LOGICAL_NOT, "Invalid Node Type");
-  const func = compileUnaryOp(node, opts);
+  const func = compileUnaryOp(node);
   assert(node.token?.text, "Empty token text");
   const child = node.children[0];
   return withNode(["not", func(child, opts)], node);
@@ -146,7 +146,7 @@ function compileArgList(node: Node, opts: Options): Expr[] {
 
 // ----------------------------------------------------------------
 
-function compileNumber(node: Node, opts: Options): Expr {
+function compileNumber(node: Node): Expr {
   assert(node.Type === NUMBER, "Invalid Node Type");
   assert(typeof node.token?.text === "string", "No token text");
   try {
@@ -158,7 +158,7 @@ function compileNumber(node: Node, opts: Options): Expr {
 
 function compileNegative(node: Node, opts: Options): Expr {
   assert(node.Type === NEGATIVE, "Invalid Node Type");
-  const func = compileUnaryOp(node, opts);
+  const func = compileUnaryOp(node);
   assert(node.token?.text, "Empty token text");
   const child = node.children[0];
   if (child.Type === NUMBER) {
@@ -191,7 +191,7 @@ function compileSubtractionOp(node: Node, opts: Options): Expr {
 
 // ----------------------------------------------------------------
 
-function compileUnaryOp(node: Node, _: Options) {
+function compileUnaryOp(node: Node) {
   if (node.children.length > 1) {
     throw new CompileError("Unexpected expression", { node: node.children[1] });
   } else if (node.children.length === 0) {
@@ -222,7 +222,7 @@ function compileInfixOp(node: Node, opts: Options) {
   const text = node.token?.text;
   let left: any = leftFn(node.children[0], opts);
   if (Array.isArray(left) && left[0].toUpperCase() === text?.toUpperCase()) {
-    const [op, ...args] = left;
+    const [_, ...args] = left;
     left = args;
   } else {
     left = [left];

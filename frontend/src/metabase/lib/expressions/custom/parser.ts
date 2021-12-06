@@ -188,7 +188,6 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
       );
       
       if (shouldReparent(node.parent.Type, token.Type)) {
-        const parent = node.parent;
         node.parent = createASTNode(
           token,
           node.parent,
