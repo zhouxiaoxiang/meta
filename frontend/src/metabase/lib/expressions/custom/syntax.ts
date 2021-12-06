@@ -1,4 +1,4 @@
-import { assert, NodeType, Node, Type } from "./types";
+import { assert, NodeType, Node } from "./types";
 
 /*
  * This file specifies most of the syntax for the Metabase handwritten custom
@@ -47,8 +47,8 @@ function operand(leftOperands: number, rightOperands: number) {
 }
 
 function setAttributes(...syntaxRules: [Partial<NodeType>, NodeType[]][]) {
-  for (let [values, types] of syntaxRules) {
-    for (let type of types) {
+  for (const [values, types] of syntaxRules) {
+    for (const type of types) {
       Object.assign(type, values);
     }
   }
@@ -209,7 +209,7 @@ CALL.checkChildConstraints = CTCByPos([ARG_LIST]);
 
 function CTCForAll(...acceptableTypes: NodeType[]) {
   return (node: Node) => {
-    for (let child of node.children) {
+    for (const child of node.children) {
       if (!acceptableTypes.includes(child.Type)) {
         return { child };
       }
@@ -239,7 +239,7 @@ ROOT.checkChildConstraints = CTCForAll(
 function PTCByPos(...positions: [NodeType, number | null][]) {
   return (node: Node) => {
     const { parent } = node;
-    for (var [parentType, pos] of positions) {
+    for (const [parentType, pos] of positions) {
       if (!parent) {
         // This should only ever happen with ROOT nodes
         assert(
@@ -273,7 +273,7 @@ ARG_LIST.checkParentConstraints = PTCByPos([CALL, 0]);
   [LOGICAL_OR],
   [IDENTIFIER],
 ].forEach((tier, precedence, tiers) => {
-  for (let type of tier) {
+  for (const type of tier) {
     type.precedence = tiers.length - precedence;
   }
 });

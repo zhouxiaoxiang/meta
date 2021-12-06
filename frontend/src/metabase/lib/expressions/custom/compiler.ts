@@ -18,7 +18,7 @@ import {
   ROOT,
   ARG_LIST,
 } from "./syntax";
-import { assert, NodeType, Token, Node, CompileError, Type } from "./types";
+import { assert, NodeType, Node, CompileError } from "./types";
 
 export type Expr = number | string | ([string, ...Expr[]] & { node?: Node });
 
@@ -135,7 +135,7 @@ function compileFunctionCall(node: Node, opts: Options): Expr {
 function compileArgList(node: Node, opts: Options): Expr[] {
   assert(node.Type === ARG_LIST, "Invalid Node Type");
   return node.children.map(child => {
-    const func = COMPILE.get(child.Type);
+    const func = getCompileFunction(child);
     if (!func) {
       throw new CompileError("Invalid node type", { node: child });
     }
@@ -191,13 +191,13 @@ function compileSubtractionOp(node: Node, opts: Options): Expr {
 
 // ----------------------------------------------------------------
 
-function compileUnaryOp(node: Node, opts: Options) {
+function compileUnaryOp(node: Node, _: Options) {
   if (node.children.length > 1) {
     throw new CompileError("Unexpected expression", { node: node.children[1] });
   } else if (node.children.length === 0) {
     throw new CompileError("Expected expression", { node });
   }
-  const func = COMPILE.get(node.children[0].Type);
+  const func = getCompileFunction(node.children[0]);
   if (!func) {
     throw new CompileError("Invalid node type", { node: node.children[0] });
   }
@@ -210,11 +210,11 @@ function compileInfixOp(node: Node, opts: Options) {
   } else if (node.children.length === 0) {
     throw new CompileError("Expected expressions", { node });
   }
-  const leftFn = COMPILE.get(node.children[0].Type);
+  const leftFn = getCompileFunction(node.children[0]);
   if (!leftFn) {
     throw new CompileError("Invalid node type", { node: node.children[0] });
   }
-  const rightFn = COMPILE.get(node.children[1].Type);
+  const rightFn = getCompileFunction(node.children[1]);
   if (!rightFn) {
     throw new CompileError("Invalid node type", { node: node.children[1] });
   }
@@ -263,3 +263,11 @@ const COMPILE = new Map<NodeType, CompileFn>([
   [SUB, compileSubtractionOp],
   [IDENTIFIER, compileIdentifier],
 ]);
+
+function getCompileFunction(node: Node): (node: Node, opts: Options) => Expr {
+  const func = COMPILE.get(node.Type);
+  if (!func) {
+    throw new CompileError("Invalid node type", { node });
+  }
+  return func;
+}
