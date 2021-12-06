@@ -106,11 +106,6 @@ export function resolve(expression, type = "expression", fn = undefined) {
       throw new Error(t`Unknown function ${op}`);
     }
     const { displayName, args, multiple, hasOptions } = clause;
-    if (!isCompatible(type, clause.type)) {
-      throw new Error(
-        t`Expecting ${type} but found function ${displayName} returning ${clause.type}`,
-      );
-    }
     if (!multiple) {
       const expectedArgsLength = args.length;
       const maxArgCount = hasOptions
@@ -128,6 +123,11 @@ export function resolve(expression, type = "expression", fn = undefined) {
           ),
         );
       }
+    }
+    if (!isCompatible(type, clause.type)) {
+      throw new Error(
+        t`Expecting ${type} but found function ${displayName} returning ${clause.type}`,
+      );
     }
     const resolvedOperands = operands.map((operand, i) => {
       if (i >= args.length) {

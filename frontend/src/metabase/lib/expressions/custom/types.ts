@@ -101,7 +101,7 @@ export class CompileError extends Error {
   data: any;
 
   constructor(type: string, data: any) {
-    super(type + "\n");
+    super(type);
     this.type = type;
     this.data = data;
   }
