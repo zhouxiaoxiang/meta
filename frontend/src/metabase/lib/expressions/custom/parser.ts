@@ -211,7 +211,7 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
         hooks.onCompleteNode?.(token, node);
       } else if (node.Type.ignoresTerminator.indexOf(token.Type) === -1) {
         const err = new CompileError(
-          `Expected terminator for ${node.Type._name}, found token \`${token.text}\` at position ${token.pos}`,
+          `Expected expression`,
           { node, token },
         );
         hooks.onUnexpectedTerminator?.(token, node, err);

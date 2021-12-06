@@ -24,7 +24,7 @@ export type Expr = number | string | ([string, ...Expr[]] & { node?: Node });
 
 export interface Options {
   resolve: (kind: any, name: string) => Expr;
-  getMBQLName(expressionName: string): string;
+  getMBQLName(expressionName: string): string | undefined;
   passes?: CompilerPass[];
 }
 

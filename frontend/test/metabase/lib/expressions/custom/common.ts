@@ -14,13 +14,21 @@ import {
 
 type Type = "expression" | "boolean";
 
-export function compile(source: string, type: Type, throwOnError = true) {
+interface Opts {
+  throwOnError?: boolean;
+  resolverPass?: boolean;
+}
+
+export function compile(source: string, type: Type, opts: Opts = {}) {
+  const { throwOnError } = opts;
   return newCompile(
     parse(lexify(source), {
       throwOnError,
     }).root,
     {
-      passes: [...passes, resolverPass(type)],
+      passes: opts.resolverPass
+        ? [...passes, resolverPass("expression")]
+        : passes,
       getMBQLName,
       resolve: (kind, name) => ["dimension", name],
     },
@@ -55,20 +63,20 @@ export function oracle(source: string, type: Type) {
 export function compare(
   source: string,
   type: Type,
-  throwOnError = true,
+  opts: Opts = {},
 ): { oracle: any; compiled: any } {
   const _oracle = oracle(source, type);
-  const compiled = compile(source, type, throwOnError);
+  const compiled = compile(source, type, opts);
   return { oracle: _oracle, compiled };
 }
 
 export function compareSeed(
   seed: number,
   type: Type,
-  throwOnError = true,
+  opts: Opts = {},
 ): { oracle: any; compiled: any } {
   const { expression } = generateExpression(seed, type);
   const _oracle = oracle(expression, type);
-  const compiled = compile(expression, type, throwOnError);
+  const compiled = compile(expression, type, opts);
   return { oracle: _oracle, compiled };
 }
