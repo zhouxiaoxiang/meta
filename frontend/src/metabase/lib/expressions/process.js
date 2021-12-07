@@ -1,3 +1,5 @@
+import Dimension from "metabase-lib/lib/Dimension";
+
 import { parse, lexify } from "./custom/parser";
 import { DEFAULT_PASSES, resolverPass } from "./custom/compiler_passes";
 import { compile } from "./custom/compiler";
@@ -9,7 +11,7 @@ export function processSource(options) {
   // Lazily load all these parser-related stuff, because parser construction is expensive
   // https://github.com/metabase/metabase/issues/13472
 
-  const { source, startRule } = options;
+  const { source, startRule, query } = options;
 
   let expression;
   let compileError;
@@ -23,6 +25,9 @@ export function processSource(options) {
   });
 
   function resolveMBQLField(kind, name) {
+    if (!query) {
+      return [kind, name];
+    }
     if (kind === "metric") {
       const metric = parseMetric(name, options);
       if (!metric) {
@@ -41,7 +46,8 @@ export function processSource(options) {
       if (!dimension) {
         throw new Error(`Unknown Field: ${name}`);
       }
-      return dimension.mbql();
+      const [_, ...field] = dimension.mbql();
+      return ["dimension", ...field];
     }
   }
 
