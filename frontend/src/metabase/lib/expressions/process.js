@@ -1,11 +1,13 @@
+import { parse, lexify } from "./custom/parser";
+import { DEFAULT_PASSES, resolverPass } from "./custom/compiler_passes";
+import { compile } from "./custom/compiler";
+import { getMBQLName } from "./config";
+import { parseMetric, parseSegment, parseDimension } from "./index";
+
 // combine compile/suggest/syntax so we only need to parse once
 export function processSource(options) {
   // Lazily load all these parser-related stuff, because parser construction is expensive
   // https://github.com/metabase/metabase/issues/13472
-  const { parse, lexify } = require("./custom/parser");
-  const { DEFAULT_PASSES, resolverPass } = require("./custom/compiler_passes");
-  const compile = require("./custom/compiler").compile;
-  const getMBQLName = require("./config").getMBQLName;
 
   const { source, startRule } = options;
 
@@ -20,6 +22,29 @@ export function processSource(options) {
     ...options,
   });
 
+  function resolveMBQLField(kind, name) {
+    if (kind === "metric") {
+      const metric = parseMetric(name, options);
+      if (!metric) {
+        throw new Error(`Unknown Metric: ${name}`);
+      }
+      return ["metric", metric.id];
+    } else if (kind === "segment") {
+      const segment = parseSegment(name, options);
+      if (!segment) {
+        throw new Error(`Unknown Segment: ${name}`);
+      }
+      return ["segment", segment.id];
+    } else {
+      // fallback
+      const dimension = parseDimension(name, options);
+      if (!dimension) {
+        throw new Error(`Unknown Field: ${name}`);
+      }
+      return dimension.mbql();
+    }
+  }
+
   // COMPILE
   if (errors.length > 0) {
     compileError = errors;
@@ -28,7 +53,7 @@ export function processSource(options) {
       expression = compile(root, {
         passes: [...DEFAULT_PASSES, resolverPass(startRule)],
         getMBQLName,
-        resolve: (kind, name) => ["dimension", name],
+        resolve: resolveMBQLField,
       });
     } catch (e) {
       console.warn("compile error", e);
