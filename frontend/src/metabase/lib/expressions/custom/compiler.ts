@@ -23,7 +23,6 @@ import { assert, NodeType, Node, CompileError } from "./types";
 export type Expr = number | string | ([string, ...Expr[]] & { node?: Node });
 
 export interface Options {
-  resolve: (kind: any, name: string) => Expr;
   getMBQLName(expressionName: string): string | undefined;
   passes?: CompilerPass[];
 }
@@ -40,27 +39,29 @@ export function compile(node: Node, opts: Options): Expr {
   const func = compileUnaryOp(node);
   let expr = func(node.children[0], opts);
   const { passes = [] } = opts;
+  console.log("Original:", expr);
   for (const pass of passes) {
     expr = pass(expr);
+    console.log("After:", expr);
   }
   return expr;
 }
 
 // ----------------------------------------------------------------
 
-function compileField(node: Node, opts: Options): Expr {
+function compileField(node: Node): Expr {
   assert(node.Type === FIELD, "Invalid Node Type");
   assert(node.token?.text, "Empty field name");
   // Slice off the leading and trailing brackets
   const name = node.token.text.slice(1, node.token.text.length - 1);
-  return withNode(opts.resolve(undefined, name), node);
+  return withNode(["dimension", name], node);
 }
 
-function compileIdentifier(node: Node, opts: Options): Expr {
+function compileIdentifier(node: Node): Expr {
   assert(node.Type === IDENTIFIER, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const name = node.token.text;
-  return withNode(opts.resolve(undefined, name), node);
+  return withNode(["dimension", name], node);
 }
 
 function compileGroup(node: Node, opts: Options): Expr {
