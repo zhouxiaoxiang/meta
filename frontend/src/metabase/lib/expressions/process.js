@@ -1,5 +1,3 @@
-import Dimension from "metabase-lib/lib/Dimension";
-
 import { parse, lexify } from "./custom/parser";
 import { DEFAULT_PASSES, resolverPass } from "./custom/compiler_passes";
 import { compile } from "./custom/compiler";
@@ -46,8 +44,7 @@ export function processSource(options) {
       if (!dimension) {
         throw new Error(`Unknown Field: ${name}`);
       }
-      const [_, ...field] = dimension.mbql();
-      return ["dimension", ...field];
+      return dimension.mbql();
     }
   }
 
@@ -57,9 +54,8 @@ export function processSource(options) {
   } else {
     try {
       expression = compile(root, {
-        passes: [...DEFAULT_PASSES, resolverPass(startRule)],
+        passes: [...DEFAULT_PASSES, resolverPass(startRule, resolveMBQLField)],
         getMBQLName,
-        resolve: resolveMBQLField,
       });
     } catch (e) {
       console.warn("compile error", e);
