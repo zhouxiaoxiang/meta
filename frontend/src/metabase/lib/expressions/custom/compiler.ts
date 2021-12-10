@@ -30,19 +30,18 @@ export interface Options {
 type CompileFn = (node: Node, opts: Options) => Expr;
 
 export function compile(node: Node, opts: Options): Expr {
-  if (node.Type !== ROOT) {
-    throw new CompileError("Must be root node", { node });
-  }
+  assert(node.type !== ROOT, "Must be root node");
   if (node.children.length > 1) {
-    throw new CompileError("Unexpected expression", { node: node.children[1] });
+    throw new CompileError("Unexpected expression", {
+      node: node.children[1],
+      token: node.children[1].token,
+    });
   }
   const func = compileUnaryOp(node);
   let expr = func(node.children[0], opts);
   const { passes = [] } = opts;
-  console.log("Original:", expr);
   for (const pass of passes) {
     expr = pass(expr);
-    console.log("After:", expr);
   }
   return expr;
 }
@@ -50,7 +49,7 @@ export function compile(node: Node, opts: Options): Expr {
 // ----------------------------------------------------------------
 
 function compileField(node: Node): Expr {
-  assert(node.Type === FIELD, "Invalid Node Type");
+  assert(node.type === FIELD, "Invalid Node Type");
   assert(node.token?.text, "Empty field name");
   // Slice off the leading and trailing brackets
   const name = node.token.text.slice(1, node.token.text.length - 1);
@@ -58,29 +57,29 @@ function compileField(node: Node): Expr {
 }
 
 function compileIdentifier(node: Node): Expr {
-  assert(node.Type === IDENTIFIER, "Invalid Node Type");
+  assert(node.type === IDENTIFIER, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const name = node.token.text;
   return withNode(["dimension", name], node);
 }
 
 function compileGroup(node: Node, opts: Options): Expr {
-  assert(node.Type === GROUP, "Invalid Node Type");
+  assert(node.type === GROUP, "Invalid Node Type");
   const func = compileUnaryOp(node);
   return func(node.children[0], opts);
 }
 
 function compileString(node: Node): Expr {
-  assert(node.Type === STRING, "Invalid Node Type");
+  assert(node.type === STRING, "Invalid Node Type");
   assert(typeof node.token?.text === "string", "No token text");
   // Slice off the leading and trailing quotes
-  return withNode(node.token.text.slice(1, node.token.text.length - 1), node);
+  return node.token.text.slice(1, node.token.text.length - 1);
 }
 
 // ----------------------------------------------------------------
 
 function compileLogicalNot(node: Node, opts: Options): Expr {
-  assert(node.Type === LOGICAL_NOT, "Invalid Node Type");
+  assert(node.type === LOGICAL_NOT, "Invalid Node Type");
   const func = compileUnaryOp(node);
   assert(node.token?.text, "Empty token text");
   const child = node.children[0];
@@ -88,21 +87,21 @@ function compileLogicalNot(node: Node, opts: Options): Expr {
 }
 
 function compileLogicalAnd(node: Node, opts: Options): Expr {
-  assert(node.Type === LOGICAL_AND, "Invalid Node Type");
+  assert(node.type === LOGICAL_AND, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const [left, right] = compileInfixOp(node, opts);
   return withNode([node.token?.text.toLowerCase(), ...left, ...right], node);
 }
 
 function compileLogicalOr(node: Node, opts: Options): Expr {
-  assert(node.Type === LOGICAL_OR, "Invalid Node Type");
+  assert(node.type === LOGICAL_OR, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const [left, right] = compileInfixOp(node, opts);
   return withNode([node.token?.text.toLowerCase(), ...left, ...right], node);
 }
 
 function compileComparisonOp(node: Node, opts: Options): Expr {
-  assert(node.Type === COMPARISON, "Invalid Node Type");
+  assert(node.type === COMPARISON, "Invalid Node Type");
   const text = node.token?.text;
   assert(text, "Empty token text");
   const [left, right] = compileInfixOp(node, opts);
@@ -110,7 +109,7 @@ function compileComparisonOp(node: Node, opts: Options): Expr {
 }
 
 function compileEqualityOp(node: Node, opts: Options): Expr {
-  assert(node.Type === EQUALITY, "Invalid Node Type");
+  assert(node.type === EQUALITY, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const [left, right] = compileInfixOp(node, opts);
   return withNode([node.token?.text, ...left, ...right], node);
@@ -119,10 +118,10 @@ function compileEqualityOp(node: Node, opts: Options): Expr {
 // ----------------------------------------------------------------
 
 function compileFunctionCall(node: Node, opts: Options): Expr {
-  assert(node.Type === CALL, "Invalid Node Type");
+  assert(node.type === CALL, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   assert(
-    node.children[0].Type === ARG_LIST,
+    node.children[0].type === ARG_LIST,
     "First argument must be an arglist",
   );
   const text = node.token?.text;
@@ -134,7 +133,7 @@ function compileFunctionCall(node: Node, opts: Options): Expr {
 }
 
 function compileArgList(node: Node, opts: Options): Expr[] {
-  assert(node.Type === ARG_LIST, "Invalid Node Type");
+  assert(node.type === ARG_LIST, "Invalid Node Type");
   return node.children.map(child => {
     const func = getCompileFunction(child);
     if (!func) {
@@ -148,35 +147,38 @@ function compileArgList(node: Node, opts: Options): Expr[] {
 // ----------------------------------------------------------------
 
 function compileNumber(node: Node): Expr {
-  assert(node.Type === NUMBER, "Invalid Node Type");
+  assert(node.type === NUMBER, "Invalid Node Type");
   assert(typeof node.token?.text === "string", "No token text");
   try {
     return parseFloat(node.token.text);
   } catch (err) {
-    throw new CompileError("Invalid number format", { node });
+    throw new CompileError("Invalid number format", {
+      node,
+      token: node.token,
+    });
   }
 }
 
 function compileNegative(node: Node, opts: Options): Expr {
-  assert(node.Type === NEGATIVE, "Invalid Node Type");
+  assert(node.type === NEGATIVE, "Invalid Node Type");
   const func = compileUnaryOp(node);
   assert(node.token?.text, "Empty token text");
   const child = node.children[0];
-  if (child.Type === NUMBER) {
+  if (child.type === NUMBER) {
     return -func(child, opts);
   }
   return withNode(["-", func(child, opts)], node);
 }
 
 function compileAdditionOp(node: Node, opts: Options): Expr {
-  assert(node.Type === ADD, "Invalid Node Type");
+  assert(node.type === ADD, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const [left, right] = compileInfixOp(node, opts);
   return withNode([node.token?.text, ...left, ...right], node);
 }
 
 function compileMulDivOp(node: Node, opts: Options): Expr {
-  assert(node.Type === MULDIV_OP, "Invalid Node Type");
+  assert(node.type === MULDIV_OP, "Invalid Node Type");
   const text = node.token?.text;
   assert(text, "Empty token text");
   const [left, right] = compileInfixOp(node, opts);
@@ -184,7 +186,7 @@ function compileMulDivOp(node: Node, opts: Options): Expr {
 }
 
 function compileSubtractionOp(node: Node, opts: Options): Expr {
-  assert(node.Type === SUB, "Invalid Node Type");
+  assert(node.type === SUB, "Invalid Node Type");
   assert(node.token?.text, "Empty token text");
   const [left, right] = compileInfixOp(node, opts);
   return withNode([node.token?.text, ...left, ...right], node);
@@ -194,30 +196,45 @@ function compileSubtractionOp(node: Node, opts: Options): Expr {
 
 function compileUnaryOp(node: Node) {
   if (node.children.length > 1) {
-    throw new CompileError("Unexpected expression", { node: node.children[1] });
+    throw new CompileError("Unexpected expression", {
+      node: node.children[1],
+      token: node.children[1].token,
+    });
   } else if (node.children.length === 0) {
-    throw new CompileError("Expected expression", { node });
+    throw new CompileError("Expected expression", { node, token: node.token });
   }
   const func = getCompileFunction(node.children[0]);
   if (!func) {
-    throw new CompileError("Invalid node type", { node: node.children[0] });
+    throw new CompileError("Invalid node type", {
+      node: node.children[0],
+      token: node.children[0].token,
+    });
   }
   return func;
 }
 
 function compileInfixOp(node: Node, opts: Options) {
   if (node.children.length > 2) {
-    throw new CompileError("Unexpected expression", { node: node.children[2] });
+    throw new CompileError("Unexpected expression", {
+      node: node.children[2],
+      token: node.children[2].token,
+    });
   } else if (node.children.length === 0) {
-    throw new CompileError("Expected expressions", { node });
+    throw new CompileError("Expected expressions", { node, token: node.token });
   }
   const leftFn = getCompileFunction(node.children[0]);
   if (!leftFn) {
-    throw new CompileError("Invalid node type", { node: node.children[0] });
+    throw new CompileError("Invalid node type", {
+      node: node.children[0],
+      token: node.children[0].token,
+    });
   }
   const rightFn = getCompileFunction(node.children[1]);
   if (!rightFn) {
-    throw new CompileError("Invalid node type", { node: node.children[1] });
+    throw new CompileError("Invalid node type", {
+      node: node.children[1],
+      token: node.children[1].token,
+    });
   }
 
   const text = node.token?.text;
@@ -266,9 +283,9 @@ const COMPILE = new Map<NodeType, CompileFn>([
 ]);
 
 function getCompileFunction(node: Node): (node: Node, opts: Options) => Expr {
-  const func = COMPILE.get(node.Type);
+  const func = COMPILE.get(node.type);
   if (!func) {
-    throw new CompileError("Invalid node type", { node });
+    throw new CompileError("Invalid node type", { node, token: node.token });
   }
   return func;
 }

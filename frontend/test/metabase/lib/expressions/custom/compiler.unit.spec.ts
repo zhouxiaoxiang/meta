@@ -22,7 +22,6 @@ describe("metabase/lib/expressions/compiler", () => {
         passes: opts.resolverPass
           ? [...passes, resolverPass("expression")]
           : passes,
-        resolve: mockResolve,
       },
     );
   }

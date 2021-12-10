@@ -1,3 +1,5 @@
+import { isProduction } from "metabase/env";
+
 export const VOID = Symbol("Unknown Type");
 
 export type VariableKind =
@@ -9,19 +11,16 @@ export type Type = VariableKind | "string" | "number" | "boolean";
 export type VariableId = number;
 
 export interface Token {
-  Type: NodeType;
+  type: NodeType;
   text: string;
   length: number;
   pos: number;
 }
 
 export interface Node {
-  // For debugging
-  _TYPE?: string;
-  Type: NodeType;
+  type: NodeType;
   children: Node[];
   complete: boolean;
-  // TODO: Rename this or NodeType member above
   resolvedType: Type | VariableId;
   parent: Node | null;
   token: Token | null;
@@ -29,8 +28,7 @@ export interface Node {
 }
 
 export interface NodeType {
-  // For debugging, since node types are represented with objects
-  _name?: string;
+  name?: string;
 
   // Should the parser ignore this sort of token entirely (whitespace)
   skip: boolean;
@@ -46,8 +44,6 @@ export interface NodeType {
   checkChildConstraints: (
     node: Node,
   ) => { position?: number; child?: Node } | null;
-  // Check parent constraints
-  checkParentConstraints: (node: Node) => boolean;
 
   // For open expressions, this is the AST type of tokens that close the
   // expression  (e.g. GROUP_CLOSE for GROUP).
@@ -61,9 +57,6 @@ export interface NodeType {
 
   // The precedence to use for operator parsing conflicts. Higher wins.
   precedence: number;
-  // This sets the associativity rule for operators with equal precedence - see
-  // the precedence tiers docs below.
-  rightAssociative: boolean;
 
   // The type this node resolves to, if it can be deduced early on. If null, the
   // parser assigns an integer value for substitutions instead
@@ -87,7 +80,6 @@ export interface Hooks {
   onBadToken?: HookErrFn;
   onUnexpectedTerminator?: HookErrFn;
   onMissinChildren?: HookErrFn;
-  onParentConstraintViolation?: NodeErrFn;
   onChildConstraintViolation?: NodeErrFn;
 }
 
@@ -121,8 +113,9 @@ export function assert(
   msg: string,
   data?: any,
 ): asserts condition {
-  // TODO: Check for NODE_ENV so this can be compiled out completely in prod
-  if (!condition) {
-    throw new AssertionError(msg, data || {});
+  if (isProduction) {
+    if (!condition) {
+      throw new AssertionError(msg, data || {});
+    }
   }
 }

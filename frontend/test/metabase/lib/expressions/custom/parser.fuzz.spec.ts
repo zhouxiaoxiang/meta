@@ -5,14 +5,12 @@ import { generateExpression } from "metabase/lib/expressions/generator";
 if (process.env.MB_FUZZ) {
   describe("FUZZING custom parser", () => {
     interface AST {
-      _: string;
       token: string;
       children: AST[];
       pos: number;
     }
     function cleanupAST(node: Node): AST {
       return {
-        _: node._TYPE || node.Type._name || "UNKNOWN",
         token: node.token?.text || "UNKNOWN",
         children: node.children.map(cleanupAST),
         pos: node.token?.pos || -1,
@@ -20,16 +18,11 @@ if (process.env.MB_FUZZ) {
     }
 
     function parseSource(source: string, startRule: string) {
-      try {
-        return cleanupAST(
-          parse(lexify(source), {
-            throwOnError: false,
-          }).root,
-        );
-      } catch (err) {
-        // Helps get the error value in wallaby/quokka
-        throw err; //?
-      }
+      return cleanupAST(
+        parse(lexify(source), {
+          throwOnError: false,
+        }).root,
+      );
     }
 
     function parseExpression(expr: string) {

@@ -54,6 +54,32 @@ function setAttributes(...syntaxRules: [Partial<NodeType>, NodeType[]][]) {
   }
 }
 
+const ALL_NODES = [
+  ADD,
+  LOGICAL_AND,
+  ARG_LIST,
+  BAD_TOKEN,
+  CALL,
+  COMMA,
+  END_OF_INPUT,
+  EQUALITY,
+  NUMBER,
+  NEGATIVE,
+  LOGICAL_NOT,
+  LOGICAL_OR,
+  COMPARISON,
+  GROUP,
+  GROUP_CLOSE,
+  ROOT,
+  MULDIV_OP,
+  STRING,
+  SUB,
+  FIELD,
+  IDENTIFIER,
+  WS,
+];
+
+// Set default values for AST node attributes
 setAttributes([
   {
     skip: false,
@@ -62,46 +88,18 @@ setAttributes([
     rightOperands: 0,
     expectedChildCount: 0,
     checkChildConstraints: () => null,
-    checkParentConstraints: () => false,
 
     requiresTerminator: null,
     ignoresTerminator: [],
     isTerminator: false,
 
     precedence: -Infinity,
-    rightAssociative: false,
     resolvesAs: null,
     expectedTypes: null,
   },
 
-  [
-    ADD,
-    LOGICAL_AND,
-    ARG_LIST,
-    BAD_TOKEN,
-    CALL,
-    COMMA,
-    END_OF_INPUT,
-    EQUALITY,
-    NUMBER,
-    NEGATIVE,
-    LOGICAL_NOT,
-    LOGICAL_OR,
-    COMPARISON,
-    GROUP,
-    GROUP_CLOSE,
-    ROOT,
-    MULDIV_OP,
-    STRING,
-    SUB,
-    FIELD,
-    IDENTIFIER,
-  ],
+  ALL_NODES,
 ]);
-
-/*
- * setExpectedTypes is a shortcut for type inference later on
- */
 
 setAttributes(
   // Prefix Operators
@@ -142,9 +140,7 @@ setAttributes(
 
 /*
  * Child constraints govern how many children an AST node can have and where
- * thare placed relative to the node. Many constraints are enforced at the
- * parent level as well, but having both available improves the amount of
- * information available for error diagnostics.
+ * thare placed relative to the node.
  *
  * These are syntax rules, rather than semantic ones, since that is handled
  * later by a different pass. i.e. LOGICAL_AND and LOGICAL_OR rules don't check
@@ -154,12 +150,12 @@ setAttributes(
  * there is a constraint violation, null otherwise.
  */
 
-function CTCByPos(...positions: NodeType[][]) {
+function childConstraintByPosition(...positions: NodeType[][]) {
   return (node: Node) => {
     for (let i = 0; i < positions.length; i++) {
       if (!node.children[i]) {
         return { position: i, expected: positions };
-      } else if (!positions[i].includes(node.children[i].Type)) {
+      } else if (!positions[i].includes(node.children[i].type)) {
         return { position: i, child: node.children[i], expected: positions };
       }
     }
@@ -167,7 +163,7 @@ function CTCByPos(...positions: NodeType[][]) {
   };
 }
 
-LOGICAL_NOT.checkChildConstraints = CTCByPos([
+LOGICAL_NOT.checkChildConstraints = childConstraintByPosition([
   FIELD,
   IDENTIFIER,
   LOGICAL_NOT,
@@ -178,7 +174,6 @@ LOGICAL_NOT.checkChildConstraints = CTCByPos([
   CALL,
   GROUP,
 
-  // TODO: Remove and make this an error?
   NEGATIVE,
   NUMBER,
   STRING,
@@ -187,7 +182,7 @@ LOGICAL_NOT.checkChildConstraints = CTCByPos([
   MULDIV_OP,
 ]);
 
-NEGATIVE.checkChildConstraints = CTCByPos([
+NEGATIVE.checkChildConstraints = childConstraintByPosition([
   NUMBER,
   FIELD,
   IDENTIFIER,
@@ -198,19 +193,18 @@ NEGATIVE.checkChildConstraints = CTCByPos([
   SUB,
   MULDIV_OP,
 
-  // TODO: Remove and make this an error?
   LOGICAL_NOT,
   LOGICAL_OR,
   LOGICAL_AND,
   COMPARISON,
   STRING,
 ]);
-CALL.checkChildConstraints = CTCByPos([ARG_LIST]);
+CALL.checkChildConstraints = childConstraintByPosition([ARG_LIST]);
 
-function CTCForAll(...acceptableTypes: NodeType[]) {
+function anyChildConstraint(...acceptableTypes: NodeType[]) {
   return (node: Node) => {
     for (const child of node.children) {
-      if (!acceptableTypes.includes(child.Type)) {
+      if (!acceptableTypes.includes(child.type)) {
         return { child };
       }
     }
@@ -218,7 +212,7 @@ function CTCForAll(...acceptableTypes: NodeType[]) {
   };
 }
 
-ROOT.checkChildConstraints = CTCForAll(
+ROOT.checkChildConstraints = anyChildConstraint(
   FIELD,
   ADD,
   LOGICAL_AND,
@@ -236,31 +230,11 @@ ROOT.checkChildConstraints = CTCForAll(
   IDENTIFIER,
 );
 
-function PTCByPos(...positions: [NodeType, number | null][]) {
-  return (node: Node) => {
-    const { parent } = node;
-    for (const [parentType, pos] of positions) {
-      if (!parent) {
-        // This should only ever happen with ROOT nodes
-        assert(
-          node.Type !== ROOT,
-          "Parent constraint check on node without parent",
-        );
-        return true;
-      }
-      if (
-        parent.Type === parentType &&
-        (pos === null || parent.children.length === pos)
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-}
-
-ARG_LIST.checkParentConstraints = PTCByPos([CALL, 0]);
-
+/*
+ * This defines the operator precedence in order from highest priority to lowest
+ * priority. When a node with a higher precedence is encountered, the node with
+ * the lower precedence is "reparented" into the higher node.
+ */
 [
   [CALL],
   [FIELD],
@@ -277,3 +251,11 @@ ARG_LIST.checkParentConstraints = PTCByPos([CALL, 0]);
     type.precedence = tiers.length - precedence;
   }
 });
+
+// Give each node
+for (let [key, value] of Object.entries(ALL_NODES)) {
+  value.name = key;
+}
+
+SUB.name = "SUBTRACT";
+WS.name = "WHITESPACE";

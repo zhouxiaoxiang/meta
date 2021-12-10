@@ -30,7 +30,6 @@ export function compile(source: string, type: Type, opts: Opts = {}) {
         ? [...passes, resolverPass("expression")]
         : passes,
       getMBQLName,
-      resolve: (kind, name) => ["dimension", name],
     },
   );
 }

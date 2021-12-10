@@ -22,13 +22,7 @@ import {
   SUB,
   WS,
 } from "./syntax";
-import { assert, CompileError } from "./types";
-import type {
-  NodeType,
-  Token,
-  Node,
-  Hooks,
-} from "./types";
+import { assert, CompileError, NodeType, Token, Node, Hooks } from "./types";
 
 import { tokenize, TOKEN, OPERATOR } from "../tokenizer";
 
@@ -43,7 +37,6 @@ interface ParserResult {
   errors: CompileError[];
 }
 
-
 export function lexify(expression: string) {
   const lexs: Token[] = [];
 
@@ -51,8 +44,8 @@ export function lexify(expression: string) {
   if (errors && errors.length > 0) {
     errors.forEach(error => {
       const { pos } = error;
-      lexs.push({ Type: BAD_TOKEN, text: expression[pos], length: 1, pos });
-    })
+      lexs.push({ type: BAD_TOKEN, text: expression[pos], length: 1, pos });
+    });
   }
 
   let start = 0;
@@ -60,66 +53,66 @@ export function lexify(expression: string) {
     const token = tokens[i];
     if (start < token.start) {
       lexs.push({
-        Type: WS,
+        type: WS,
         text: expression.slice(start, token.start),
         length: token.start - start,
-        pos: start
+        pos: start,
       });
     }
     start = token.end;
     let text = expression.slice(token.start, token.end);
     const pos = token.start;
     let length = token.end - token.start;
-    let Type = BAD_TOKEN;
+    let type = BAD_TOKEN;
     switch (token.type) {
       case TOKEN.Number:
-        Type = NUMBER;
+        type = NUMBER;
         break;
       case TOKEN.String:
-        Type = STRING;
+        type = STRING;
         break;
       case TOKEN.Identifier:
-        Type = text[0] === "[" ? FIELD : IDENTIFIER;
+        type = text[0] === "[" ? FIELD : IDENTIFIER;
         break;
       case TOKEN.Operator:
         switch (token.op) {
           case OPERATOR.Comma:
-            Type = COMMA;
+            type = COMMA;
             break;
           case OPERATOR.OpenParenthesis:
-            Type = GROUP;
+            type = GROUP;
             break;
           case OPERATOR.CloseParenthesis:
-            Type = GROUP_CLOSE;
+            type = GROUP_CLOSE;
             break;
           case OPERATOR.Plus:
-            Type = ADD;
+            type = ADD;
             break;
           case OPERATOR.Minus:
-            Type = SUB;
+            type = SUB;
             break;
           case OPERATOR.Star:
           case OPERATOR.Slash:
-            Type = MULDIV_OP;
+            type = MULDIV_OP;
             break;
           case OPERATOR.Equal:
           case OPERATOR.NotEqual:
-            Type = EQUALITY;
+            type = EQUALITY;
             break;
           case OPERATOR.LessThan:
           case OPERATOR.GreaterThan:
           case OPERATOR.LessThanEqual:
           case OPERATOR.GreaterThanEqual:
-            Type = COMPARISON;
+            type = COMPARISON;
             break;
           case OPERATOR.Not:
-            Type = LOGICAL_NOT;
+            type = LOGICAL_NOT;
             break;
           case OPERATOR.And:
-            Type = LOGICAL_AND;
+            type = LOGICAL_AND;
             break;
           case OPERATOR.Or:
-            Type = LOGICAL_OR;
+            type = LOGICAL_OR;
             break;
           default:
             break;
@@ -127,25 +120,33 @@ export function lexify(expression: string) {
         break;
     }
 
-    if (Type === IDENTIFIER) {
+    if (type === IDENTIFIER) {
       const next = tokens[i + 1];
-      if (next && next.type === TOKEN.Operator && next.op === OPERATOR.OpenParenthesis) {
-        Type = CALL;
+      if (
+        next &&
+        next.type === TOKEN.Operator &&
+        next.op === OPERATOR.OpenParenthesis
+      ) {
+        type = CALL;
         length = next.start - token.start;
         text = expression.slice(token.start, next.start);
         start = next.start;
       }
     }
 
-    lexs.push({ Type, text, length, pos });
+    lexs.push({ type, text, length, pos });
   }
 
   // This simplifies the parser
-  lexs.push({ Type: END_OF_INPUT, text: "\n", length: 1, pos: expression.length });
+  lexs.push({
+    type: END_OF_INPUT,
+    text: "\n",
+    length: 1,
+    pos: expression.length,
+  });
 
   return lexs.sort((a, b) => a.pos - b.pos);
 }
-
 
 export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
   const { maxIterations = 1000000, hooks = {}, throwOnError = false } = opts;
@@ -153,24 +154,30 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
   let counter = 0;
   const root = createASTNode(null, null, ROOT, counter);
   root.isRoot = true;
-  
+
   let node = root;
   hooks.onCreateNode?.(tokens[0], node);
-  for (let index = 0; index < tokens.length && counter < maxIterations; index++) {
+  for (
+    let index = 0;
+    index < tokens.length && counter < maxIterations;
+    index++
+  ) {
     const token = tokens[index];
     hooks.onIteration?.(token, node);
 
-    if (token.Type.skip) {
+    if (token.type.skip) {
       hooks.onSkipToken?.(token, node);
       continue;
     }
-    if (token.Type === BAD_TOKEN) {
-      const err = new CompileError(
-        `Unknown token: "${token.text}" at position ${token.pos}`,
-        { token },
-      );
+    if (token.type === BAD_TOKEN) {
+      const err = new CompileError(`Unexpected token "${token.text}"`, {
+        node,
+        token,
+      });
       hooks.onBadToken?.(token, node, err);
-      if (throwOnError) { throw err; }
+      if (throwOnError) {
+        throw err;
+      }
       errors.push(err);
       // If we don't throw on error, we skip the bad token
       continue;
@@ -186,59 +193,84 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
         node.parent,
         "Marked a node complete without placing it with a parent",
       );
-      
-      if (shouldReparent(node.parent.Type, token.Type)) {
+
+      // This is the core of the precedence climbing logic. If a higher priority
+      // token is encountered, shouldReparent will return true and the new node
+      // we created for the token will "take" the current node
+      if (shouldReparent(node.parent.type, token.type)) {
         node.parent = createASTNode(
           token,
           node.parent,
-          getASType(token.Type, node.parent.Type),
+          getASType(token.type, node.parent.type),
           counter,
         );
         hooks.onReparentNode?.(token, node);
       } else {
+        // If we don't need to reparent, we decrement the token index. This is
+        // because we iterate several times for each node, first to create it
+        // and then to check if it is completed.
         index--;
       }
 
-      node = place(node, errors, opts); 
-      if (node.children.length === node.Type.expectedChildCount) {
+      // Place the node in its parent children and get the next "active" node
+      // which is node.parent
+      node = place(node, errors, opts);
+      if (node.children.length === node.type.expectedChildCount) {
         node.complete = true;
         hooks.onCompleteNode?.(token, node);
       }
-    } else if (token.Type.isTerminator) {
+    } else if (token.type.isTerminator) {
       hooks.onTerminatorToken?.(token, node);
-      if (node.Type.requiresTerminator === token.Type) {
+      // Terminator tokens like `]`, `)` or end of input will complete a node if
+      // they match the type's `requiresTerminator`
+      if (node.type.requiresTerminator === token.type) {
         node.complete = true;
         hooks.onCompleteNode?.(token, node);
-      } else if (node.Type.ignoresTerminator.indexOf(token.Type) === -1) {
-        const err = new CompileError(
-          `Expected expression`,
-          { node, token },
-        );
+      } else if (node.type.ignoresTerminator.indexOf(token.type) === -1) {
+        // If the current token isn't in the list of the AST type's ignored
+        // tokens and it's not the terminator the current node requires, we'll
+        // throw an error
+        const err = new CompileError(`Unexpected token`, { node, token });
         hooks.onUnexpectedTerminator?.(token, node, err);
-        if (throwOnError) { throw err; }
+        if (throwOnError) {
+          throw err;
+        }
         errors.push(err);
-        if (token.Type === END_OF_INPUT) {
+
+        if (token.type === END_OF_INPUT) {
+          // We complete and reparent/place the final node by running the for
+          // loop one last time
           if (!node.complete) {
             node.complete = true;
             hooks.onCompleteNode?.(token, node);
-            index --;
+            index--;
           }
         }
       }
-    } else if (token.Type.leftOperands !== 0) {
-      if (token.Type === SUB) {
-        node = createASTNode(token, node, NEGATIVE, counter); 
+    } else if (token.type.leftOperands !== 0) {
+      // Subtraction is a special case because it might actually be negation
+      if (token.type === SUB) {
+        node = createASTNode(token, node, NEGATIVE, counter);
         hooks.onCreateNode?.(token, node);
       } else {
-        const err = new CompileError(`Missing children for ${token.Type._name}`, {
+        const err = new CompileError(`Expected expression`, {
           token,
         });
         hooks.onMissinChildren?.(token, node, err);
-        if (throwOnError) { throw err; }
+        if (throwOnError) {
+          throw err;
+        }
         errors.push(err);
       }
     } else {
-      node = createASTNode(token, node, getASType(token.Type, node.Type), counter);
+      // Create the AST node. It will be marked as complete if the node doesn't
+      // expect any children (like a literal or identifier)
+      node = createASTNode(
+        token,
+        node,
+        getASType(token.type, node.type),
+        counter,
+      );
       hooks.onCreateNode?.(token, node);
     }
     counter += 1;
@@ -250,12 +282,14 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
 
   const childViolation = ROOT.checkChildConstraints(root);
   if (childViolation !== null) {
-    const err = new CompileError(
-      "Unintelligible Syntax (Child Type Constraint Violation)",
-      { node: root, ...childViolation },
-    );
+    const err = new CompileError("Unexpected token", {
+      node: root,
+      ...childViolation,
+    });
     hooks.onChildConstraintViolation?.(node, err);
-    if (throwOnError) { throw err; }
+    if (throwOnError) {
+      throw err;
+    }
     errors.push(err);
   }
   return { root, errors };
@@ -264,40 +298,33 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
 function createASTNode(
   token: Token | null,
   parent: Node | null,
-  Type: NodeType,
+  type: NodeType,
   counter: number,
 ): Node {
   return {
-    _TYPE: Type._name,
-    Type,
+    type,
     children: [],
-    complete: Type.expectedChildCount === 0,
+    complete: type.expectedChildCount === 0,
     parent,
     token,
-    resolvedType: Type.resolvesAs ? Type.resolvesAs : counter,
+    resolvedType: type.resolvesAs ? type.resolvesAs : counter,
   };
 }
 
 function place(node: Node, errors: CompileError[], opts: ParserOptions) {
-  const {hooks = {}, throwOnError = false} = opts;
-  const { Type, parent } = node;
+  const { hooks = {}, throwOnError = false } = opts;
+  const { type, parent } = node;
 
-  const childViolation = Type.checkChildConstraints(node);
+  const childViolation = type.checkChildConstraints(node);
   if (childViolation !== null) {
-    const err = new CompileError(
-      "Child Constraint Violation",
-      { node, ...childViolation },
-    );
+    const err = new CompileError("Unexpected token", {
+      node,
+      ...childViolation,
+    });
     hooks.onChildConstraintViolation?.(node, err);
-    if (throwOnError) { throw err; }
-    errors.push(err);
-  } else if (Type.checkParentConstraints(node)) {
-    const err = new CompileError(
-      "Parent Constraint Violation",
-      { node },
-    );
-    hooks.onParentConstraintViolation?.(node, err);
-    if (throwOnError) { throw err; }
+    if (throwOnError) {
+      throw err;
+    }
     errors.push(err);
   }
   assert(parent, "Tried to place a node without a parent", node);
@@ -307,11 +334,10 @@ function place(node: Node, errors: CompileError[], opts: ParserOptions) {
 }
 
 function shouldReparent(leftType: NodeType, rightType: NodeType) {
+  // If the right node doesn't have any left operands like a literal or
+  // identifier, then it can't become the parent of the left node anyway
   if (rightType.leftOperands === 0) {
     return false;
-
-  } else if (rightType.rightAssociative) {
-    return rightType.precedence >= leftType.precedence;
   } else {
     return rightType.precedence > leftType.precedence;
   }
@@ -319,6 +345,8 @@ function shouldReparent(leftType: NodeType, rightType: NodeType) {
 
 export function getASType(type: NodeType, parentType: NodeType) {
   if (type === GROUP) {
+    // A list of function call arguments is first interpreted as a GROUP, then
+    // reinterpreted as an ARG_LIST if its the child of a CALL
     if (parentType === CALL) {
       return ARG_LIST;
     }

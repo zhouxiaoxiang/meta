@@ -61,7 +61,7 @@ export const adjustCaseExpression: CompilerPass = (tree: Expr): Expr =>
 
 export const resolverPass: (
   type: "expression" | "boolean",
-  resolveFn: any,
+  resolveFn?: any,
 ) => CompilerPass = (type, resolveFn) => expr => resolve(expr, type, resolveFn);
 
 export const DEFAULT_PASSES = [useShorthands, adjustCaseExpression];

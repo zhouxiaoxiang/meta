@@ -3,14 +3,12 @@ import { Node } from "metabase/lib/expressions/custom/types";
 
 describe("metabase/lib/expressions/parser", () => {
   interface AST {
-    _: string;
     token: string;
     children: AST[];
     pos: number;
   }
   function cleanupAST(node: Node): AST {
     return {
-      _: node._TYPE || node.Type._name || "UNKNOWN",
       token: node.token?.text || "UNKNOWN",
       children: node.children.map(cleanupAST),
       pos: node.token?.pos || -1,
@@ -18,16 +16,11 @@ describe("metabase/lib/expressions/parser", () => {
   }
 
   function parseExpression(source: string, throwOnError: boolean = true) {
-    try {
-      return cleanupAST(
-        parse(lexify(source), {
-          throwOnError,
-        }).root,
-      );
-    } catch (err) {
-      // Helps get the error value in wallaby/quokka
-      throw err; //?
-    }
+    return cleanupAST(
+      parse(lexify(source), {
+        throwOnError,
+      }).root,
+    );
   }
 
   const parseAggregation = parseExpression;
