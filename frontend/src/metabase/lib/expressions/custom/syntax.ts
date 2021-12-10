@@ -253,7 +253,7 @@ ROOT.checkChildConstraints = anyChildConstraint(
 });
 
 // Give each node
-for (let [key, value] of Object.entries(ALL_NODES)) {
+for (const [key, value] of Object.entries(ALL_NODES)) {
   value.name = key;
 }
 
