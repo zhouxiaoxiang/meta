@@ -230,7 +230,7 @@ export function parse(tokens: Token[], opts: ParserOptions = {}): ParserResult {
         // If the current token isn't in the list of the AST type's ignored
         // tokens and it's not the terminator the current node requires, we'll
         // throw an error
-        const err = new CompileError(`Unexpected token`, { node, token });
+        const err = new CompileError(`Expected expression`, { node, token });
         hooks.onUnexpectedTerminator?.(token, node, err);
         if (throwOnError) {
           throw err;
