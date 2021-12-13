@@ -133,6 +133,13 @@ export function resolve(expression, type = "expression", fn = undefined) {
     }
     const resolvedOperands = operands.map((operand, i) => {
       if (i >= args.length) {
+        // Verbatim from old compiler in `ExpressionMBQLCompilerVisitor.functionExpression`
+        // HACK: very specific to some string/time functions for now
+        if (operand === "case-insensitive") {
+          return { "case-sensitive": false };
+        } else if (operand === "include-current") {
+          return { "include-current": true };
+        }
         // as-is, optional object for e.g. ends-with, time-interval, etc
         return operand;
       }
