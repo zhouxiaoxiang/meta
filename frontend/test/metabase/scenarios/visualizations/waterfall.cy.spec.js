@@ -111,8 +111,8 @@ describe("scenarios > visualizations > waterfall", () => {
     cy.get(".ace_text-input")
       .first()
       .focus()
-      .type('between([Created At], "2016-01-01", "2016-08-01")')
-      .blur();
+      .type('between([Created At], "2016-01-01", "2016-08-01")');
+    cy.wait(100);
     cy.button("Done")
       .should("not.be.disabled")
       .click();

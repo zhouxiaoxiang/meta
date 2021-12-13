@@ -1,8 +1,8 @@
 export function enterCustomColumnDetails({ formula, name } = {}) {
   cy.get(".ace_text-input")
     .first()
-    .should("exist")
     .as("formula")
+    .should("be.visible")
     .focus()
     .type(formula);
 
