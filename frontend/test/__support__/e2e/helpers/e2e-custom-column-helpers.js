@@ -1,5 +1,6 @@
 export function enterCustomColumnDetails({ formula, name } = {}) {
   cy.get(".ace_text-input")
+    .focus()
     .first()
     .as("formula")
     .focus()

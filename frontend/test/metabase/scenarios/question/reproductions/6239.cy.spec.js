@@ -16,6 +16,7 @@ describe("issue 6239", () => {
     cy.findByText("Custom Expression").click();
 
     cy.get(".ace_text-input")
+      .focus()
       .type("CountIf([Total] > 0)")
       .blur();
 

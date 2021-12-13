@@ -458,6 +458,7 @@ describe("scenarios > question > new", () => {
         .click();
       popover().within(() => {
         cy.get(".ace_text-input")
+          .focus()
           .type(FORMULA)
           .blur();
 

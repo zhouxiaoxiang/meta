@@ -589,6 +589,7 @@ describe("scenarios > question > filter", () => {
     cy.findByText("Custom Expression").click();
     cy.contains("isempty([Reviewer])");
     cy.get(".ace_text-input")
+      .focus()
       .clear()
       .type("NOT IsEmpty([Reviewer])");
     cy.findByText("Done").click();
@@ -612,6 +613,7 @@ describe("scenarios > question > filter", () => {
     cy.findByText("Custom Expression").click();
     cy.contains("isnull([Rating])");
     cy.get(".ace_text-input")
+      .focus()
       .clear()
       .type("NOT IsNull([Rating])", { delay: 50 });
     cy.findByText("Done").click();
@@ -787,6 +789,7 @@ describe("scenarios > question > filter", () => {
     cy.findByText("Filter").click();
     cy.findByText("Custom Expression").click();
     cy.get(".ace_text-input")
+      .focus()
       .type("([ID] > 2 OR [Subtotal] = 100) and [Tax] < 4")
       .blur();
     cy.findByText(/^Expected closing parenthesis but found/).should(
@@ -802,6 +805,7 @@ describe("scenarios > question > filter", () => {
     cy.findByText("Filter").click();
     cy.findByText("Custom Expression").click();
     cy.get(".ace_text-input")
+      .focus()
       .type("0 < [ID]")
       .blur();
     cy.findByText("Expecting field but found 0");
@@ -915,6 +919,7 @@ describe("scenarios > question > filter", () => {
       cy.findByText("Filter").click();
       cy.findByText("Custom Expression").click();
       cy.get(".ace_text-input")
+        .focus()
         .type("[Total] < [Product → Price]")
         .blur();
       cy.button("Done").click();
@@ -946,6 +951,7 @@ describe("scenarios > question > filter", () => {
         .click();
       cy.findByText("Custom Expression").click();
       cy.get(".ace_text-input")
+        .focus()
         .type("[Total] < [Product → Price]")
         .blur();
       cy.button("Done").click();
