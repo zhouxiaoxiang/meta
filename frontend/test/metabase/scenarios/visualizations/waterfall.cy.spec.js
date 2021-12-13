@@ -113,7 +113,9 @@ describe("scenarios > visualizations > waterfall", () => {
       .should("exist")
       .focus()
       .type("between([Created At], '2016-01-01', '2016-08-01')");
-    cy.button("Done").click();
+    cy.button("Done")
+      .should("not.be.disabled")
+      .click();
 
     visualize();
 
