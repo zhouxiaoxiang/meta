@@ -30,7 +30,7 @@ export interface Options {
 type CompileFn = (node: Node, opts: Options) => Expr;
 
 export function compile(node: Node, opts: Options): Expr {
-  assert(node.type !== ROOT, "Must be root node");
+  assert(node.type === ROOT, "Must be root node");
   if (node.children.length > 1) {
     throw new CompileError("Unexpected expression", {
       node: node.children[1],
