@@ -109,10 +109,10 @@ describe("scenarios > visualizations > waterfall", () => {
     cy.findByText("Filter").click();
     cy.findByText("Custom Expression").click();
     cy.get(".ace_text-input")
-      .should("be.visible")
       .first()
       .focus()
-      .type("between([Created At], '2016-01-01', '2016-08-01')");
+      .type("between([Created At], '2016-01-01', '2016-08-01')")
+      .blur();
     cy.button("Done")
       .should("not.be.disabled")
       .click();
