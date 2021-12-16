@@ -36,14 +36,58 @@
   (is (= some shit some shit)))
 
 ;;; ------------------- `metric-name` -------------------
+
+(deftest metric-name-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `metric-op` -------------------
+
+(deftest metric-op-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `join-enumeration` -------------------
+
+(deftest join-enumeration-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `metric->description` -------------------
+
+(deftest metric->description-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `question-description` -------------------
+
+(deftest question-description-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `ga-table?` -------------------
+
+(deftest ga-table-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `->root` -------------------
+
+(deftest ->root-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `source` -------------------
+
+(deftest source-test
+
+  (is (= some shit some shit)))
+
 ;;; ------------------- `optimal-datetime-resolution` -------------------
+
+(deftest optimal-datetime-resolution-test
+
+  (is (= some shit some shit)))
 
 ;;; ------------------- `->reference` -------------------
 
@@ -72,6 +116,9 @@
 ;;; ------------------- `bind-dimensions` -------------------
 ;;; ------------------- `build-order-by` -------------------
 ;;; ------------------- `build-query` -------------------
+
+
+
 ;;; ------------------- `has-matches?` -------------------
 ;;; ------------------- `resolve-overloading` -------------------
 ;;; ------------------- `instantiate-visualization` -------------------
