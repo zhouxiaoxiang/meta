@@ -23,76 +23,71 @@
             [schema.core :as s]
             [toucan.db :as db]))
 
-(def test-root some shit)
-
 ;;; ------------------- `->field` -------------------
 
 (deftest ->field-test
-  ;; id case, table
-  ;; name case, table
-  ;; id case, query
-  ;; name case, query
-
-  (is (= some shit some shit)))
+  (mt/with-temp* [Database [{database-id :id}]
+                  Table    [tbl {:db_id database-id}]
+                  Field    [field {:table_id (u/the-id tbl), :name "boop", :base_type :type/Integer, :semantic_type :type/PK}]]
+    (let [field-id (u/the-id field)
+          tbl-root (magic/->root tbl)]
+      (is (= field-id (u/the-id (magic/->field tbl-root field-id)))))))
 
 ;;; ------------------- `metric-name` -------------------
 
 (deftest metric-name-test
-
-  (is (= some shit some shit)))
+  ;; ga
+  ;; adhoc
+  ;; saved
+  ;; else
+  (let [met1 [:avg [:field 1 nil]] ]
+    (is (= field-id (u/the-id (magic/->field tbl-root field-id))))))
 
 ;;; ------------------- `metric-op` -------------------
 
 (deftest metric-op-test
-
-  (is (= some shit some shit)))
-
-;;; ------------------- `join-enumeration` -------------------
-
-(deftest join-enumeration-test
-
-  (is (= some shit some shit)))
+  ;; saved
+  ;; other
+  (mt/with-temp* [Metric [met1 {met1-id :id} {:name "boop"}]]
+    (is (= field-id (u/the-id (magic/->field tbl-root field-id))))))
 
 ;;; ------------------- `metric->description` -------------------
 
-(deftest metric->description-test
-
-  (is (= some shit some shit)))
+;; (deftest metric->description-test
+;; 
+;;   (is (= some shit some shit)))
 
 ;;; ------------------- `question-description` -------------------
 
-(deftest question-description-test
-
-  (is (= some shit some shit)))
-
-;;; ------------------- `ga-table?` -------------------
-
-(deftest ga-table-test
-
-  (is (= some shit some shit)))
+;; (deftest question-description-test
+;; 
+;;   (is (= some shit some shit)))
 
 ;;; ------------------- `->root` -------------------
 
-(deftest ->root-test
+;; (deftest ->root-test
 
-  (is (= some shit some shit)))
+;;;  type query
+;;;  type card
+;;;  type table
+;;;  type segment
+;;;  type metric
+;;;  type field
+;;   (is (= some shit some shit)))
 
 ;;; ------------------- `source` -------------------
 
-(deftest source-test
+;; (deftest source-test
 
-  (is (= some shit some shit)))
-
-;;; ------------------- `optimal-datetime-resolution` -------------------
-
-(deftest optimal-datetime-resolution-test
-
-  (is (= some shit some shit)))
+;; nested query condition
+;; native query condition
+;; normal ass card condition
+;; 
+;;   (is (= some shit some shit)))
 
 ;;; ------------------- `->reference` -------------------
 
 (deftest ->reference-test
-  ;;; beef these up
   (is (= [:field 1 nil]
          (->> (assoc (field/->FieldInstance) :id 1)
               (#'magic/->reference :mbql))))

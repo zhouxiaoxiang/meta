@@ -53,7 +53,8 @@
   (some-fn :id :name))
 
 (s/defn ->field
-  "Return `Field` instance for a given ID or name in the context of root."
+  "Return `Field` instance for a given ID or name in the context of root.
+  Despite the name of id-or-name, in the specific case of root being a table, this won't actually work with field names."
   [root id-or-name :- (s/cond-pre su/IntGreaterThanZero su/NonBlankString mbql.s/Field)]
   (let [id-or-name (if (sequential? id-or-name)
                      (filters/field-reference->id id-or-name)
