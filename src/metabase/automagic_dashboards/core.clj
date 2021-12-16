@@ -1,6 +1,14 @@
 (ns metabase.automagic-dashboards.core
   "Automatically generate questions and dashboards based on predefined
-   heuristics."
+   heuristics.
+
+  The heuristics are under the top-level `resources/automagic_dashboards` folder in yaml files.
+
+  An instance of one of several kinds of MB models is enriched with more information to become the 'root' hash to make the x-ray around.
+  (This is basically a context.)
+  The correct rules yaml file corresponding to the MB model is found and then the tree,
+  with leaves as automatically created cards, defined by that rule file is expanded, that's why it's called the 'root'.
+  Both before and after the expansion actually occurs, many enrichments of the data are performed."
   (:require [buddy.core.codecs :as codecs]
             [cheshire.core :as json]
             [clojure.math.combinatorics :as combo]
@@ -63,7 +71,7 @@
             (classify/run-classifiers {}))))))
 
 (def ^{:arglists '([root])} source-name
-  "Return the (display) name of the soruce of a given root object."
+  "Return the (display) name of the source of a given root object."
   (comp (some-fn :display_name :name) :source))
 
 (def ^:private op->name
@@ -554,7 +562,7 @@
                         (max-key :score a b)))
          definitions))
 
-(defn- instantate-visualization
+(defn- instantiate-visualization
   [[k v] dimensions metrics]
   (let [dimension->name (comp vector :name dimensions)
         metric->name    (comp vector first :metric metrics)]
@@ -582,7 +590,7 @@
                s))
            form))
        x)
-      (m/update-existing :visualization #(instantate-visualization % bindings (:metrics context)))))
+      (m/update-existing :visualization #(instantiate-visualization % bindings (:metrics context)))))
 
 (defn- valid-breakout-dimension?
   [{:keys [base_type engine fingerprint aggregation]}]

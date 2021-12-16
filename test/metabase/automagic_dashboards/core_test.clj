@@ -23,9 +23,32 @@
             [schema.core :as s]
             [toucan.db :as db]))
 
+(def test-root some shit)
+
+;;; ------------------- `->field` -------------------
+
+(deftest ->field-test
+  ;; id case, table
+  ;; name case, table
+  ;; id case, query
+  ;; name case, query
+
+  (is (= some shit some shit)))
+
+;;; ------------------- `metric-name` -------------------
+;;; ------------------- `metric-op` -------------------
+;;; ------------------- `join-enumeration` -------------------
+;;; ------------------- `metric->description` -------------------
+;;; ------------------- `question-description` -------------------
+;;; ------------------- `ga-table?` -------------------
+;;; ------------------- `->root` -------------------
+;;; ------------------- `source` -------------------
+;;; ------------------- `optimal-datetime-resolution` -------------------
+
 ;;; ------------------- `->reference` -------------------
 
 (deftest ->reference-test
+  ;;; beef these up
   (is (= [:field 1 nil]
          (->> (assoc (field/->FieldInstance) :id 1)
               (#'magic/->reference :mbql))))
@@ -39,9 +62,28 @@
               (#'magic/->reference :mbql)))))
 
 
-;;; ------------------- Rule matching  -------------------
+;;; ------------------- `key-col?` -------------------
+;;; ------------------- `filter-fields` -------------------
+;;; ------------------- `filter-tables` -------------------
+;;; ------------------- `fill-templates` -------------------
+;;; ------------------- `field-candidates` -------------------
+;;; ------------------- `make-bindings` -------------------
+;;; ------------------- `most-specific-definition` -------------------
+;;; ------------------- `bind-dimensions` -------------------
+;;; ------------------- `build-order-by` -------------------
+;;; ------------------- `build-query` -------------------
+;;; ------------------- `has-matches?` -------------------
+;;; ------------------- `resolve-overloading` -------------------
+;;; ------------------- `instantiate-visualization` -------------------
+;;; ------------------- `instantiate-metadata` -------------------
+;;; ------------------- `valid-breakout-dimension?` -------------------
+;;; ------------------- `singular-cell-dimensions` -------------------
+;;; ------------------- `card-candidates` -------------------
+
+;;; ------------------- `matching-rules` -------------------
 
 (deftest rule-matching-test
+  ;;; beef this up...
   (is (= [:entity/UserTable :entity/GenericTable :entity/*]
          (->> (mt/id :users)
               Table
@@ -58,8 +100,34 @@
                 (#'magic/matching-rules (rules/get-rules ["table"]))
                 (map (comp first :applies_to)))))))
 
+;;; ------------------- `linked-tables` -------------------
+;;; ------------------- `inject-root` -------------------
+;;; ------------------- `make-context` -------------------
+;;; ------------------- `make-cards` -------------------
+;;; ------------------- `make-dashboard` -------------------
+;;; ------------------- `apply-rule` -------------------
+;;; ------------------- `->related-entity` -------------------
+;;; ------------------- `related-entities` -------------------
+;;; ------------------- `indepth` -------------------
+;;; ------------------- `drilldown-fields` -------------------
+;;; ------------------- `comparisons` -------------------
+;;; ------------------- `fill-related` -------------------
+;;; ------------------- `related` -------------------
+;;; ------------------- `filter-referenced-fields` -------------------
+;;; ------------------- `collect-metrics` -------------------
+;;; ------------------- `collect-breakout-fields` -------------------
+;;; ------------------- `decompose-question` -------------------
+;;; ------------------- `pluralize` -------------------
+;;; ------------------- `humanize-datetime` -------------------
+;;; ------------------- `field-reference->field` -------------------
+;;; ------------------- `field-name` -------------------
+;;; ------------------- `humanize-filter-value` -------------------
+;;; ------------------- `cell-title` -------------------
+;;; ------------------- `key-in?` -------------------
+;;; ------------------- `splice-in` -------------------
+;;; ------------------- `maybe-enrich-joins` -------------------
 
-;;; ------------------- `automagic-anaysis` -------------------
+;;; ------------------- `automagic-dashboard` and `automagic-analysis` -------------------
 
 (defn- test-automagic-analysis
   ([entity card-count] (test-automagic-analysis entity nil card-count))
@@ -598,3 +666,6 @@
                          (mt/user-http-request
                           :crowberto :get 200
                           (format "automagic-dashboards/adhoc/%s/cell/%s" (->base-64 query) (->base-64 cell)))))))))))
+
+;;; ------------------- `enhance-table-stats` -------------------
+;;; ------------------- `candidate-tables` -------------------
