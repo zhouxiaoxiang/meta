@@ -570,8 +570,10 @@
                     :alert_above_goal false}}
       "with data"
       {:card
-       (checkins-query-card {:filter   [:between $date "2014-02-12" "2014-02-17"]
-                             :breakout [!day.date]})
+       (merge (checkins-query-card {:filter   [:between $date "2014-04-01" "2014-06-01"]
+                                    :breakout [!day.date]})
+              {:display                :line
+               :visualization_settings {:graph.show_goal true :graph.goal_value 1.1}})
 
        :assert
        {:email
