@@ -55,6 +55,7 @@ export type SettingName =
   | "admin-email"
   | "analytics-uuid"
   | "anon-tracking-enabled"
+  | "user-locale"
   | "available-locales"
   | "available-timezones"
   | "custom-formatting"
@@ -253,6 +254,10 @@ class Settings {
 
   storeUrl(path = "") {
     return `https://store.metabase.com/${path}`;
+  }
+
+  pricingUrl() {
+    return "https://www.metabase.com/pricing/";
   }
 
   newVersionAvailable() {

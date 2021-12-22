@@ -19,7 +19,7 @@ describe("metabase/lib/expressions/process", () => {
         source: "1+",
         targetOffset: null,
       });
-      expect(compileError.toString()).toEqual("Error: Expected expression");
+      expect(compileError.toString()).toEqual("Error: Unexpected end of input");
     });
   });
 });

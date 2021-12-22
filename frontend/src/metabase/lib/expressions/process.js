@@ -1,31 +1,14 @@
-import { parse, lexify } from "./custom/parser";
-import { DEFAULT_PASSES, resolverPass } from "./custom/compiler_passes";
-import { compile } from "./custom/compiler";
-import { getMBQLName } from "./config";
-import { parseMetric, parseSegment, parseDimension } from "./index";
+import { parse } from "metabase/lib/expressions/recursive-parser";
+import { resolve } from "metabase/lib/expressions/resolver";
 
-// combine compile/suggest/syntax so we only need to parse once
+import {
+  parseDimension,
+  parseMetric,
+  parseSegment,
+} from "metabase/lib/expressions/";
+
 export function processSource(options) {
-  // Lazily load all these parser-related stuff, because parser construction is expensive
-  // https://github.com/metabase/metabase/issues/13472
-
-  const { source, startRule, query } = options;
-
-  let expression;
-  let compileError;
-
-  const tokens = lexify(source);
-
-  // PARSE
-  const { root, errors } = parse(tokens, {
-    throwOnError: false,
-    ...options,
-  });
-
-  function resolveMBQLField(kind, name) {
-    if (!query) {
-      return [kind, name];
-    }
+  const resolveMBQLField = (kind, name) => {
     if (kind === "metric") {
       const metric = parseMetric(name, options);
       if (!metric) {
@@ -46,21 +29,17 @@ export function processSource(options) {
       }
       return dimension.mbql();
     }
-  }
+  };
 
-  // COMPILE
-  if (errors.length > 0) {
-    compileError = errors;
-  } else {
-    try {
-      expression = compile(root, {
-        passes: [...DEFAULT_PASSES, resolverPass(startRule, resolveMBQLField)],
-        getMBQLName,
-      });
-    } catch (e) {
-      console.warn("compile error", e);
-      compileError = e;
-    }
+  const { source, startRule } = options;
+
+  let expression;
+  let compileError;
+  try {
+    expression = resolve(parse(source), startRule, resolveMBQLField);
+  } catch (e) {
+    console.warn("compile error", e);
+    compileError = e;
   }
 
   return {
