@@ -929,3 +929,14 @@ export function formatSQL(sql) {
     return sql;
   }
 }
+
+export function getCurrency(currency, currencyStyle) {
+  return (0)
+    .toLocaleString("en", {
+      style: "currency",
+      currency: currency,
+      currencyDisplay: currencyStyle,
+    })
+    .replace(/0([.,]0+)?/, "")
+    .trim(); // strip off actual number
+}

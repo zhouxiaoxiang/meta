@@ -14,7 +14,6 @@ import {
   isCurrency,
   isDateWithoutTime,
 } from "metabase/lib/schema_metadata";
-
 // HACK: cyclical dependency causing errors in unit tests
 // import { getVisualizationRaw } from "metabase/visualizations";
 function getVisualizationRaw(...args) {
@@ -24,6 +23,7 @@ function getVisualizationRaw(...args) {
 import {
   formatColumn,
   numberFormatterForOptions,
+  getCurrency,
 } from "metabase/lib/formatting";
 import {
   getDateFormatFromStyle,
@@ -251,17 +251,6 @@ export const DATE_COLUMN_SETTINGS = {
     readDependencies: ["time_enabled"],
   },
 };
-
-function getCurrency(currency, currencyStyle) {
-  return (0)
-    .toLocaleString("en", {
-      style: "currency",
-      currency: currency,
-      currencyDisplay: currencyStyle,
-    })
-    .replace(/0([.,]0+)?/, "")
-    .trim(); // strip off actual number
-}
 
 export const NUMBER_COLUMN_SETTINGS = {
   number_style: {
