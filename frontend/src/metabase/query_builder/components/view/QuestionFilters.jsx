@@ -18,12 +18,7 @@ import { color, alpha } from "metabase/lib/colors";
 const FilterPill = props => <ViewPill color={color("filter")} {...props} />;
 
 const FilterButton = props => (
-  <HeaderButton
-    large
-    secondary
-    color={color("filter")}
-    {...props}
-  />
+  <HeaderButton large secondary color={color("filter")} {...props} />
 );
 
 export default function QuestionFilters({
@@ -104,11 +99,15 @@ export function QuestionFilterToggle({
       <div className={className}>
         <Tooltip tooltip={expanded ? t`Hide filters` : t`Show filters`}>
         <span
-          className={cx("circular p1 pr2 flex align-center text-large text-bold cursor-pointer")}
+          className={cx(
+            "circular p1 pr2 flex align-center text-large text-bold cursor-pointer",
+          )}
           onClick={expanded ? onCollapse : onExpand}
-          style={expanded
+          style={
+            expanded
           ? { backgroundColor: bgColor, color: "white" }
-          : { backgroundColor: alpha(bgColor, 0.2), color: bgColor }}
+              : { backgroundColor: alpha(bgColor, 0.2), color: bgColor }
+          }
         >
           <Icon name={"filter"} size={14} className="m1" />
           {filters.length}
@@ -118,11 +117,7 @@ export function QuestionFilterToggle({
   );
 }
 
-export function FilterHeader({
-  className,
-  question,
-  expanded,
-}) {
+export function FilterHeader({ className, question, expanded }) {
   const query = question.query();
   const filters = query.topLevelFilters();
   if (filters.length === 0 || !expanded) {

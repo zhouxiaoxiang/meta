@@ -89,7 +89,11 @@ export default class NativeQueryButton extends React.Component {
           title={title}
           footer={
             loading || error ? null : (
-              <Button primary className={cx("text-dark")} onClick={this.handleConvert}>
+              <Button
+                primary
+                className={cx("text-dark")}
+                onClick={this.handleConvert}
+              >
                 {button}
               </Button>
             )

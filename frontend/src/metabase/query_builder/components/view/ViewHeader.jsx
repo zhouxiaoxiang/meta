@@ -25,7 +25,11 @@ import QuestionDescription from "./QuestionDescription";
 import QuestionLineage from "./QuestionLineage";
 import QuestionPreviewToggle from "./QuestionPreviewToggle";
 import QuestionNotebookButton from "./QuestionNotebookButton";
-import QuestionFilters, { QuestionFilterToggle, FilterHeader, QuestionFilterWidget } from "./QuestionFilters";
+import QuestionFilters, {
+  QuestionFilterToggle,
+  FilterHeader,
+  QuestionFilterWidget,
+} from "./QuestionFilters";
 import { QuestionSummarizeWidget } from "./QuestionSummaries";
 import NativeQueryButton from "./NativeQueryButton";
 import ViewSection from "./ViewSection";
@@ -119,14 +123,9 @@ export function ViewTitleHeader(props) {
     <>
     <ViewHeaderContainer className={className} style={style}>
       {isDataset ? (
-        <DatasetLeftSide
-          {...props}
-        />
+          <DatasetLeftSide {...props} />
       ) : isSaved ? (
-        <SavedQuestionLeftSide
-          {...props}
-          lastEditInfo={lastEditInfo}
-        />
+          <SavedQuestionLeftSide {...props} lastEditInfo={lastEditInfo} />
       ) : (
         <AhHocQuestionLeftSide
           {...props}
