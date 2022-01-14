@@ -20,6 +20,7 @@ import SavedQuestionHeaderButton from "metabase/query_builder/components/SavedQu
 import RunButtonWithTooltip from "../RunButtonWithTooltip";
 
 import { HeadBreadcrumbs } from "./HeaderBreadcrumbs";
+import PathBreadcrumbs from "./header/PathBreadcrumbs";
 import QuestionDataSource from "./QuestionDataSource";
 import QuestionDescription from "./QuestionDescription";
 import QuestionLineage from "./QuestionLineage";
@@ -121,29 +122,29 @@ export function ViewTitleHeader(props) {
 
   return (
     <>
-    <ViewHeaderContainer className={className} style={style}>
-      {isDataset ? (
+      <ViewHeaderContainer className={className} style={style}>
+        {isDataset ? (
           <DatasetLeftSide {...props} />
-      ) : isSaved ? (
+        ) : isSaved ? (
           <SavedQuestionLeftSide {...props} lastEditInfo={lastEditInfo} />
-      ) : (
-        <AhHocQuestionLeftSide
+        ) : (
+          <AhHocQuestionLeftSide
+            {...props}
+            isNative={isNative}
+            isSummarized={isSummarized}
+          />
+        )}
+        <ViewTitleHeaderRightSide
           {...props}
+          isSaved={isSaved}
+          isDataset={isDataset}
           isNative={isNative}
           isSummarized={isSummarized}
-        />
-      )}
-      <ViewTitleHeaderRightSide
-        {...props}
-        isSaved={isSaved}
-        isDataset={isDataset}
-        isNative={isNative}
-        isSummarized={isSummarized}
           areFiltersExpanded={areFiltersExpanded}
           onExpandFilters={expandFilters}
           onCollapseFilters={collapseFilters}
-      />
-    </ViewHeaderContainer>
+        />
+      </ViewHeaderContainer>
       <FilterHeader expanded={areFiltersExpanded} question={question} />
     </>
   );
@@ -165,18 +166,16 @@ SavedQuestionLeftSide.propTypes = {
 function SavedQuestionLeftSide(props) {
   const {
     question,
-    areFiltersExpanded,
     isObjectDetail,
     isShowingQuestionDetailsSidebar,
-    onExpandFilters,
-    onCollapseFilters,
     onOpenQuestionDetails,
     onCloseQuestionDetails,
-    lastEditInfo,
-    onOpenQuestionHistory,
   } = props;
   return (
     <div>
+      <ViewHeaderLeftSubHeading>
+        <PathBreadcrumbs collectionId={question.collectionId()} />
+      </ViewHeaderLeftSubHeading>
       <ViewHeaderMainLeftContentContainer>
         <SavedQuestionHeaderButtonContainer>
           <SavedQuestionHeaderButton
@@ -189,28 +188,7 @@ function SavedQuestionLeftSide(props) {
             }
           />
         </SavedQuestionHeaderButtonContainer>
-        {lastEditInfo && (
-          <LastEditInfoLabel
-            className="ml1 text-light"
-            item={question.card()}
-            onClick={onOpenQuestionHistory}
-          />
-        )}
       </ViewHeaderMainLeftContentContainer>
-      <ViewHeaderLeftSubHeading>
-        <CollectionBadge
-          collectionId={question.collectionId()}
-          className="mb1"
-        />
-        {QuestionDataSource.shouldRender(props) && (
-          <QuestionDataSource
-            className="ml3 mb1 pr2"
-            question={question}
-            isObjectDetail={isObjectDetail}
-            subHead
-          />
-        )}
-      </ViewHeaderLeftSubHeading>
     </div>
   );
 }
