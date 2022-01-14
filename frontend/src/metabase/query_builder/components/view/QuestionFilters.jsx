@@ -2,24 +2,26 @@
 import React from "react";
 
 import { t } from "ttag";
+import cx from "classnames";
 
+import Icon from "metabase/components/Icon";
 import Tooltip from "metabase/components/Tooltip";
 import PopoverWithTrigger from "metabase/components/PopoverWithTrigger";
 
 import FilterPopover from "metabase/query_builder/components/filters/FilterPopover";
 import ViewPill from "./ViewPill";
-import ViewButton from "./ViewButton";
+import HeaderButton from "./header/HeaderButton";
+import { FilterHeaderContainer } from "./header/styled";
 
-import { color } from "metabase/lib/colors";
+import { color, alpha } from "metabase/lib/colors";
 
 const FilterPill = props => <ViewPill color={color("filter")} {...props} />;
 
 const FilterButton = props => (
-  <ViewButton
-    medium
-    icon="filter"
+  <HeaderButton
+    large
+    secondary
     color={color("filter")}
-    labelBreakpoint="sm"
     {...props}
   />
 );
@@ -82,6 +84,79 @@ export default function QuestionFilters({
           ))}
       </div>
     </div>
+  );
+}
+
+export function QuestionFilterToggle({
+  className,
+  question,
+  onExpand,
+  expanded,
+  onCollapse,
+}) {
+  const query = question.query();
+  const filters = query.topLevelFilters();
+  if (filters.length === 0) {
+    return null;
+  }
+  const bgColor = color("filter");
+  return (
+      <div className={className}>
+        <Tooltip tooltip={expanded ? t`Hide filters` : t`Show filters`}>
+        <span
+          className={cx("circular p1 pr2 flex align-center text-large text-bold cursor-pointer")}
+          onClick={expanded ? onCollapse : onExpand}
+          style={expanded
+          ? { backgroundColor: bgColor, color: "white" }
+          : { backgroundColor: alpha(bgColor, 0.2), color: bgColor }}
+        >
+          <Icon name={"filter"} size={14} className="m1" />
+          {filters.length}
+        </span>
+        </Tooltip>
+      </div>
+  );
+}
+
+export function FilterHeader({
+  className,
+  question,
+  expanded,
+}) {
+  const query = question.query();
+  const filters = query.topLevelFilters();
+  if (filters.length === 0 || !expanded) {
+    return null;
+  }
+  return (
+    <FilterHeaderContainer className={className}>
+      <div className="flex flex-wrap align-center">
+          {filters.map((filter, index) => (
+            <PopoverWithTrigger
+              key={index}
+              triggerElement={
+                <FilterPill
+                  onRemove={() => filter.remove().update(null, { run: true })}
+                >
+                  {filter.displayName()}
+                </FilterPill>
+              }
+              triggerClasses="flex flex-no-shrink align-center mr1 mb1"
+              sizeToFit
+            >
+              <FilterPopover
+                isTopLevel
+                query={query}
+                filter={filter}
+                onChangeFilter={newFilter =>
+                  newFilter.replace().update(null, { run: true })
+                }
+                className="scroll-y"
+              />
+            </PopoverWithTrigger>
+          ))}
+      </div>
+    </FilterHeaderContainer>
   );
 }
 

@@ -6,8 +6,8 @@ import ViewSection, { ViewSubHeading, ViewHeading } from "./ViewSection";
 
 export const ViewHeaderContainer = styled(ViewSection)`
   border-bottom: 1px solid ${color("border")};
-  padding-top: ${space(1)};
-  padding-bottom: ${space(1)};
+  padding-top: ${space(2)};
+  padding-bottom: ${space(2)};
 `;
 
 export const ViewHeaderMainLeftContentContainer = styled.div`

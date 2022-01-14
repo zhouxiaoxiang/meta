@@ -5,7 +5,7 @@ import { t } from "ttag";
 import PopoverWithTrigger from "metabase/components/PopoverWithTrigger";
 
 import ViewPill from "./ViewPill";
-import ViewButton from "./ViewButton";
+import HeaderButton from "./header/HeaderButton";
 
 import SummarizeSidebar from "./sidebars/SummarizeSidebar/SummarizeSidebar";
 
@@ -16,12 +16,11 @@ const SummarizePill = props => (
 );
 
 const SummarizeButton = props => (
-  <ViewButton
-    medium
+  <HeaderButton
+    large
+    secondary
     data-testid="toggle-summarize-sidebar-button"
-    icon="insight"
     color={color("accent1")}
-    labelBreakpoint="sm"
     {...props}
   />
 );

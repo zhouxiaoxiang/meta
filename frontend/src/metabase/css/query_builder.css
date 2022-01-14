@@ -530,6 +530,7 @@
 
 .RunButton {
   opacity: 1;
+  color: var(--color-text-dark);
   transition: transform 0.25s, opacity 0.25s;
 }
 
