@@ -22,7 +22,12 @@ const IRREGULAR_ICON_PROPS = {
   targetOffsetX: IRREGULAR_ICON_WIDTH,
 };
 
-function CollectionBadge({ collection, analyticsContext, className, inactiveColor = "text-light" }) {
+function CollectionBadge({
+  collection,
+  analyticsContext,
+  className,
+  inactiveColor = "text-light",
+}) {
   if (!collection) {
     return null;
   }
