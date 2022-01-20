@@ -1,4 +1,6 @@
 import styled from "styled-components";
+
+import { space } from "metabase/styled-components/theme";
 import { color } from "metabase/lib/colors";
 
 export const Container = styled.div`
@@ -25,5 +27,23 @@ export const BorderedSectionContainer = styled.div`
 
   &:not(:empty) {
     border-top: 1px solid ${color("border")};
+  }
+`;
+
+export const LastEditInfoButton = styled.button`
+  display: inline-block;
+  box-sizing: border-box;
+  text-decoration: none;
+  margin: ${space(2)} 0;
+  background: transparent;
+  border: none;
+  color: ${color("text-medium")};
+  cursor: pointer;
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  text-align: left;
+
+  &:hover {
+    color: ${color("brand")};
   }
 `;
