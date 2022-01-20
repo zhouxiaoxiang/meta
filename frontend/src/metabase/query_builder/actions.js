@@ -68,7 +68,6 @@ import { parse as urlParse } from "url";
 import querystring from "querystring";
 
 import StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
-import NativeQuery from "metabase-lib/lib/queries/NativeQuery";
 import { getSensibleDisplays } from "metabase/visualizations";
 import { getCardAfterVisualizationClick } from "metabase/visualizations/lib/utils";
 import { getPersistableDefaultSettingsForSeries } from "metabase/visualizations/lib/settings/visualization";
@@ -83,17 +82,11 @@ import { setRequestUnloaded } from "metabase/redux/requests";
 import {
   getQueryBuilderModeFromLocation,
   getPathNameFromQueryBuilderMode,
+  getNextTemplateTagVisibilityState,
   isAdHocDatasetQuestion,
 } from "./utils";
 
 const PREVIEW_RESULT_LIMIT = 10;
-
-const getTemplateTagWithoutSnippetsCount = question => {
-  const query = question.query();
-  return query instanceof NativeQuery
-    ? query.templateTagsWithoutSnippets().length
-    : 0;
-};
 
 export const SET_UI_CONTROLS = "metabase/qb/SET_UI_CONTROLS";
 export const setUIControls = createAction(SET_UI_CONTROLS);
@@ -412,17 +405,31 @@ export const initializeQB = (location, params, queryParams) => {
             card.dashboardId = dashboardId;
           }
         } else if (card.original_card_id) {
+          const deserializedCard = card;
           // deserialized card contains the card id, so just populate originalCard
           originalCard = await loadCard(card.original_card_id);
-          if (
-            cardIsEquivalent(card, originalCard, { checkParameters: false }) &&
-            !cardIsEquivalent(card, originalCard, { checkParameters: true })
-          ) {
-            // if the cards are equal except for parameters, copy over the id to undirty the card
-            card.id = originalCard.id;
-          } else if (cardIsEquivalent(card, originalCard)) {
-            // if the cards are equal then show the original
+
+          if (cardIsEquivalent(deserializedCard, originalCard)) {
             card = Utils.copy(originalCard);
+
+            if (
+              !cardIsEquivalent(deserializedCard, originalCard, {
+                checkParameters: true,
+              })
+            ) {
+              const metadata = getMetadata(getState());
+              const { dashboardId, parameters } = deserializedCard;
+              verifyMatchingDashcardAndParameters({
+                dispatch,
+                dashboardId,
+                cardId: card.id,
+                parameters,
+                metadata,
+              });
+
+              card.parameters = parameters;
+              card.dashboardId = dashboardId;
+            }
           }
         }
         // if this card has any snippet tags we might need to fetch snippets pending permissions
@@ -478,7 +485,7 @@ export const initializeQB = (location, params, queryParams) => {
           card = null;
         }
 
-        if (!card.dataset && location.pathname.startsWith("/dataset")) {
+        if (!card.dataset && location.pathname.startsWith("/model")) {
           dispatch(
             setErrorPage({
               data: {
@@ -1002,10 +1009,7 @@ export const updateQuestion = (
     // </PIVOT LOGIC>
 
     // Native query should never be in notebook mode (metabase#12651)
-    if (
-      getQueryBuilderMode(getState()) === "notebook" &&
-      newQuestion.isNative()
-    ) {
+    if (mode === "notebook" && newQuestion.isNative()) {
       await dispatch(
         setQueryBuilderMode("view", {
           shouldUpdateUrl: false,
@@ -1021,15 +1025,21 @@ export const updateQuestion = (
     }
 
     // See if the template tags editor should be shown/hidden
-    const oldTagCount = getTemplateTagWithoutSnippetsCount(oldQuestion);
-    const newTagCount = getTemplateTagWithoutSnippetsCount(newQuestion);
-    if (newTagCount > oldTagCount) {
-      dispatch(setIsShowingTemplateTagsEditor(true));
-    } else if (
-      newTagCount === 0 &&
-      getIsShowingTemplateTagsEditor(getState())
-    ) {
-      dispatch(setIsShowingTemplateTagsEditor(false));
+    const isTemplateTagEditorVisible = getIsShowingTemplateTagsEditor(
+      getState(),
+    );
+    const nextTagEditorVisibilityState = getNextTemplateTagVisibilityState({
+      oldQuestion,
+      newQuestion,
+      isTemplateTagEditorVisible,
+      queryBuilderMode: mode,
+    });
+    if (nextTagEditorVisibilityState !== "deferToCurrentState") {
+      dispatch(
+        setIsShowingTemplateTagsEditor(
+          nextTagEditorVisibilityState === "visible",
+        ),
+      );
     }
 
     try {
@@ -1514,7 +1524,7 @@ export const turnQuestionIntoDataset = () => async (dispatch, getState) => {
 
   dispatch(
     addUndo({
-      message: t`This is a dataset now.`,
+      message: t`This is a model now.`,
       actions: [apiUpdateQuestion(question, { rerunQuery: true })],
     }),
   );

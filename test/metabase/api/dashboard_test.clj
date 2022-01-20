@@ -455,9 +455,10 @@
             ;; grant Permissions for only the *old* collection
             (perms/grant-collection-readwrite-permissions! (group/all-users) collection)
             ;; now make an API call to move collections. Should fail
-            (is (= "You don't have permissions to do that."
-                   (mt/user-http-request :rasta :put 403 (str "dashboard/" (u/the-id dash))
-                                         {:collection_id (u/the-id new-collection)})))))))))
+            (is (schema= {:message (s/eq "You do not have curate permissions for this Collection.")
+                          s/Keyword s/Any}
+                         (mt/user-http-request :rasta :put 403 (str "dashboard/" (u/the-id dash))
+                                               {:collection_id (u/the-id new-collection)})))))))))
 
 
 ;;; +----------------------------------------------------------------------------------------------------------------+
@@ -1667,13 +1668,7 @@
                              (mt/user-http-request :rasta :post 202 url
                                                    {:parameters [{:id    "_PRICE_"
                                                                   :type  :number/=
-                                                                  :value [1 2 3]}]}))))
-              (testing :number/<=
-                (is (schema= (dashboard-card-query-expected-results-schema :row-count 94)
-                             (mt/user-http-request :rasta :post 202 url
-                                                   {:parameters [{:id    "_PRICE_"
-                                                                  :type  :number/<=
-                                                                  :value [3]}]}))))))
+                                                                  :value [1 2 3]}]}))))))
           (testing "Should return error if parameter doesn't exist"
             (is (= "Dashboard does not have a parameter with ID \"_THIS_PARAMETER_DOES_NOT_EXIST_\"."
                    (mt/user-http-request :rasta :post 400 url
