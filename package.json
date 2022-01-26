@@ -315,5 +315,8 @@
   },
   "browserslist": [
     "defaults"
-  ]
+  ],
+  "nyc": {
+    "report-dir": "cypress-coverage"
+  }
 }
