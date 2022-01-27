@@ -12,6 +12,8 @@
 
 (def ^:private browser-id-cookie-name "metabase.DEVICE")
 
+(def ^:private twenty-years-in-seconds (* 60 60 24 365 20))
+
 ;; This cookie doesn't need to be secure, because it's only used for notification purposes and cannot be used for
 ;; CSRF as it is not a session cookie.
 ;; However, we do need to make sure it's persisted/sent as much as possible to prevent superfluous login notification
@@ -21,8 +23,8 @@
   [request]
   (merge {:http-only true
           :path      "/"
-          ;; Set the cookie to expire 20 years from now. That should be sufficient
-          :expires   (t/format :rfc-1123-date-time (t/plus (t/zoned-date-time) (t/years 20)))}
+          ;; Set the cookie to live for 20 years. That should be sufficient
+          :max-age twenty-years-in-seconds}
          (if (request.u/https? request)
            {:same-site :none, :secure true}
            {:same-site :lax})))

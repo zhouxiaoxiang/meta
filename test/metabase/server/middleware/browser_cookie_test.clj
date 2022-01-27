@@ -36,7 +36,8 @@
               :path      "/"
               :same-site :lax}
              (-> (get-in response [:cookies browser-id-cookie-name])
-                 (dissoc :expires))))))
+                 (dissoc :max-age))))))
+
   (testing "set DEVICE cookie with SameSite=None if served over HTTPS"
     (let [request    (-> (mock/request :get "https://localhost/foo"))
           response   (handler request)
@@ -48,4 +49,4 @@
               :same-site :none
               :secure    true}
              (-> (get-in response [:cookies browser-id-cookie-name])
-                 (dissoc :expires)))))))
+                 (dissoc :max-age)))))))
