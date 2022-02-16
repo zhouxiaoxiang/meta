@@ -1,4 +1,4 @@
-name: E2E Tests
+name: E2E Currents Dashboard Tests
 
 on:
   push:
@@ -129,7 +129,7 @@ jobs:
         jar xf target/uberjar/metabase.jar version.properties
         mv version.properties resources/
 
-    - run: yarn run test-cypress-no-build --spec "./frontend/test/metabase/scenarios/${{ matrix.folder }}/**/*.cy.spec.js" --record --key ${{ secrets.CURRENTS_KEY }} --ci-build-id "${{ github.repository }}-${{ github.run_id }}-${{ github.run_attempt}}"
+    - run: yarn run test-cypress-no-build --spec "./frontend/test/metabase/scenarios/${{ matrix.folder }}/**/*.cy.spec.js" --record --key ${{ secrets.CURRENTS_KEY }}
       name: Run Cypress tests on ${{ matrix.folder }}
       env:
         TERM: xterm
