@@ -129,7 +129,7 @@ jobs:
         jar xf target/uberjar/metabase.jar version.properties
         mv version.properties resources/
 
-    - run: yarn run test-cypress-no-build --spec "./frontend/test/metabase/scenarios/${{ matrix.folder }}/**/*.cy.spec.js" --parallel --record --key ${{ secrets.CURRENTS_KEY }} --ci-build-id
+    - run: yarn run test-cypress-no-build --spec "./frontend/test/metabase/scenarios/${{ matrix.folder }}/**/*.cy.spec.js" --parallel --record --key ${{ secrets.CURRENTS_KEY }} --ci-build-id hello-currents
       name: Run Cypress tests on ${{ matrix.folder }}
       env:
         TERM: xterm
