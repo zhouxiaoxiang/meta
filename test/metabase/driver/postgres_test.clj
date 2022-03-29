@@ -285,7 +285,7 @@
         (is (= :type/SerializedJSON
                (db/select-one-field :semantic_type Field, :id (mt/id :venues :address))))))))
 
-(deftest ^:parallel json-query-test
+(comment (deftest ^:parallel json-query-test
   (let [boop-identifier (hx/with-type-info (hx/identifier :field "boop" "bleh -> meh") {})]
     (testing "Transforming MBQL query with JSON in it to postgres query works"
       (let [boop-field {:nfc_path [:bleh :meh]}]
@@ -304,7 +304,7 @@
                 "boop"
                 "foobar"
                 "1234"]
-               (hsql/format (#'postgres/json-query boop-identifier boolean-boop-field))))))))
+               (hsql/format (#'postgres/json-query boop-identifier boolean-boop-field)))))))))
 
 (deftest describe-nested-field-columns-test
   (mt/test-driver :postgres
