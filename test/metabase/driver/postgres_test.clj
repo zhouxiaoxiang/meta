@@ -285,26 +285,26 @@
         (is (= :type/SerializedJSON
                (db/select-one-field :semantic_type Field, :id (mt/id :venues :address))))))))
 
-(comment (deftest ^:parallel json-query-test
-  (let [boop-identifier (hx/with-type-info (hx/identifier :field "boop" "bleh -> meh") {})]
-    (testing "Transforming MBQL query with JSON in it to postgres query works"
-      (let [boop-field {:nfc_path [:bleh :meh]}]
-        (is (= ["CAST(json_extract_path_text(CAST(boop.bleh AS json), (CAST(? AS text))) AS Text)" "meh"]
-               (hsql/format (#'postgres/json-query boop-identifier boop-field))))))
-    (testing "What if types are weird and we have lists"
-      (let [weird-field {:nfc_path [:bleh "meh" :foobar 1234]}]
-        (is (= ["CAST(json_extract_path_text(CAST(boop.bleh AS json), (CAST(? AS text), CAST(? AS text), CAST(? AS text))) AS Text)"
-                "meh"
-                "foobar"
-                "1234"]
-               (hsql/format (#'postgres/json-query boop-identifier weird-field))))))
-    (testing "Give us a boolean cast when the field is boolean"
-      (let [boolean-boop-field {:effective_type :type/Boolean :nfc_path [:bleh "boop" :foobar 1234]}]
-        (is (= ["CAST(json_extract_path_text(CAST(boop.bleh AS json), (CAST(? AS text), CAST(? AS text), CAST(? AS text))) AS Boolean)"
-                "boop"
-                "foobar"
-                "1234"]
-               (hsql/format (#'postgres/json-query boop-identifier boolean-boop-field)))))))))
+;; (deftest ^:parallel json-query-test
+;;   (let [boop-identifier (hx/with-type-info (hx/identifier :field "boop" "bleh -> meh") {})]
+;;     (testing "Transforming MBQL query with JSON in it to postgres query works"
+;;       (let [boop-field {:nfc_path [:bleh :meh]}]
+;;         (is (= ["CAST(json_extract_path_text(CAST(boop.bleh AS json), (CAST(? AS text))) AS Text)" "meh"]
+;;                (hsql/format (#'postgres/json-query boop-identifier boop-field))))))
+;;     (testing "What if types are weird and we have lists"
+;;       (let [weird-field {:nfc_path [:bleh "meh" :foobar 1234]}]
+;;         (is (= ["CAST(json_extract_path_text(CAST(boop.bleh AS json), (CAST(? AS text), CAST(? AS text), CAST(? AS text))) AS Text)"
+;;                 "meh"
+;;                 "foobar"
+;;                 "1234"]
+;;                (hsql/format (#'postgres/json-query boop-identifier weird-field))))))
+;;     (testing "Give us a boolean cast when the field is boolean"
+;;       (let [boolean-boop-field {:effective_type :type/Boolean :nfc_path [:bleh "boop" :foobar 1234]}]
+;;         (is (= ["CAST(json_extract_path_text(CAST(boop.bleh AS json), (CAST(? AS text), CAST(? AS text), CAST(? AS text))) AS Boolean)"
+;;                 "boop"
+;;                 "foobar"
+;;                 "1234"]
+;;                (hsql/format (#'postgres/json-query boop-identifier boolean-boop-field))))))))
 
 (deftest describe-nested-field-columns-test
   (mt/test-driver :postgres
