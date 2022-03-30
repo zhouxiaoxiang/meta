@@ -25,25 +25,25 @@
             [toucan.db :as db])
   (:import java.sql.DatabaseMetaData))
 
-;; (defn- drop-if-exists-and-create-db!
-;;   "Drop a Postgres database named `db-name` if it already exists; then create a new empty one with that name."
-;;   [db-name]
-;;   (let [spec (sql-jdbc.conn/connection-details->spec :postgres (mt/dbdef->connection-details :postgres :server nil))]
-;;     ;; kill any open connections
-;;     (jdbc/query spec ["SELECT pg_terminate_backend(pg_stat_activity.pid)
-;;                        FROM pg_stat_activity
-;;                        WHERE pg_stat_activity.datname = ?;" db-name])
-;;     ;; create the DB
-;;     (jdbc/execute! spec [(format "DROP DATABASE IF EXISTS \"%s\";
-;;                                   CREATE DATABASE \"%s\";"
-;;                                  db-name db-name)]
-;;                    {:transaction? false})))
-;; 
-;; (defn- exec!
-;;   "Execute a sequence of statements against the database whose spec is passed as the first param."
-;;   [spec statements]
-;;   (doseq [statement statements]
-;;     (jdbc/execute! spec [statement])))
+(defn- drop-if-exists-and-create-db!
+  "Drop a Postgres database named `db-name` if it already exists; then create a new empty one with that name."
+  [db-name]
+  (let [spec (sql-jdbc.conn/connection-details->spec :postgres (mt/dbdef->connection-details :postgres :server nil))]
+    ;; kill any open connections
+    (jdbc/query spec ["SELECT pg_terminate_backend(pg_stat_activity.pid)
+                       FROM pg_stat_activity
+                       WHERE pg_stat_activity.datname = ?;" db-name])
+    ;; create the DB
+    (jdbc/execute! spec [(format "DROP DATABASE IF EXISTS \"%s\";
+                                  CREATE DATABASE \"%s\";"
+                                 db-name db-name)]
+                   {:transaction? false})))
+
+(defn- exec!
+  "Execute a sequence of statements against the database whose spec is passed as the first param."
+  [spec statements]
+  (doseq [statement statements]
+    (jdbc/execute! spec [statement])))
 ;; 
 ;; ;;; ----------------------------------------------- Connection Details -----------------------------------------------
 ;; 
@@ -275,15 +275,15 @@
 ;; 
 ;; ;;; ----------------------------------------- Tests for exotic column types ------------------------------------------
 ;; 
-;; (deftest json-columns-test
-;;   (mt/test-driver :postgres
-;;     (testing "Verify that we identify JSON columns and mark metadata properly during sync"
-;;       (mt/dataset (mt/dataset-definition "Postgres with a JSON Field"
-;;                     ["venues"
-;;                      [{:field-name "address", :base-type {:native "json"}, :effective-type :type/Structured}]
-;;                      [[(hsql/raw "to_json('{\"street\": \"431 Natoma\", \"city\": \"San Francisco\", \"state\": \"CA\", \"zip\": 94103}'::text)")]]])
-;;         (is (= :type/SerializedJSON
-;;                (db/select-one-field :semantic_type Field, :id (mt/id :venues :address))))))))
+(deftest json-columns-test
+  (mt/test-driver :postgres
+    (testing "Verify that we identify JSON columns and mark metadata properly during sync"
+      (mt/dataset (mt/dataset-definition "Postgres with a JSON Field"
+                    ["venues"
+                     [{:field-name "address", :base-type {:native "json"}, :effective-type :type/Structured}]
+                     [[(hsql/raw "to_json('{\"street\": \"431 Natoma\", \"city\": \"San Francisco\", \"state\": \"CA\", \"zip\": 94103}'::text)")]]])
+        (is (= :type/SerializedJSON
+               (db/select-one-field :semantic_type Field, :id (mt/id :venues :address))))))))
 ;; 
 ;; ;; (deftest ^:parallel json-query-test
 ;; ;;   (let [boop-identifier (hx/with-type-info (hx/identifier :field "boop" "bleh -> meh") {})]
