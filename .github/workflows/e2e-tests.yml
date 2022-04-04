@@ -3,7 +3,7 @@ name: E2E Tests
 on:
   push:
     branches:
-      - 'master'
+      - 'e2e-test-parallelization'
     paths-ignore:
       - "docs/**"
       - "**.md"
@@ -38,7 +38,7 @@ jobs:
       uses: ./.github/actions/prepare-uberjar-artifact
 
   e2e-tests:
-    runs-on: buildjet-4vcpu-ubuntu-2004
+    runs-on: ubuntu-20.04
     timeout-minutes: 30
     needs: build
     name: e2e-tests-${{ matrix.folder }}-${{ matrix.edition }}
@@ -124,7 +124,13 @@ jobs:
         mv version.properties resources/
 
     - name: Run Cypress tests on ${{ matrix.folder }}
-      run: yarn run test-cypress-no-build --folder ${{ matrix.folder }} --record --key ${{ secrets.CURRENTS_KEY }} --group ${{ matrix.folder }}-${{ matrix.edition }} --ci-build-id "${{ github.run_id }}-${{ github.run_attempt }}"
+      run: |
+        yarn run test-cypress-no-build \
+          --folder ${{ matrix.folder }} \
+          --record --key ${{ secrets.CURRENTS_KEY }} \
+          --group ${{ matrix.folder }}-${{ matrix.edition }} \
+          --ci-build-id "${{ github.run_id }}-${{ github.run_attempt }}" \
+          --parallel
       env:
         TERM: xterm
 
