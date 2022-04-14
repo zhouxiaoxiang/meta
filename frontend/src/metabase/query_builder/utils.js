@@ -5,6 +5,17 @@ import NativeQuery from "metabase-lib/lib/queries/NativeQuery";
 
 // Query Builder Mode
 
+function isModelEditorPathname(pathname) {
+  if (!pathname.startsWith("/model/")) {
+    return false;
+  }
+  return (
+    pathname.endsWith("/query") ||
+    pathname.endsWith("/metadata") ||
+    pathname.endsWith("/settings")
+  );
+}
+
 export function getQueryBuilderModeFromLocation(location) {
   const { pathname } = location;
   if (pathname.endsWith("/notebook")) {
@@ -12,10 +23,11 @@ export function getQueryBuilderModeFromLocation(location) {
       mode: "notebook",
     };
   }
-  if (pathname.endsWith("/query") || pathname.endsWith("/metadata")) {
+  if (isModelEditorPathname(pathname)) {
+    const [datasetEditorTab] = pathname.split("/").reverse();
     return {
       mode: "dataset",
-      datasetEditorTab: pathname.endsWith("/query") ? "query" : "metadata",
+      datasetEditorTab,
     };
   }
   return {

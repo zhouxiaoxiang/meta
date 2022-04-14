@@ -46,7 +46,8 @@ import {
 
 const propTypes = {
   question: PropTypes.object.isRequired,
-  datasetEditorTab: PropTypes.oneOf(["query", "metadata"]).isRequired,
+  datasetEditorTab: PropTypes.oneOf(["query", "metadata", "settings"])
+    .isRequired,
   metadata: PropTypes.object,
   isMetadataDirty: PropTypes.bool.isRequired,
   result: PropTypes.object,
@@ -417,6 +418,7 @@ function DatasetEditor(props) {
             options={[
               { id: "query", name: t`Query`, icon: "notebook" },
               { id: "metadata", name: t`Metadata`, icon: "label" },
+              { id: "settings", name: t`Settings`, icon: "gear" },
             ]}
           />
         }

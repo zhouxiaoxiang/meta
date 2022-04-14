@@ -68,7 +68,11 @@ const getErrorComponent = ({ status, data, context }) => {
   }
 };
 
-const PATHS_WITHOUT_NAVBAR = [/\/model\/.*\/query/, /\/model\/.*\/metadata/];
+const PATHS_WITHOUT_NAVBAR = [
+  /\/model\/.*\/query/,
+  /\/model\/.*\/metadata/,
+  /\/model\/.*\/settings/,
+];
 
 const EMBEDDED_ROUTES_WITH_NAVBAR = ["/collection", "/archive"];
 
