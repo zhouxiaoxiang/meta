@@ -104,6 +104,10 @@ function getSidebar(
     toggleSnippetSidebar,
   } = props;
 
+  if (datasetEditorTab === "settings") {
+    return null;
+  }
+
   if (datasetEditorTab === "metadata") {
     if (isQueryError) {
       return null;
