@@ -218,8 +218,13 @@ function DatasetEditor(props) {
       .filter(Boolean);
   }, [orderedColumns, result]);
 
-  const isEditingQuery = datasetEditorTab === "query";
-  const isEditingMetadata = datasetEditorTab === "metadata";
+  const isEditingQuery = useMemo(() => datasetEditorTab === "query", [
+    datasetEditorTab,
+  ]);
+
+  const isEditingMetadata = useMemo(() => datasetEditorTab === "metadata", [
+    datasetEditorTab,
+  ]);
 
   const initialEditorHeight = useMemo(() => {
     if (dataset.isStructured()) {
@@ -381,11 +386,8 @@ function DatasetEditor(props) {
   );
 
   const renderTableHeaderWrapper = useMemo(
-    () =>
-      datasetEditorTab === "metadata"
-        ? renderSelectableTableColumnHeader
-        : undefined,
-    [datasetEditorTab, renderSelectableTableColumnHeader],
+    () => (isEditingMetadata ? renderSelectableTableColumnHeader : undefined),
+    [isEditingMetadata, renderSelectableTableColumnHeader],
   );
 
   const canSaveChanges = useMemo(() => {
