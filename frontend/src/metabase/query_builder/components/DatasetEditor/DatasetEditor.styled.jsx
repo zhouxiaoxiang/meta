@@ -1,7 +1,10 @@
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+
+import Card from "metabase/components/Card";
 import EditBar from "metabase/components/EditBar";
 import Icon from "metabase/components/Icon";
+
 import { color } from "metabase/lib/colors";
 import { breakpointMinSmall, space } from "metabase/styled-components/theme";
 
@@ -88,7 +91,8 @@ export const Root = styled.div`
   display: flex;
   flex: 1 0 auto;
   position: relative;
-  background-color: ${color("bg-white")};
+  background-color: ${props =>
+    props.tab === "settings" ? color("content") : color("bg-white")};
   height: calc(100vh - ${EDIT_BAR_HEIGHT});
 `;
 
@@ -127,4 +131,20 @@ export const TableContainer = styled.div`
   flex-basis: 0;
 
   ${props => props.isSidebarOpen && tableVisibilityStyle}
+`;
+
+export const SettingsRoot = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2.5rem;
+`;
+
+export const SettingsFormCard = styled(Card)`
+  width: 50%;
+  padding: 2.5rem;
+`;
+
+export const SettingsFormTitle = styled.h2`
+  margin-bottom: 2rem;
 `;

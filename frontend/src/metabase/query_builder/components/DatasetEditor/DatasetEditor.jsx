@@ -31,6 +31,7 @@ import { EDITOR_TAB_INDEXES } from "./constants";
 import DatasetFieldMetadataSidebar from "./DatasetFieldMetadataSidebar";
 import DatasetQueryEditor from "./DatasetQueryEditor";
 import EditorTabs from "./EditorTabs";
+import ModelEditorSettings from "./ModelEditorSettings";
 import { TabHintToast } from "./TabHintToast";
 
 import {
@@ -61,6 +62,7 @@ const propTypes = {
   onCancelDatasetChanges: PropTypes.func.isRequired,
   handleResize: PropTypes.func.isRequired,
   runQuestionQuery: PropTypes.func.isRequired,
+  updateQuestion: PropTypes.func.isRequired,
 
   // Native editor sidebars
   isShowingTemplateTagsEditor: PropTypes.bool.isRequired,
@@ -187,6 +189,7 @@ function DatasetEditor(props) {
     onSave,
     handleResize,
     runQuestionQuery,
+    updateQuestion,
   } = props;
 
   // It's important to reload the query to refresh metadata when coming from the model page
@@ -227,6 +230,10 @@ function DatasetEditor(props) {
   ]);
 
   const isEditingMetadata = useMemo(() => datasetEditorTab === "metadata", [
+    datasetEditorTab,
+  ]);
+
+  const isEditingSettings = useMemo(() => datasetEditorTab === "settings", [
     datasetEditorTab,
   ]);
 
@@ -404,6 +411,17 @@ function DatasetEditor(props) {
     );
   }, [dataset, fields, isModelQueryDirty, isMetadataDirty]);
 
+  const onDatasetParamChange = useCallback(
+    (key, value) => {
+      const nextDataset = dataset.setCard({
+        ...dataset.card(),
+        [key]: value,
+      });
+      updateQuestion(nextDataset);
+    },
+    [dataset, updateQuestion],
+  );
+
   const sidebar = getSidebar(props, {
     datasetEditorTab,
     isQueryError: result?.error,
@@ -446,37 +464,48 @@ function DatasetEditor(props) {
           />,
         ]}
       />
-      <Root>
+      <Root tab={datasetEditorTab}>
         <MainContainer>
-          <QueryEditorContainer isResizable={isEditingQuery}>
-            <DatasetQueryEditor
-              {...props}
-              isActive={isEditingQuery}
-              height={editorHeight}
-              viewHeight={height}
-              onResizeStop={handleResize}
+          {isEditingSettings ? (
+            <ModelEditorSettings
+              dataset={dataset}
+              onChange={onDatasetParamChange}
             />
-          </QueryEditorContainer>
-          <TableContainer isSidebarOpen={!!sidebar}>
-            <DebouncedFrame className="flex-full" enabled>
-              <QueryVisualization
-                {...props}
-                className="spread"
-                noHeader
-                queryBuilderMode="dataset"
-                hasMetadataPopovers={false}
-                handleVisualizationClick={handleTableElementClick}
-                tableHeaderHeight={isEditingMetadata && TABLE_HEADER_HEIGHT}
-                renderTableHeaderWrapper={renderTableHeaderWrapper}
-                scrollToColumn={focusedFieldIndex + scrollToColumnModifier}
-              />
-            </DebouncedFrame>
-            <TabHintToastContainer
-              isVisible={isEditingMetadata && isTabHintVisible && !result.error}
-            >
-              <TabHintToast onClose={hideTabHint} />
-            </TabHintToastContainer>
-          </TableContainer>
+          ) : (
+            <>
+              <QueryEditorContainer isResizable={isEditingQuery}>
+                <DatasetQueryEditor
+                  {...props}
+                  isActive={isEditingQuery}
+                  height={editorHeight}
+                  viewHeight={height}
+                  onResizeStop={handleResize}
+                />
+              </QueryEditorContainer>
+              <TableContainer isSidebarOpen={!!sidebar}>
+                <DebouncedFrame className="flex-full" enabled>
+                  <QueryVisualization
+                    {...props}
+                    className="spread"
+                    noHeader
+                    queryBuilderMode="dataset"
+                    hasMetadataPopovers={false}
+                    handleVisualizationClick={handleTableElementClick}
+                    tableHeaderHeight={isEditingMetadata && TABLE_HEADER_HEIGHT}
+                    renderTableHeaderWrapper={renderTableHeaderWrapper}
+                    scrollToColumn={focusedFieldIndex + scrollToColumnModifier}
+                  />
+                </DebouncedFrame>
+                <TabHintToastContainer
+                  isVisible={
+                    isEditingMetadata && isTabHintVisible && !result.error
+                  }
+                >
+                  <TabHintToast onClose={hideTabHint} />
+                </TabHintToastContainer>
+              </TableContainer>
+            </>
+          )}
         </MainContainer>
         <ViewSidebar side="right" isOpen={!!sidebar}>
           {sidebar}
