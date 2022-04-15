@@ -47,6 +47,7 @@ import {
 
 const propTypes = {
   question: PropTypes.object.isRequired,
+  originalQuestion: PropTypes.object.isRequired,
   datasetEditorTab: PropTypes.oneOf(["query", "metadata", "settings"])
     .isRequired,
   metadata: PropTypes.object,
@@ -175,6 +176,7 @@ function compareFields(fieldRef1, fieldRef2) {
 function DatasetEditor(props) {
   const {
     question: dataset,
+    originalQuestion: originalDataset,
     datasetEditorTab,
     result,
     metadata,
@@ -406,10 +408,13 @@ function DatasetEditor(props) {
       return false;
     }
     const hasFieldWithoutDisplayName = fields.some(f => !f.display_name);
-    return (
-      !hasFieldWithoutDisplayName && (isModelQueryDirty || isMetadataDirty)
-    );
-  }, [dataset, fields, isModelQueryDirty, isMetadataDirty]);
+    if (hasFieldWithoutDisplayName) {
+      return false;
+    }
+    const hasCachingStateChange =
+      originalDataset.isPersisted() !== dataset.isPersisted();
+    return isModelQueryDirty || isMetadataDirty || hasCachingStateChange;
+  }, [dataset, originalDataset, fields, isModelQueryDirty, isMetadataDirty]);
 
   const onDatasetParamChange = useCallback(
     (key, value) => {
