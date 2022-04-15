@@ -370,19 +370,17 @@ describe("scenarios > models", () => {
       getDetailsSidebarActions().within(() => {
         cy.icon("pencil").click();
       });
-      modal().within(() => {
-        cy.findByLabelText("Name")
-          .clear()
-          .type("M1");
-        cy.findByLabelText("Description")
-          .clear()
-          .type("foo");
-        cy.button("Save").click();
-      });
+
+      cy.findByLabelText("Name")
+        .clear()
+        .type("M1");
+      cy.button("Save changes").click();
+
       cy.wait("@updateCard");
+      // Wait until model editor gets closed
+      cy.findByTestId("qb-header");
 
       cy.findByText("M1");
-      cy.findByText("foo");
     });
   });
 
