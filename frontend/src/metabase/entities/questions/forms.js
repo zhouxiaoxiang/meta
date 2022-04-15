@@ -1,4 +1,7 @@
-import { t } from "ttag";
+import React from "react";
+import { t, jt } from "ttag";
+
+import ExternalLink from "metabase/core/components/ExternalLink";
 
 import MetabaseSettings from "metabase/lib/settings";
 import { PLUGIN_CACHING } from "metabase/plugins";
@@ -29,6 +32,22 @@ function getQuestionCachingField() {
   };
 }
 
+function getModelCachingField() {
+  const docsLink = (
+    <ExternalLink
+      key="model-docs-link"
+      href={MetabaseSettings.docsUrl("users-guide/models")}
+    >{t`Learn more`}</ExternalLink>
+  );
+
+  return {
+    name: "persisted",
+    title: t`Cache`,
+    description: jt`Enabling caching will create tables for your models in a dedicated schema and Metabase will refresh them on a schedule. ${docsLink}.`,
+    type: "boolean",
+  };
+}
+
 export default {
   create: {
     fields: () => [
@@ -43,5 +62,8 @@ export default {
   edit: {
     fields: () =>
       [...getCommonFormFields(), getQuestionCachingField()].filter(Boolean),
+  },
+  editModel: {
+    fields: () => [...getCommonFormFields(), getModelCachingField()],
   },
 };
