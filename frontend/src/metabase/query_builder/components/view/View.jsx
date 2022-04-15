@@ -124,13 +124,14 @@ export default class View extends React.Component {
   getLeftSidebar = () => {
     const {
       question,
+      isBookmarked,
       isShowingChartSettingsSidebar,
       isShowingChartTypeSidebar,
       isShowingQuestionDetailsSidebar,
+      setQueryBuilderMode,
       onOpenModal,
       onCloseChartSettings,
       onCloseChartType,
-      isBookmarked,
       toggleBookmark,
     } = this.props;
 
@@ -148,8 +149,9 @@ export default class View extends React.Component {
       return (
         <QuestionDetailsSidebar
           question={question}
-          onOpenModal={onOpenModal}
           isBookmarked={isBookmarked}
+          setQueryBuilderMode={setQueryBuilderMode}
+          onOpenModal={onOpenModal}
           toggleBookmark={toggleBookmark}
         />
       );

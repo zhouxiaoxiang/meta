@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { t } from "ttag";
 import { connect } from "react-redux";
@@ -32,9 +32,10 @@ const ICON_SIZE = 18;
 QuestionActionButtons.propTypes = {
   question: PropTypes.object.isRequired,
   canWrite: PropTypes.bool.isRequired,
+  isBookmarked: PropTypes.bool.isRequired,
   areNestedQueriesEnabled: PropTypes.bool.isRequired,
   onOpenModal: PropTypes.func.isRequired,
-  isBookmarked: PropTypes.bool.isRequired,
+  setQueryBuilderMode: PropTypes.func.isRequired,
   toggleBookmark: PropTypes.func.isRequired,
 };
 
@@ -51,6 +52,7 @@ function QuestionActionButtons({
   onOpenModal,
   isBookmarked,
   toggleBookmark,
+  setQueryBuilderMode,
 }) {
   const isDataset = question.isDataset();
 
@@ -66,6 +68,16 @@ function QuestionActionButtons({
 
   const bookmarkButtonColor = isBookmarked ? color("brand") : "";
 
+  const onEditClick = useCallback(() => {
+    if (question.isDataset()) {
+      setQueryBuilderMode("dataset", {
+        datasetEditorTab: "settings",
+      });
+    } else {
+      onOpenModal(MODAL_TYPES.EDIT);
+    }
+  }, [question, setQueryBuilderMode, onOpenModal]);
+
   return (
     <Container data-testid="question-action-buttons">
       {canWrite && (
@@ -74,7 +86,7 @@ function QuestionActionButtons({
             onlyIcon
             icon="pencil"
             iconSize={ICON_SIZE}
-            onClick={() => onOpenModal(MODAL_TYPES.EDIT)}
+            onClick={onEditClick}
             data-testid={EDIT_TESTID}
           />
         </Tooltip>

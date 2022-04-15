@@ -6,15 +6,17 @@ import { SIDEBAR_VIEWS } from "./constants";
 
 QuestionDetailsSidebar.propTypes = {
   question: PropTypes.object.isRequired,
-  onOpenModal: PropTypes.func.isRequired,
   isBookmarked: PropTypes.bool.isRequired,
+  setQueryBuilderMode: PropTypes.func.isRequired,
+  onOpenModal: PropTypes.func.isRequired,
   toggleBookmark: PropTypes.func.isRequired,
 };
 
 function QuestionDetailsSidebar({
   question,
-  onOpenModal,
   isBookmarked,
+  setQueryBuilderMode,
+  onOpenModal,
   toggleBookmark,
 }) {
   const [view, setView] = useState(view);
@@ -26,8 +28,9 @@ function QuestionDetailsSidebar({
         <QuestionDetailsSidebarPanel
           setView={setView}
           question={question}
-          onOpenModal={onOpenModal}
           isBookmarked={isBookmarked}
+          setQueryBuilderMode={setQueryBuilderMode}
+          onOpenModal={onOpenModal}
           toggleBookmark={toggleBookmark}
         />
       );

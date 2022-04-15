@@ -17,15 +17,17 @@ import DatasetManagementSection from "./DatasetManagementSection";
 
 QuestionDetailsSidebarPanel.propTypes = {
   question: PropTypes.object.isRequired,
-  onOpenModal: PropTypes.func.isRequired,
   isBookmarked: PropTypes.bool.isRequired,
+  setQueryBuilderMode: PropTypes.func.isRequired,
+  onOpenModal: PropTypes.func.isRequired,
   toggleBookmark: PropTypes.func.isRequired,
 };
 
 function QuestionDetailsSidebarPanel({
   question,
-  onOpenModal,
   isBookmarked,
+  setQueryBuilderMode,
+  onOpenModal,
   toggleBookmark,
 }) {
   const isDataset = question.isDataset();
@@ -44,8 +46,9 @@ function QuestionDetailsSidebarPanel({
         <QuestionActionButtons
           question={question}
           canWrite={canWrite}
-          onOpenModal={onOpenModal}
           isBookmarked={isBookmarked}
+          setQueryBuilderMode={setQueryBuilderMode}
+          onOpenModal={onOpenModal}
           toggleBookmark={toggleBookmark}
         />
         <ClampedDescription
