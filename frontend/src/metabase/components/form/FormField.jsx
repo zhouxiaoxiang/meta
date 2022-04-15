@@ -16,7 +16,7 @@ import { FormFieldDecription } from "./FormFieldDescription";
 
 const formFieldCommon = {
   title: PropTypes.string,
-  description: PropTypes.string,
+  description: PropTypes.node,
   descriptionPosition: PropTypes.oneOf(["top", "bottom"]),
   info: PropTypes.string,
   hidden: PropTypes.bool,
