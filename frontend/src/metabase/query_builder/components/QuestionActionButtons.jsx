@@ -8,7 +8,6 @@ import { color } from "metabase/lib/colors";
 import {
   checkDatabaseSupportsModels,
   checkCanBeModel,
-  checkDatabaseCanPersistDatasets,
 } from "metabase/lib/data-modeling/utils";
 
 import { MODAL_TYPES } from "metabase/query_builder/constants";
@@ -37,8 +36,6 @@ QuestionActionButtons.propTypes = {
   onOpenModal: PropTypes.func.isRequired,
   isBookmarked: PropTypes.bool.isRequired,
   toggleBookmark: PropTypes.func.isRequired,
-  persistDataset: PropTypes.func.isRequired,
-  unpersistDataset: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
@@ -54,12 +51,8 @@ function QuestionActionButtons({
   onOpenModal,
   isBookmarked,
   toggleBookmark,
-  persistDataset,
-  unpersistDataset,
 }) {
-  const isSaved = question.isSaved();
   const isDataset = question.isDataset();
-  const isPersisted = question.isPersisted();
 
   const duplicateTooltip = isDataset
     ? t`Duplicate this model`
@@ -70,12 +63,6 @@ function QuestionActionButtons({
     !isDataset &&
     areNestedQueriesEnabled &&
     checkDatabaseSupportsModels(question.query().database());
-
-  const canPersistDataset =
-    canWrite &&
-    isSaved &&
-    isDataset &&
-    checkDatabaseCanPersistDatasets(question.query().database());
 
   const bookmarkButtonColor = isBookmarked ? color("brand") : "";
 
@@ -128,26 +115,6 @@ function QuestionActionButtons({
           />
         </Tooltip>
       )}
-      {canPersistDataset &&
-        (isPersisted ? (
-          <Tooltip tooltip={t`Unpersist model`}>
-            <Button
-              onlyIcon
-              icon="database"
-              iconSize={ICON_SIZE}
-              onClick={() => unpersistDataset(question.id())}
-            />
-          </Tooltip>
-        ) : (
-          <Tooltip tooltip={t`Persist model`}>
-            <Button
-              onlyIcon
-              icon="database"
-              iconSize={ICON_SIZE}
-              onClick={() => persistDataset(question.id())}
-            />
-          </Tooltip>
-        ))}
       {canWrite && (
         <Tooltip tooltip={duplicateTooltip}>
           <Button
