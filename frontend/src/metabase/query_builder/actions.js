@@ -1239,6 +1239,15 @@ export const apiCreateQuestion = question => {
   };
 };
 
+function checkShouldUpdateModelCaching(originalQuestion, question) {
+  return (
+    originalQuestion &&
+    originalQuestion.isDataset() &&
+    question.isDataset() &&
+    originalQuestion.isPersisted() !== question.isPersisted()
+  );
+}
+
 export const API_UPDATE_QUESTION = "metabase/qb/API_UPDATE_QUESTION";
 export const apiUpdateQuestion = (question, { rerunQuery = false } = {}) => {
   return async (dispatch, getState) => {
@@ -1270,6 +1279,15 @@ export const apiUpdateQuestion = (question, { rerunQuery = false } = {}) => {
     // This is done when saving a Card because the newly saved card will be eligible for use as a source query
     // so we want the databases list to be re-fetched next time we hit "New Question" so it shows up
     dispatch(setRequestUnloaded(["entities", "databases"]));
+
+    if (checkShouldUpdateModelCaching(originalQuestion, question)) {
+      const id = question.id();
+      if (question.isPersisted()) {
+        await CardApi.persist({ id });
+      } else {
+        await CardApi.unpersist({ id });
+      }
+    }
 
     MetabaseAnalytics.trackStructEvent(
       "QueryBuilder",
