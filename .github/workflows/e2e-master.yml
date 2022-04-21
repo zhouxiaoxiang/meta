@@ -117,7 +117,6 @@ jobs:
           --folder ${{ matrix.folder }} \
       env:
         TERM: xterm
-        burn: 3
 
     - name: Upload Cypress recording upon failure
       uses: actions/upload-artifact@v2
