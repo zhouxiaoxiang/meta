@@ -3,7 +3,7 @@ name: E2E Tests
 on:
   push:
     branches:
-      - "master"
+      - "e2e-test-new-restore"
     paths-ignore:
       - "docs/**"
       - "**.md"
