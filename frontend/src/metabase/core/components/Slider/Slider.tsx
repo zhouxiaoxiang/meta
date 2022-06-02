@@ -3,11 +3,14 @@ import React, {
   InputHTMLAttributes,
   useCallback,
   useMemo,
+  useState,
+  useEffect,
 } from "react";
 
 import {
   SliderContainer,
   SliderInput,
+  SliderTooltip,
   SliderTrack,
   ActiveTrack,
 } from "./Slider.styled";
@@ -26,16 +29,23 @@ export interface SliderProps extends NumericInputAttributes {
 }
 
 const Slider = ({
-  value,
+  value: parentValue,
   onChange,
   min = 0,
   max = 100,
   step = 1,
 }: SliderProps) => {
+  const [value, setValue] = useState(parentValue || [min, max]);
+  const [isDragging, setIsDragging] = useState(false);
+
   const [rangeMin, rangeMax] = useMemo(
     () => [Math.min(...value, min, max), Math.max(...value, min, max)],
     [value, min, max],
   );
+
+  useEffect(() => {
+    setValue(parentValue || [min, max]);
+  }, [parentValue, min, max]);
 
   const [beforeRange, rangeWidth] = useMemo(() => {
     const totalRange = rangeMax - rangeMin;
@@ -50,38 +60,59 @@ const Slider = ({
     (event: ChangeEvent<HTMLInputElement>, valueIndex: number) => {
       const changedValue = [...value];
       changedValue[valueIndex] = Number(event.target.value);
-      onChange(changedValue);
+      setValue(changedValue);
     },
-    [value, onChange],
+    [value, setValue],
   );
 
   const sortValues = useCallback(() => {
-    if (value[0] > value[1]) {
-      const sortedValues = [...value].sort();
-      onChange(sortedValues);
-    }
+    const sortedValues = value[1] < value[0] ? [...value].sort() : value;
+
+    onChange(sortedValues);
   }, [value, onChange]);
 
   return (
     <SliderContainer>
       <SliderTrack />
-      <ActiveTrack left={beforeRange} width={rangeWidth} />
+      <ActiveTrack
+        style={{ left: `${beforeRange}%`, width: `${rangeWidth}%` }}
+      />
+      <SliderTooltip
+        style={{
+          left: getTooltipPosition(beforeRange),
+          opacity: isDragging ? 1 : 0,
+        }}
+      >
+        {Math.min(...value)}
+      </SliderTooltip>
       <SliderInput
         type="range"
         aria-label="min"
         value={value[0]}
         onChange={e => handleChange(e, 0)}
+        onMouseEnter={() => setIsDragging(true)}
+        onMouseLeave={() => setIsDragging(false)}
         onMouseUp={sortValues}
         min={rangeMin}
         max={rangeMax}
         step={step}
       />
+      <SliderTooltip
+        style={{
+          left: getTooltipPosition(beforeRange + rangeWidth),
+          opacity: isDragging ? 1 : 0,
+        }}
+      >
+        {Math.max(...value)}
+      </SliderTooltip>
       <SliderInput
         type="range"
         aria-label="max"
         value={value[1]}
         onChange={e => handleChange(e, 1)}
         onMouseUp={sortValues}
+        onMouseEnter={() => setIsDragging(true)}
+        onMouseLeave={() => setIsDragging(false)}
         min={rangeMin}
         max={rangeMax}
         step={step}
@@ -89,5 +120,8 @@ const Slider = ({
     </SliderContainer>
   );
 };
+
+const getTooltipPosition = (basePosition: number) =>
+  `calc(${basePosition}% + ${11 - basePosition * 0.18}px)`;
 
 export default Slider;

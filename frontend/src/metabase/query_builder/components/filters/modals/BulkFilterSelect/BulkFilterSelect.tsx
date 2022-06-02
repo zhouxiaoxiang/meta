@@ -67,6 +67,7 @@ export const BulkFilterSelect = ({
     return (
       <InlineFilterSelect
         fieldType={fieldType}
+        dimension={dimension}
         filter={filter ?? newFilter}
         handleChange={handleChange}
       />

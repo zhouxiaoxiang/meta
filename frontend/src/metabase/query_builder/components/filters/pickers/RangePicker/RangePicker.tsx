@@ -1,28 +1,68 @@
-import React, { useCallback, useMemo, ChangeEvent } from "react";
+import React, {
+  useCallback,
+  useMemo,
+  ChangeEvent,
+  useState,
+  useEffect,
+} from "react";
 import _ from "underscore";
 import { t } from "ttag";
 
 import Filter from "metabase-lib/lib/queries/structured/Filter";
 import Slider from "metabase/core/components/Slider";
+import Dimension from "metabase-lib/lib/Dimension";
 
 import { RangeContainer, RangeNumberInput } from "./RangePicker.styled";
 
 interface RangePickerProps {
   filter: Filter;
+  dimension: Dimension;
   onFilterChange: (filter: Filter) => void;
   className?: string;
 }
 
-function RangePicker({ className, filter, onFilterChange }: RangePickerProps) {
+function RangePicker({
+  className,
+  filter,
+  onFilterChange,
+  dimension,
+}: RangePickerProps) {
+  const [fieldMin, fieldMax] = useMemo(() => {
+    const fingerprint = dimension?.field()?.fingerprint?.type?.["type/Number"];
+
+    if (!fingerprint) {
+      return [0, 100];
+    }
+    return [fingerprint.min, fingerprint.max];
+  }, [dimension]);
+
+  const [rangeMin, setRangeMin] = useState(fieldMin);
+  const [rangeMax, setRangeMax] = useState(fieldMax);
   const values = useMemo(() => getValues(filter), [filter]);
-  console.log(filter);
 
   const updateFilter = useCallback(
-    (newValue: number[]) => {
-      onFilterChange(filter.setOperator("between").setArguments(newValue));
+    (newValue: (number | undefined)[]) => {
+      if (!newValue.includes(undefined)) {
+        onFilterChange(filter.setOperator("between").setArguments(newValue));
+      } else if (newValue[0] === undefined) {
+        onFilterChange(filter.setOperator("lt").setArguments(newValue[1]));
+      } else if (newValue[1] === undefined) {
+        onFilterChange(filter.setOperator("gt").setArguments(newValue[0]));
+      }
     },
     [filter, onFilterChange],
   );
+
+  useEffect(() => {
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    if (minValue < rangeMin) {
+      setRangeMin(minValue);
+    }
+    if (maxValue > rangeMax) {
+      setRangeMax(maxValue);
+    }
+  }, [dimension, values, rangeMin, rangeMax]);
 
   return (
     <RangeContainer className={className}>
@@ -32,10 +72,10 @@ function RangePicker({ className, filter, onFilterChange }: RangePickerProps) {
         onChange={value => updateFilter([value, values[1]])}
       />
       <Slider
-        min={0}
-        max={100}
+        min={rangeMin}
+        max={rangeMax}
         step={1}
-        value={values}
+        value={[values[0] ?? rangeMin, values[1] ?? rangeMax]}
         onChange={updateFilter}
       />
       <RangeInput
@@ -52,7 +92,7 @@ function getValues(filter: Filter) {
   if (operatorName === "between") {
     return filter.arguments();
   } else {
-    return [0, 100];
+    return [undefined, undefined];
   }
 }
 
