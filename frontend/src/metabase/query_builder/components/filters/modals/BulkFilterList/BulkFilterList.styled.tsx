@@ -9,6 +9,7 @@ export const ListRoot = styled.div`
 
 export const ListRow = styled.div`
   display: flex;
+  flex-wrap: wrap;
   padding: 0.375rem 0;
 `;
 

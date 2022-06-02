@@ -4,6 +4,7 @@ import { t } from "ttag";
 import Filter from "metabase-lib/lib/queries/structured/Filter";
 
 import BooleanPicker from "metabase/query_builder/components/filters/pickers/BooleanPicker";
+import RangePicker from "metabase/query_builder/components/filters/pickers/RangePicker";
 import Warnings from "metabase/query_builder/components/Warnings";
 
 export interface InlineFilterSelectProps {
@@ -26,6 +27,9 @@ export const InlineFilterSelect = ({
           asCheckBox
         />
       );
+    case "type/Float":
+    case "type/Integer":
+      return <RangePicker filter={filter} onFilterChange={handleChange} />;
     default:
       return <Warnings warnings={[t`Invalid field type`]} />;
   }

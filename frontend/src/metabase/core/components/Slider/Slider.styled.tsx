@@ -1,9 +1,12 @@
 import styled from "@emotion/styled";
 import { color, alpha } from "metabase/lib/colors";
+import { space } from "metabase/styled-components/theme";
 
 export const SliderContainer = styled.div`
   position: relative;
   display: flex;
+  width: 100%;
+  margin: 0 ${space(1)};
 `;
 
 const thumbStyles = `
