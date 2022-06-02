@@ -13,6 +13,7 @@ import Slider from "metabase/core/components/Slider";
 import Dimension from "metabase-lib/lib/Dimension";
 
 import { RangeContainer, RangeNumberInput } from "./RangePicker.styled";
+import { getStep, roundToStep } from "./utils";
 
 interface RangePickerProps {
   filter: Filter;
@@ -27,13 +28,18 @@ function RangePicker({
   onFilterChange,
   dimension,
 }: RangePickerProps) {
-  const [fieldMin, fieldMax] = useMemo(() => {
+  const [fieldMin, fieldMax, step] = useMemo(() => {
     const fingerprint = dimension?.field()?.fingerprint?.type?.["type/Number"];
 
     if (!fingerprint) {
-      return [0, 100];
+      return [0, 100, 1];
     }
-    return [fingerprint.min, fingerprint.max];
+    const stepCalc = getStep(fingerprint.min, fingerprint.max);
+    return [
+      roundToStep(fingerprint.min, stepCalc),
+      roundToStep(fingerprint.max, stepCalc),
+      stepCalc,
+    ];
   }, [dimension]);
 
   const [rangeMin, setRangeMin] = useState(fieldMin);
@@ -74,7 +80,7 @@ function RangePicker({
       <Slider
         min={rangeMin}
         max={rangeMax}
-        step={1}
+        step={step}
         value={[values[0] ?? rangeMin, values[1] ?? rangeMax]}
         onChange={updateFilter}
       />
