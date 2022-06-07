@@ -167,15 +167,13 @@ const BulkFilterModalSectionList = ({
 }: BulkFilterModalSectionListProps): JSX.Element => {
   const [tab, setTab] = useState(0);
 
+  console.log({ sections });
+
   return (
     <TabContent value={tab} onChange={setTab}>
       <ModalTabList>
         {sections.map((section, index) => (
-          <Tab
-            key={index}
-            value={index}
-            icon={index > 0 ? section.icon : undefined}
-          >
+          <Tab key={index} value={index} icon={section.icon}>
             {section.name}
           </Tab>
         ))}
