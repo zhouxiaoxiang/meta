@@ -22,8 +22,10 @@ const SettingInput = ({
     })}
     id={id}
     type={type}
-    value={setting.value || ""}
-    placeholder={setting.placeholder}
+    value={type === "password" ? "" : setting.value || ""}
+    placeholder={
+      type === "password" && setting.value ? setting.value : setting.placeholder
+    }
     onChange={fireOnChange ? e => onChange(e.target.value) : null}
     onBlurChange={!fireOnChange ? e => onChange(e.target.value) : null}
     autoFocus={autoFocus}
