@@ -8,23 +8,23 @@
 
 (deftest create-test
   (mt/with-model-cleanup [Collection]
-    (let [base-params {:name "App collection"
+    (let [base-params {:name  "App collection"
                        :color "#123456"}]
       (mt/test-drivers (mt/normal-drivers-with-feature :actions/custom)
         (testing "Create app in non-root collection"
           (mt/with-temp* [Collection [{collection-id :id}]]
             (let [coll-params (assoc base-params :parent_id collection-id)
-                  response (mt/user-http-request :crowberto :post 200 "app" {:collection coll-params})]
+                  response    (mt/user-http-request :crowberto :post 200 "app" {:collection coll-params})]
               (is (pos-int? (:id response)))
               (is (pos-int? (:collection_id response)))
-              (is (partial= (assoc base-params :location (format "/%d/" collection-id))
-                            (:collection response))))))
+              (is (partial= {:collection (assoc base-params :location (format "/%d/" collection-id))}
+                            response)))))
         (testing "Create aoo in the root"
           (let [response (mt/user-http-request :crowberto :post 200 "app" {:collection base-params})]
             (is (pos-int? (:id response)))
             (is (pos-int? (:collection_id response)))
-            (is (partial= (assoc base-params :location "/")
-                          (:collection response)))))
+            (is (partial= {:collection (assoc base-params :location "/")}
+                          response))))
         (testing "Collection permissions"
           (mt/with-non-admin-groups-no-root-collection-perms
             (mt/with-temp* [Collection [{collection-id :id}]]
@@ -33,22 +33,22 @@
                        (mt/user-http-request :rasta :post 403 "app" {:collection coll-params}))))))
           (mt/with-temp* [Collection [{collection-id :id}]]
             (let [coll-params (assoc base-params :parent_id collection-id)
-                  response (mt/user-http-request :rasta :post 200 "app" {:collection coll-params})]
+                  response    (mt/user-http-request :rasta :post 200 "app" {:collection coll-params})]
               (is (pos-int? (:id response)))
               (is (pos-int? (:collection_id response)))
-              (is (partial= (assoc base-params :location (format "/%d/" collection-id))
-                            (:collection response))))))
+              (is (partial= {:collection (assoc base-params :location (format "/%d/" collection-id))}
+                            response)))))
         (testing "With initial dashboard and nav_items"
           (mt/with-temp* [Collection [{collection-id :id}]
                           Dashboard [{dashboard-id :id}]]
             (let [coll-params (assoc base-params :parent_id collection-id)
-                  nav_items [{:options {:click_behavior {}}}]]
-              (is (partial= {:collection (assoc base-params :location (format "/%d/" collection-id))
+                  nav_items   [{:options {:click_behavior {}}}]]
+              (is (partial= {:collection   (assoc base-params :location (format "/%d/" collection-id))
                              :dashboard_id dashboard-id
-                             :nav_items nav_items}
-                            (mt/user-http-request :crowberto :post 200 "app" {:collection coll-params
+                             :nav_items    nav_items}
+                            (mt/user-http-request :crowberto :post 200 "app" {:collection   coll-params
                                                                               :dashboard_id dashboard-id
-                                                                              :nav_items nav_items}))))))))))
+                                                                              :nav_items    nav_items}))))))))))
 
 (deftest update-test
   (mt/test-drivers (mt/normal-drivers-with-feature :actions/custom)

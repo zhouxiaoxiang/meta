@@ -13,7 +13,9 @@
             [metabase.util.i18n :refer [tru]]
             [schema.core :as s]
             [toucan.db :as db]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 ;; ## Static Definitions
 
@@ -119,7 +121,7 @@
   (derive ::mi/read-policy.always-allow)
   (derive ::mi/write-policy.superuser))
 
-(defn ^:hydrate recipients
+(defn recipients
   "Return the `PulseChannelRecipients` associated with this `pulse-channel`."
   [{pulse-channel-id :id, {:keys [emails]} :details}]
   (concat
@@ -134,6 +136,10 @@
                             [:= :u.is_active true]]
                 :order-by [[:u.id :asc]]})]
      (user/add-common-name user))))
+
+(md/defmethod t2.hydrate/simple-hydrate [PulseChannel :recipients]
+  [_model k pulse-channel]
+  (assoc pulse-channel k (recipients pulse-channel)))
 
 (defn- pre-delete [pulse-channel]
   ;; Call [[metabase.models.pulse/will-delete-channel]] to let it know we're about to delete a PulseChannel; that
@@ -188,8 +194,7 @@
   models/IModel
   (merge
    models/IModelDefaults
-   {:hydration-keys (constantly [:pulse_channel])
-    :types          (constantly {:details :json, :channel_type :keyword, :schedule_type :keyword, :schedule_frame :keyword})
+   {:types          (constantly {:details :json, :channel_type :keyword, :schedule_type :keyword, :schedule_frame :keyword})
     :properties     (constantly {:timestamped? true
                                  :entity_id    true})
     :pre-delete     pre-delete
@@ -198,6 +203,10 @@
 
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [(serdes.hash/hydrated-hash :pulse) :channel_type :details])})
+
+(md/defmethod t2.hydrate/model-for-automagic-hydration [:default :pulse_channel]
+  [_original-model _k]
+  PulseChannel)
 
 (defn will-delete-recipient
   "This function is called by [[metabase.models.pulse-channel-recipient/pre-delete]] when a `PulseChannelRecipient` is

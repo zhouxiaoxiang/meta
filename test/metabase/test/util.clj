@@ -935,8 +935,8 @@
                               FieldValues [_ {:field_id              (:id original)
                                               :values                (keys values-map)
                                               :human_readable_values (vals values-map)}]]
-                (testing (format "With human readable values remapping %s -> %s\n"
-                                 (describe-field original) (pr-str values-map))
+                (testing (format "With human readable values remapping %s ->\n%s\n"
+                                 (describe-field original) (u/pprint-to-str values-map))
                   (thunk)))))))))
    orig->remapped))
 

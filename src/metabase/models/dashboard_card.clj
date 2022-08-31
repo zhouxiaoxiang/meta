@@ -12,10 +12,12 @@
             [metabase.util :as u]
             [metabase.util.i18n :refer [tru]]
             [metabase.util.schema :as su]
+            [methodical.core :as md]
             [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (models/defmodel DashboardCard :report_dashboardcard)
 
@@ -69,13 +71,17 @@
   {:pre [(integer? dashboard_id)]}
   (db/select-one 'Dashboard, :id dashboard_id))
 
-(defn ^:hydrate series
+(defn series
   "Return the `Cards` associated as additional series on this DashboardCard."
   [{:keys [id]}]
   (db/select [Card :id :name :description :display :dataset_query :visualization_settings :collection_id]
     (mdb.u/join [Card :id] [DashboardCardSeries :card_id])
     (db/qualify DashboardCardSeries :dashboardcard_id) id
     {:order-by [[(db/qualify DashboardCardSeries :position) :asc]]}))
+
+(md/defmethod t2.hydrate/simple-hydrate [DashboardCard :series]
+  [_model k dashboard-card]
+  (assoc dashboard-card k (series dashboard-card)))
 
 
 ;;; ---------------------------------------------------- CRUD FNS ----------------------------------------------------

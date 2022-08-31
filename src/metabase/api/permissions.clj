@@ -16,7 +16,9 @@
             [metabase.util.schema :as su]
             schema.core
             [toucan.db :as db]
-            [toucan.hydrate :refer [hydrate]]))
+            [toucan.hydrate :refer [hydrate]]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 ;;; +----------------------------------------------------------------------------------------------------------------+
 ;;; |                                          PERMISSIONS GRAPH ENDPOINTS                                           |
@@ -79,13 +81,11 @@
                (some? offset) (hh/offset offset)
                (some? query)  (hh/where query))))
 
-(defn add-member-counts
-  "Efficiently add `:member_count` to PermissionGroups."
-  {:batched-hydrate :member_count}
-  [groups]
+(md/defmethod t2.hydrate/batched-hydrate [PermissionsGroup :member_count]
+  [_model k groups]
   (let [group-id->num-members (group-id->num-members)]
     (for [group groups]
-      (assoc group :member_count (get group-id->num-members (u/the-id group) 0)))))
+      (assoc group k (get group-id->num-members (u/the-id group) 0)))))
 
 (api/defendpoint GET "/group"
   "Fetch all `PermissionsGroups`, including a count of the number of `:members` in that group.

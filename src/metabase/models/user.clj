@@ -15,9 +15,11 @@
             [metabase.util.i18n :as i18n :refer [deferred-tru trs]]
             [metabase.util.password :as u.password]
             [metabase.util.schema :as su]
+            [methodical.core :as md]
             [schema.core :as s]
             [toucan.db :as db]
-            [toucan.models :as models])
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate])
   (:import java.util.UUID))
 
 ;;; ----------------------------------------------- Entity & Lifecycle -----------------------------------------------
@@ -137,7 +139,6 @@
   models/IModel
   (merge models/IModelDefaults
          {:default-fields (constantly default-user-columns)
-          :hydration-keys (constantly [:author :creator :user])
           :properties     (constantly {:updated-at-timestamped? true})
           :pre-insert     pre-insert
           :post-insert    post-insert
@@ -147,6 +148,11 @@
                                        :settings         :encrypted-json})})
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:email])})
+
+(doseq [k [:author :creator :user]]
+  (md/defmethod t2.hydrate/model-for-automagic-hydration [:default k]
+    [_original-model _k]
+    User))
 
 (defn group-ids
   "Fetch set of IDs of PermissionsGroup a User belongs to."
@@ -190,14 +196,13 @@
 
 ;;; --------------------------------------------------- Hydration ----------------------------------------------------
 
-(defn add-user-group-memberships
-  "Add to each `user` a list of Group Memberships Info with each item is a map with 2 keys [:id :is_group_manager].
-  In which `is_group_manager` is only added when `advanced-permissions` is enabled."
-  {:batched-hydrate :user_group_memberships}
-  [users]
+;;; Add to each `user` a list of Group Memberships Info with each item is a map with 2 keys [:id :is_group_manager]. In
+;;; which `is_group_manager` is only added when `advanced-permissions` is enabled.
+(md/defmethod t2.hydrate/batched-hydrate [User :user_group_memberships]
+  [_model _k users]
   (when (seq users)
     (let [user-id->memberships (group-by :user_id (db/select [PermissionsGroupMembership :user_id [:group_id :id] :is_group_manager]
-                                                             :user_id [:in (set (map u/the-id users))]))
+                                                    :user_id [:in (set (map u/the-id users))]))
           membership->group    (fn [membership]
                                  (select-keys membership
                                               [:id (when (premium-features/enable-advanced-permissions?)
@@ -208,7 +213,6 @@
 (defn add-group-ids
   "Efficiently add PermissionsGroup `group_ids` to a collection of `users`.
   TODO: deprecate :group_ids and use :user_group_memberships instead"
-  {:batched-hydrate :group_ids}
   [users]
   (when (seq users)
     (let [user-id->memberships (group-by :user_id (db/select [PermissionsGroupMembership :user_id :group_id]
@@ -216,24 +220,25 @@
       (for [user users]
         (assoc user :group_ids (set (map :group_id (user-id->memberships (u/the-id user)))))))))
 
-(defn add-has-invited-second-user
-  "Adds the `has_invited_second_user` flag to a collection of `users`. This should be `true` for only the user who
-  underwent the initial app setup flow (with an ID of 1), iff more than one user exists. This is used to modify
-  the wording for this user on a homepage banner that prompts them to add their database."
-  {:batched-hydrate :has_invited_second_user}
-  [users]
+(md/defmethod t2.hydrate/batched-hydrate [User :group_ids]
+  [_model _k users]
+  (add-group-ids users))
+
+;;; Adds the `has_invited_second_user` flag to a collection of `users`. This should be `true` for only the user who
+;;; underwent the initial app setup flow (with an ID of 1), iff more than one user exists. This is used to modify the
+;;; wording for this user on a homepage banner that prompts them to add their database.
+(md/defmethod t2.hydrate/batched-hydrate [User :has_invited_second_user]
+  [_model _k users]
   (when (seq users)
     (let [user-count (db/count User)]
       (for [user users]
         (assoc user :has_invited_second_user (and (= (:id user) 1)
                                                   (> user-count 1)))))))
 
-(defn add-is-installer
-  "Adds the `is_installer` flag to a collection of `users`. This should be `true` for only the user who
-  underwent the initial app setup flow (with an ID of 1). This is used to modify the experience of the
-  starting page for users."
-  {:batched-hydrate :is_installer}
-  [users]
+;;; Adds the `is_installer` flag to a collection of `users`. This should be `true` for only the user who underwent the
+;;; initial app setup flow (with an ID of 1). This is used to modify the experience of the starting page for users.
+(md/defmethod t2.hydrate/batched-hydrate [User :is_installer]
+  [_model _k users]
   (when (seq users)
     (for [user users]
       (assoc user :is_installer (= (:id user) 1)))))

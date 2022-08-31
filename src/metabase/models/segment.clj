@@ -14,7 +14,9 @@
             [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (models/defmodel Segment :segment)
 
@@ -43,12 +45,14 @@
    {:types          (constantly {:definition :metric-segment-definition})
     :properties     (constantly {:timestamped? true
                                  :entity_id    true})
-    :hydration-keys (constantly [:segment])
     :pre-update     pre-update})
 
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:name (serdes.hash/hydrated-hash :table)])})
 
+(md/defmethod t2.hydrate/model-for-automagic-hydration [:default :segment]
+  [_original-model _k]
+  Segment)
 
 ;;; --------------------------------------------------- Revisions ----------------------------------------------------
 

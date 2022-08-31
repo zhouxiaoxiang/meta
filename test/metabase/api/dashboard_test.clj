@@ -75,6 +75,7 @@
                              (update :collection_id boolean)))))
 
 (defn- dashboard-response [{:keys [creator ordered_cards created_at updated_at] :as dashboard}]
+  (assert (map? dashboard) (format "Expected dashboard to be a map, got %s" (pr-str dashboard)))
   ;; todo: should be udpated to use mt/boolean-ids-and-timestamps
   (let [dash (-> (into {} dashboard)
                  (dissoc :id)

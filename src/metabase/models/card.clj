@@ -22,27 +22,30 @@
             [metabase.server.middleware.session :as mw.session]
             [metabase.util :as u]
             [metabase.util.i18n :refer [tru]]
+            [methodical.core :as md]
             [toucan.db :as db]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (models/defmodel Card :report_card)
 
 ;;; You can read/write a Card if you can read/write its parent Collection
 (derive Card ::perms/use-parent-collection-perms)
 
-
 ;;; -------------------------------------------------- Hydration --------------------------------------------------
 
 (defn dashboard-count
   "Return the number of Dashboards this Card is in."
-  {:hydrate :dashboard_count}
   [{:keys [id]}]
   (db/count 'DashboardCard, :card_id id))
+
+(md/defmethod t2.hydrate/simple-hydrate [Card :dashboard_count]
+  [_model k card]
+  (assoc card k (dashboard-count card)))
 
 (defn average-query-time
   "Average query time of card, taken by query executions which didn't hit cache.
   If it's nil we don't have any query executions on file"
-  {:hydrate :average_query_time}
   [{:keys [id]}]
   (-> (db/query {:select [:%avg.running_time]
                  :from [:query_execution]
@@ -52,9 +55,12 @@
                          [:= :card_id id]]})
       first vals first))
 
+(md/defmethod t2.hydrate/simple-hydrate [Card :average_query_time]
+  [_model k card]
+  (assoc card k (average-query-time card)))
+
 (defn last-query-start
   "Timestamp for start of last query of this card."
-  {:hydrate :last_query_start}
   [{:keys [id]}]
   (-> (db/query {:select [:%max.started_at]
                  :from [:query_execution]
@@ -63,6 +69,10 @@
                          [:not= :cache_hit true]
                          [:= :card_id id]]})
       first vals first))
+
+(md/defmethod t2.hydrate/simple-hydrate [Card :last_query_start]
+  [_model k card]
+  (assoc card k (last-query-start card)))
 
 ;; There's more hydration in the shared metabase.moderation namespace, but it needs to be required:
 (comment moderation/keep-me)
@@ -277,7 +287,8 @@
         (check-for-circular-source-query-references changes))
       ;; Make sure any native query template tags match the DB in the query.
       (check-field-filter-fields-are-from-correct-database changes)
-      ;; Make sure the Collection is in the default Collection namespace (e.g. as opposed to the Snippets Collection namespace)
+      ;; Make sure the Collection is in the default Collection namespace (e.g. as opposed to the Snippets Collection
+      ;; namespace)
       (collection/check-collection-namespace Card (:collection_id changes))
       (params/assert-valid-parameters changes)
       (params/assert-valid-parameter-mappings changes)
@@ -308,8 +319,7 @@
 (u/strict-extend #_{:clj-kondo/ignore [:metabase/disallow-class-or-type-on-model]} (class Card)
   models/IModel
   (merge models/IModelDefaults
-         {:hydration-keys (constantly [:card])
-          :types          (constantly {:dataset_query          :metabase-query
+         {:types          (constantly {:dataset_query          :metabase-query
                                        :display                :keyword
                                        :embedding_params       :json
                                        :query_type             :keyword
@@ -334,16 +344,20 @@
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:name (serdes.hash/hydrated-hash :collection)])})
 
+(md/defmethod t2.hydrate/model-for-automagic-hydration [:default :card]
+  [_model _k]
+  Card)
+
 ;;; ------------------------------------------------- Serialization --------------------------------------------------
 (defmethod serdes.base/extract-query "Card" [_ {:keys [user]}]
   (serdes.base/raw-reducible-query
-    "Card"
-    {:select     [:card.*]
-     :from       [[:report_card :card]]
-     :left-join  [[:collection :coll] [:= :coll.id :card.collection_id]]
-     :where      (if user
-                   [:or [:= :coll.personal_owner_id user] [:is :coll.personal_owner_id nil]]
-                   [:is :coll.personal_owner_id nil])}))
+   "Card"
+   {:select     [:card.*]
+    :from       [[:report_card :card]]
+    :left-join  [[:collection :coll] [:= :coll.id :card.collection_id]]
+    :where      (if user
+                  [:or [:= :coll.personal_owner_id user] [:is :coll.personal_owner_id nil]]
+                  [:is :coll.personal_owner_id nil])}))
 
 (defmethod serdes.base/extract-one "Card"
   [_model-name _opts card]

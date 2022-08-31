@@ -2,8 +2,10 @@
   (:require [clojure.string :as str]
             [medley.core :as m]
             [metabase.util :as u]
+            [methodical.core :as md]
             [schema.core :as s]
-            [toucan.db :as db]))
+            [toucan.db :as db]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (def moderated-item-types
   "Schema enum of the acceptable values for the `moderated_item_type` column"
@@ -21,11 +23,10 @@
   [moderated-item]
   (str/lower-case (name moderated-item)))
 
-(defn moderation-reviews-for-items
-  "Hydrate moderation reviews onto a seq of items. All are cards or the nils that end up here on text dashboard
-  cards. In the future could have dashboards here as well."
-  {:batched-hydrate :moderation_reviews}
-  [items]
+;;; Hydrate moderation reviews onto a seq of items. All are cards or the nils that end up here on text dashboard cards.
+;;; In the future could have dashboards here as well.
+(md/defmethod t2.hydrate/batched-hydrate [:default :moderation_reviews]
+  [_model _k items]
   ;; no need to do work on empty items. Also, can have nil here due to text cards. I think this is a bug in toucan. To
   ;; get here we are `(hydrate dashboard [:ordered_cards [:card :moderation_reviews] :series] ...)` But ordered_cards
   ;; dont have to have cards. but the hydration will pass the nil card id into here.  NOTE: it is important that each
@@ -36,19 +37,17 @@
           all-reviews (when item-ids
                         (group-by (juxt :moderated_item_type :moderated_item_id)
                                   (db/select 'ModerationReview
-                                             :moderated_item_type "card"
-                                             :moderated_item_id [:in item-ids]
-                                             {:order-by [[:id :desc]]})))]
+                                    :moderated_item_type "card"
+                                    :moderated_item_id [:in item-ids]
+                                    {:order-by [[:id :desc]]})))]
       (for [item items]
         (if (nil? item)
           nil
           (let [k ((juxt (comp keyword object->type) u/the-id) item)]
             (assoc item :moderation_reviews (get all-reviews k ()))))))))
 
-(defn moderation-user-details
-  "User details on moderation reviews"
-  {:batched-hydrate :moderator_details}
-  [moderation-reviews]
+(md/defmethod t2.hydrate/batched-hydrate [:default :moderator_details]
+  [_model _k moderation-reviews]
   (when (seq moderation-reviews)
     (let [id->user (m/index-by :id
                                (db/select 'User :id [:in (map :moderator_id moderation-reviews)]))]
@@ -57,7 +56,10 @@
 
 (defn moderated-item
   "The moderated item for a given request or review"
-  {:hydrate :moderated_item}
   [{:keys [moderated_item_id moderated_item_type]}]
   (when (and moderated_item_type moderated_item_id)
     (db/select-one (moderated-item-type->model moderated_item_type) :id moderated_item_id)))
+
+(md/defmethod t2.hydrate/simple-hydrate [:default :moderated_item]
+  [_model k row]
+  (assoc row k (moderated-item row)))

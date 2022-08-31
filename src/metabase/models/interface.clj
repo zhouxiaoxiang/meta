@@ -1,26 +1,35 @@
 (ns metabase.models.interface
-  (:require [buddy.core.codecs :as codecs]
-            [cheshire.core :as json]
-            [clojure.core.memoize :as memoize]
-            [clojure.tools.logging :as log]
-            [clojure.walk :as walk]
-            [metabase.db.connection :as mdb.connection]
-            [metabase.mbql.normalize :as mbql.normalize]
-            [metabase.mbql.schema :as mbql.s]
-            [metabase.models.dispatch :as models.dispatch]
-            [metabase.plugins.classloader :as classloader]
-            [metabase.util :as u]
-            [metabase.util.cron :as u.cron]
-            [metabase.util.encryption :as encryption]
-            [metabase.util.i18n :refer [trs tru]]
-            [potemkin :as p]
-            [schema.core :as s]
-            [taoensso.nippy :as nippy]
-            [toucan.db :as db]
-            [toucan.models :as models])
-  (:import [java.io BufferedInputStream ByteArrayInputStream DataInputStream]
-           java.sql.Blob
-           java.util.zip.GZIPInputStream))
+  (:require
+   [buddy.core.codecs :as codecs]
+   [cheshire.core :as json]
+   [clojure.core.memoize :as memoize]
+   [clojure.tools.logging :as log]
+   [clojure.walk :as walk]
+   [metabase.db.connection :as mdb.connection]
+   [metabase.mbql.normalize :as mbql.normalize]
+   [metabase.mbql.schema :as mbql.s]
+   [metabase.models.dispatch :as models.dispatch]
+   [metabase.models.toucan-2 :as models.t2]
+   [metabase.plugins.classloader :as classloader]
+   [metabase.util :as u]
+   [metabase.util.cron :as u.cron]
+   [metabase.util.encryption :as encryption]
+   [metabase.util.i18n :refer [trs tru]]
+   [methodical.core :as md]
+   [potemkin :as p]
+   [schema.core :as s]
+   [taoensso.nippy :as nippy]
+   [toucan.db :as db]
+   [toucan.models :as models]
+   [toucan2.tools.hydrate :as t2.hydrate])
+  (:import
+   (java.io BufferedInputStream ByteArrayInputStream DataInputStream)
+   (java.sql Blob)
+   (java.util.zip GZIPInputStream)))
+
+(set! *warn-on-reflection* true)
+
+(comment models.t2/keep-me)
 
 (p/import-vars
  [models.dispatch
@@ -297,8 +306,12 @@
   *  `(partial current-user-has-full-permissions? :write)` (you must also implement [[perms-objects-set]] to use this)
   *  `(partial current-user-has-partial-permissions? :write)` (you must also implement [[perms-objects-set]] to use
       this)"
-  {:arglists '([instance] [model pk]), :hydrate :can_write}
+  {:arglists '([instance] [model pk])}
   dispatch-on-model)
+
+(md/defmethod t2.hydrate/simple-hydrate [:default :can_write]
+  [_model k instance]
+  (assoc instance k (can-write? instance)))
 
 (defmulti can-create?
   "NEW! Check whether or not current user is allowed to CREATE a new instance of `model` with properties in map
@@ -428,25 +441,3 @@
 (defmethod can-create? ::create-policy.superuser
   [_model _m]
   (superuser?))
-
-
-;;;; redefs
-
-;;; swap out [[models/defmodel]] with a special magical version that avoids redefining stuff if the definition has not
-;;; changed at all. This is important to make the stuff in [[models.dispatch]] work properly, since we're dispatching
-;;; off of the model objects themselves e.g. [[metabase.models.user/User]] -- it is important that they do not change
-
-(defonce ^:private original-defmodel @(resolve `models/defmodel))
-
-(defmacro ^:private defmodel [model & args]
-  (let [varr           (ns-resolve *ns* model)
-        existing-hash  (some-> varr meta ::defmodel-hash)
-        has-same-hash? (= existing-hash (hash &form))]
-    (when has-same-hash?
-      (println model "has not changed, skipping redefinition"))
-    (when-not has-same-hash?
-      `(do
-         ~(apply original-defmodel &form &env model args)
-         (alter-meta! (var ~model) assoc ::defmodel-hash ~(hash &form))))))
-
-(alter-var-root #'models/defmodel (constantly @#'defmodel))

@@ -15,7 +15,9 @@
             [metabase.util.i18n :as i18n]
             [schema.core :as s]
             [toucan.db :as db]
-            [toucan.hydrate :as hydrate :refer [hydrate]]))
+            [toucan.hydrate :as hydrate :refer [hydrate]]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (use-fixtures
   :once
@@ -488,10 +490,9 @@
 ;;; |                                      Updating a User -- PUT /api/user/:id                                      |
 ;;; +----------------------------------------------------------------------------------------------------------------+
 
-(defn include-personal-collection-name
-  {:hydrate :personal_collection_name}
-  [user]
-  (db/select-one-field :name Collection :id (:personal_collection_id user)))
+(md/defmethod t2.hydrate/simple-hydrate [:default #_User :personal_collection_name]
+  [_model k user]
+  (assoc user k (db/select-one-field :name Collection :id (:personal_collection_id user))))
 
 (deftest admin-update-other-user-test
   (testing "PUT /api/user/:id"

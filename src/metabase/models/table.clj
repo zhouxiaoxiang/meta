@@ -14,8 +14,10 @@
             [metabase.models.serialization.base :as serdes.base]
             [metabase.models.serialization.hash :as serdes.hash]
             [metabase.util :as u]
+            [methodical.core :as md]
             [toucan.db :as db]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 ;;; ----------------------------------------------- Constants + Entity -----------------------------------------------
 
@@ -71,17 +73,19 @@
 (u/strict-extend #_{:clj-kondo/ignore [:metabase/disallow-class-or-type-on-model]} (class Table)
   models/IModel
   (merge models/IModelDefaults
-         {:hydration-keys (constantly [:table])
-          :types          (constantly {:entity_type     :keyword
-                                       :visibility_type :keyword
-                                       :field_order     :keyword})
-          :properties     (constantly {:timestamped? true})
-          :pre-insert     pre-insert
-          :pre-delete     pre-delete})
+         {:types      (constantly {:entity_type     :keyword
+                                   :visibility_type :keyword
+                                   :field_order     :keyword})
+          :properties (constantly {:timestamped? true})
+          :pre-insert pre-insert
+          :pre-delete pre-delete})
 
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:schema :name (serdes.hash/hydrated-hash :db)])})
 
+(md/defmethod t2.hydrate/model-for-automagic-hydration [:default :table]
+  [_original-model _k]
+  Table)
 
 ;;; ------------------------------------------------ Field ordering -------------------------------------------------
 
@@ -132,7 +136,7 @@
 
 ;;; --------------------------------------------------- Hydration ----------------------------------------------------
 
-(defn ^:hydrate fields
+(defn fields
   "Return the Fields belonging to a single `table`."
   [{:keys [id]}]
   (db/select Field
@@ -140,6 +144,10 @@
     :active          true
     :visibility_type [:not= "retired"]
     {:order-by field-order-rule}))
+
+(md/defmethod t2.hydrate/simple-hydrate [Table :fields]
+  [_model k table]
+  (assoc table k (fields table)))
 
 (defn metrics
   "Retrieve the Metrics for a single `table`."
@@ -153,7 +161,7 @@
 
 (defn field-values
   "Return the FieldValues for all Fields belonging to a single `table`."
-  {:hydrate :field_values, :arglists '([table])}
+  {:arglists '([table])}
   [{:keys [id]}]
   (let [field-ids (db/select-ids Field
                     :table_id        id
@@ -162,15 +170,22 @@
     (when (seq field-ids)
       (db/select-field->field :field_id :values FieldValues, :field_id [:in field-ids]))))
 
+(md/defmethod t2.hydrate/simple-hydrate [Table :field_values]
+  [_model k table]
+  (assoc table k (field-values table)))
+
 (defn pk-field-id
   "Return the ID of the primary key `Field` for `table`."
-  {:hydrate :pk_field, :arglists '([table])}
+  {:arglists '([table])}
   [{:keys [id]}]
   (db/select-one-id Field
     :table_id        id
     :semantic_type   (mdb.u/isa :type/PK)
     :visibility_type [:not-in ["sensitive" "retired"]]))
 
+(md/defmethod t2.hydrate/simple-hydrate [Table :pk_field]
+  [_model k table]
+  (assoc table k (pk-field-id table)))
 
 (defn- with-objects [hydration-key fetch-objects-fn tables]
   (let [table-ids         (set (map :id tables))
@@ -179,19 +194,15 @@
     (for [table tables]
       (assoc table hydration-key (get table-id->objects (:id table) [])))))
 
-(defn with-segments
-  "Efficiently hydrate the Segments for a collection of `tables`."
-  {:batched-hydrate :segments}
-  [tables]
+(md/defmethod t2.hydrate/batched-hydrate [Table :segments]
+  [_model _k tables]
   (with-objects :segments
     (fn [table-ids]
       (db/select Segment :table_id [:in table-ids], :archived false, {:order-by [[:name :asc]]}))
     tables))
 
-(defn with-metrics
-  "Efficiently hydrate the Metrics for a collection of `tables`."
-  {:batched-hydrate :metrics}
-  [tables]
+(md/defmethod t2.hydrate/batched-hydrate [Table :metrics]
+  [_model _k tables]
   (with-objects :metrics
     (fn [table-ids]
       (db/select Metric :table_id [:in table-ids], :archived false, {:order-by [[:name :asc]]}))

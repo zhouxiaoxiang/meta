@@ -1,11 +1,14 @@
 (ns metabase.models.action
-  (:require [cheshire.core :as json]
-            [medley.core :as m]
-            [metabase.models.interface :as mi]
-            [metabase.util :as u]
-            [metabase.util.encryption :as encryption]
-            [toucan.db :as db]
-            [toucan.models :as models]))
+  (:require
+   [cheshire.core :as json]
+   [medley.core :as m]
+   [metabase.models.interface :as mi]
+   [metabase.util :as u]
+   [metabase.util.encryption :as encryption]
+   [methodical.core :as md]
+   [toucan.db :as db]
+   [toucan.models :as models]
+   [toucan2.tools.hydrate :as t2.hydrate]))
 
 (models/defmodel QueryAction :query_action)
 (models/defmodel HTTPAction :http_action)
@@ -127,10 +130,8 @@
         http-actions (normalize-http-actions http)]
     (sort-by :updated_at (concat query-actions http-actions))))
 
-(defn action
-  "Hydrates Action from Emitter"
-  {:batched-hydrate :action}
-  [emitters]
+(md/defmethod t2.hydrate/batched-hydrate [:default #_Emitter :action]
+  [_model _k emitters]
   ;; emitters apparently might actually be `[nil]` (not 100% sure why) so just make sure we're not doing anything dumb
   ;; if this is the case.
   (if-let [action-id-by-emitter-id (not-empty (into {} (map (juxt :id :action_id) (filter :id emitters))))]
@@ -139,10 +140,8 @@
         (some-> emitter (assoc :action (get actions-by-id (get action-id-by-emitter-id emitter-id))))))
     emitters))
 
-(defn cards-by-action-id
-  "Hydrates action_id from Card for is_write cards"
-  {:batched-hydrate :card/action-id}
-  [cards]
+(md/defmethod t2.hydrate/batched-hydrate [:default #_Card :card/action-id]
+  [_model _k cards]
   (if-let [card-id->action-id (not-empty (db/select-field->field
                                            :card_id :action_id
                                            'QueryAction

@@ -11,8 +11,11 @@
             [metabase.util.i18n :refer [tru]]
             [metabase.util.schema :as su]
             [schema.core :as s]
+            [metabase.models.field :refer [Field]]
             [toucan.db :as db]
-            [toucan.hydrate :refer [hydrate]]))
+            [toucan.hydrate :refer [hydrate]]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 ;;; +----------------------------------------------------------------------------------------------------------------+
 ;;; |                                                     SHARED                                                     |
@@ -104,13 +107,12 @@
                               ;; `list` instead of `auto-list`.)
                               (hydrate :has_field_values)))))
 
-(defn add-name-field
-  "For all `fields` that are `:type/PK` Fields, look for a `:type/Name` Field belonging to the same Table. For each
-  Field, if a matching name Field exists, add it under the `:name_field` key. This is so the Fields can be used in
-  public/embedded field values search widgets. This only includes the information needed to power those widgets, and
-  no more."
-  {:batched-hydrate :name_field}
-  [fields]
+;;; For all `fields` that are `:type/PK` Fields, look for a `:type/Name` Field belonging to the same Table. For each
+;;; Field, if a matching name Field exists, add it under the `:name_field` key. This is so the Fields can be used in
+;;; public/embedded field values search widgets. This only includes the information needed to power those widgets, and
+;;; no more.
+(md/defmethod t2.hydrate/batched-hydrate [Field :name_field]
+  [_model _k fields]
   (let [table-id->name-field (fields->table-id->name-field (pk-fields fields))]
     (for [field fields]
       ;; add matching `:name_field` if it's a PK
@@ -157,10 +159,15 @@
                         (hydrate :has_field_values :name_field [:dimensions :human_readable_field])
                         remove-dimensions-nonpublic-columns))))
 
-(defmulti ^:private ^{:hydrate :param_fields} param-fields
+;;; TODO -- it seems like we can eliminate this method and just have two `simple-hydrate` methods instead.
+(defmulti ^:private param-fields
   "Add a `:param_fields` map (Field ID -> Field) for all of the Fields referenced by the parameters of a Card or
   Dashboard. Implementations are below in respective sections."
   name)
+
+(md/defmethod t2.hydrate/simple-hydrate [:default :param_fields]
+  [_model k row]
+  (assoc row k (param-fields row)))
 
 
 ;;; +----------------------------------------------------------------------------------------------------------------+

@@ -21,11 +21,13 @@
             [metabase.util.honeysql-extensions :as hx]
             [metabase.util.i18n :refer [trs tru]]
             [metabase.util.schema :as su]
+            [methodical.core :as md]
             [potemkin :as p]
             [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
-            [toucan.models :as models])
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate])
   (:import metabase.models.collection.root.RootCollection))
 
 (comment collection.root/keep-me)
@@ -326,7 +328,6 @@
 
   When called with a single argument, `collection`, this is used as a hydration function to hydrate
   `:effective_location`."
-  {:hydrate :effective_location}
   ([collection :- CollectionWithLocationOrRoot]
    (if (collection.root/is-root-collection? collection)
      nil
@@ -340,17 +341,25 @@
                                 :when (contains? allowed-collection-ids id)]
                             id)))))
 
+(md/defmethod t2.hydrate/simple-hydrate [Collection :effective_location]
+  [_model k collection]
+  (assoc collection k (effective-location-path collection)))
+
 
 ;;; +----------------------------------------------------------------------------------------------------------------+
 ;;; |                          Nested Collections: Ancestors, Childrens, Child Collections                           |
 ;;; +----------------------------------------------------------------------------------------------------------------+
 
-(s/defn ^:private ^:hydrate ancestors :- [(mi/InstanceOf Collection)]
+(s/defn ^:private ancestors :- [(mi/InstanceOf Collection)]
   "Fetch ancestors (parent, grandparent, etc.) of a `collection`. These are returned in order starting with the
   highest-level (e.g. most distant) ancestor."
   [{:keys [location]}]
   (when-let [ancestor-ids (seq (location-path->ids location))]
     (db/select [Collection :name :id] :id [:in ancestor-ids] {:order-by [:%lower.name]})))
+
+(md/defmethod t2.hydrate/simple-hydrate [Collection :ancestors]
+  [_model k collection]
+  (assoc collection k (ancestors collection)))
 
 (s/defn effective-ancestors :- [(s/cond-pre RootCollection (mi/InstanceOf Collection))]
   "Fetch the ancestors of a `collection`, filtering out any ones the current User isn't allowed to see. This is used
@@ -369,17 +378,23 @@
 
   Thus the existence of C will be kept hidden from the current User, and for all intents and purposes the current User
   can effectively treat A as the parent of C."
-  {:hydrate :effective_ancestors}
   [collection :- CollectionWithLocationAndIDOrRoot]
   (if (collection.root/is-root-collection? collection)
     []
     (filter mi/can-read? (cons (root-collection-with-ui-details (:namespace collection)) (ancestors collection)))))
 
+(md/defmethod t2.hydrate/simple-hydrate [Collection :effective_ancestors]
+  [_model k collection]
+  (assoc collection k (effective-ancestors collection)))
+
 (s/defn parent-id :- (s/maybe su/IntGreaterThanZero)
   "Get the immediate parent `collection` id, if set."
-  {:hydrate :parent_id}
   [{:keys [location]} :- CollectionWithLocationOrRoot]
   (some-> location location-path->parent-id))
+
+(md/defmethod t2.hydrate/simple-hydrate [Collection :parent_id]
+  [_model k collection]
+  (assoc collection k (parent-id collection)))
 
 (s/defn children-location :- LocationPath
   "Given a `collection` return a location path that should match the `:location` value of all the children of the
@@ -498,10 +513,13 @@
 (s/defn effective-children :- #{(mi/InstanceOf Collection)}
   "Get the descendant Collections of `collection` that should be presented to the current User as direct children of
   this Collection. See documentation for [[metabase.models.collection/effective-children-query]] for more details."
-  {:hydrate :effective_children}
   [collection :- CollectionWithLocationAndIDOrRoot & additional-honeysql-where-clauses]
   (set (db/select [Collection :id :name :description]
                   {:where (apply effective-children-where-clause collection additional-honeysql-where-clauses)})))
+
+(md/defmethod t2.hydrate/simple-hydrate [Collection :effective_children]
+  [_model k collection]
+  (assoc collection k (effective-children collection)))
 
 
 ;;; +----------------------------------------------------------------------------------------------------------------+
@@ -893,8 +911,7 @@
 (u/strict-extend #_{:clj-kondo/ignore [:metabase/disallow-class-or-type-on-model]} (class Collection)
   models/IModel
   (merge models/IModelDefaults
-         {:hydration-keys (constantly [:collection])
-          :types          (constantly {:namespace       :keyword
+         {:types          (constantly {:namespace       :keyword
                                        :authority_level :keyword})
           :properties     (constantly {:entity_id true})
           :pre-insert     pre-insert
@@ -905,14 +922,18 @@
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:name :namespace parent-identity-hash])})
 
+(md/defmethod t2.hydrate/model-for-automagic-hydration [:default :collection]
+  [_original-model _k]
+  Collection)
+
 (defn- collection-query [maybe-user]
   (serdes.base/raw-reducible-query
-    "Collection"
-    {:where [:and
-             [:= :archived false]
-             (if (nil? maybe-user)
-               [:is :personal_owner_id nil]
-               [:= :personal_owner_id maybe-user])]}))
+   "Collection"
+   {:where [:and
+            [:= :archived false]
+            (if (nil? maybe-user)
+              [:is :personal_owner_id nil]
+              [:= :personal_owner_id maybe-user])]}))
 
 (defmethod serdes.base/extract-query "Collection" [_ {:keys [user]}]
   (let [unowned (collection-query nil)]
@@ -1096,11 +1117,8 @@
           ;; in Root, so we can pass it what it needs without actually having to fetch an entire CollectionInstance
           (descendant-ids {:location "/", :id personal-collection-id}))))
 
-(defn include-personal-collection-ids
-  "Efficiently hydrate the `:personal_collection_id` property of a sequence of Users. (This is, predictably, the ID of
-  their Personal Collection.)"
-  {:batched-hydrate :personal_collection_id}
-  [users]
+(md/defmethod t2.hydrate/batched-hydrate [:default #_User :personal_collection_id]
+  [_model _k users]
   (when (seq users)
     ;; efficiently create a map of user ID -> personal collection ID
     (let [user-id->collection-id (db/select-field->id :personal_owner_id Collection

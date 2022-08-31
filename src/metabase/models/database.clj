@@ -15,8 +15,10 @@
             [metabase.plugins.classloader :as classloader]
             [metabase.util :as u]
             [metabase.util.i18n :refer [trs]]
+            [methodical.core :as md]
             [toucan.db :as db]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 ;;; ----------------------------------------------- Entity & Lifecycle -----------------------------------------------
 
@@ -197,8 +199,7 @@
 (u/strict-extend #_{:clj-kondo/ignore [:metabase/disallow-class-or-type-on-model]} (class Database)
   models/IModel
   (merge models/IModelDefaults
-         {:hydration-keys (constantly [:database :db])
-          :types          (constantly {:details                     :encrypted-json
+         {:types          (constantly {:details                     :encrypted-json
                                        :options                     :json
                                        :engine                      :keyword
                                        :metadata_sync_schedule      :cron-string
@@ -215,14 +216,23 @@
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:name :engine])})
 
+(doseq [k [:db :database]]
+  (md/defmethod t2.hydrate/model-for-automagic-hydration [:default k]
+    [_original-model _k]
+    Database))
+
 
 ;;; ---------------------------------------------- Hydration / Util Fns ----------------------------------------------
 
-(defn ^:hydrate tables
+(defn tables
   "Return the `Tables` associated with this `Database`."
   [{:keys [id]}]
   ;; TODO - do we want to include tables that should be `:hidden`?
   (db/select 'Table, :db_id id, :active true, {:order-by [[:%lower.display_name :asc]]}))
+
+(md/defmethod t2.hydrate/simple-hydrate [Database :tables]
+  [_model k database]
+  (assoc database k (tables database)))
 
 (defn schema-names
   "Return a *sorted set* of schema names (as strings) associated with this `Database`."

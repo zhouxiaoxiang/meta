@@ -35,7 +35,9 @@
             [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 ;;; ----------------------------------------------- Entity & Lifecycle -----------------------------------------------
 
@@ -128,8 +130,7 @@
   models/IModel
   (merge
    models/IModelDefaults
-   {:hydration-keys (constantly [:pulse])
-    :properties     (constantly {:timestamped? true
+   {:properties     (constantly {:timestamped? true
                                  :entity_id    true})
     :pre-insert     pre-insert
     :pre-update     pre-update
@@ -137,6 +138,10 @@
 
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:name (serdes.hash/hydrated-hash :collection)])})
+
+(md/defmethod t2.hydrate/model-for-automagic-hydration [:default :pulse]
+  [_original-model _k]
+  Pulse)
 
 (def ^:private ^:dynamic *automatically-archive-when-last-channel-is-deleted*
   "Should we automatically archive a Pulse when its last `PulseChannel` is deleted? Normally we do, but this is disabled
@@ -197,12 +202,16 @@
 
 ;;; --------------------------------------------------- Hydration ----------------------------------------------------
 
-(defn ^:hydrate channels
+(defn channels
   "Return the PulseChannels associated with this `notification`."
   [notification-or-id]
   (db/select PulseChannel, :pulse_id (u/the-id notification-or-id)))
 
-(s/defn ^:hydrate cards :- [HybridPulseCard]
+(md/defmethod t2.hydrate/simple-hydrate [Pulse :channels]
+  [_model k notificiation]
+  (assoc notificiation k (channels notificiation)))
+
+(s/defn cards :- [HybridPulseCard]
   "Return the Cards associated with this `notification`."
   [notification-or-id]
   (map (partial models/do-post-select Card)
@@ -217,6 +226,10 @@
                      [:= :p.id (u/the-id notification-or-id)]
                      [:= :c.archived false]]
          :order-by [[:pc.position :asc]]})))
+
+(md/defmethod t2.hydrate/simple-hydrate [Pulse :cards]
+  [_model k notificiation]
+  (assoc notificiation k (cards notificiation)))
 
 ;;; ---------------------------------------- Notification Fetching Helper Fns ----------------------------------------
 

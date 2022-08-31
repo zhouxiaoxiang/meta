@@ -16,7 +16,9 @@
             [metabase.util :as u]
             [metabase.util.i18n :refer [tru]]
             [toucan.db :as db]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (models/defmodel PermissionsGroup :permissions_group)
 
@@ -108,8 +110,8 @@
 ;;; ---------------------------------------------------- Util Fns ----------------------------------------------------
 
 
-(defn ^:hydrate members
-  "Return `Users` that belong to GROUP-OR-ID, ordered by their name (case-insensitive)."
+(defn members
+  "Return `Users` that belong to `group-or-id`, ordered by their name (case-insensitive)."
   [group-or-id]
   (db/query (cond-> {:select    [:user.first_name
                                  :user.last_name
@@ -125,6 +127,10 @@
 
               (premium-features/enable-advanced-permissions?)
               (hh/merge-select [:pgm.is_group_manager :is_group_manager]))))
+
+(md/defmethod t2.hydrate/simple-hydrate [PermissionsGroup :members]
+  [_model k group]
+  (assoc group k (members group)))
 
 (defn non-admin-groups
   "Return a set of the IDs of all `PermissionsGroups`, aside from the admin group."

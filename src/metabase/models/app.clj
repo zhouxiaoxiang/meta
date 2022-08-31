@@ -1,9 +1,12 @@
 (ns metabase.models.app
-  (:require [metabase.models.permissions :as perms]
+  (:require [metabase.models.collection :refer [Collection]]
+            [metabase.models.permissions :as perms]
             [metabase.models.serialization.hash :as serdes.hash]
             [metabase.util :as u]
+            [methodical.core :as md]
             [toucan.db :as db]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (models/defmodel App :app)
 
@@ -23,10 +26,8 @@
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:entity_id])})
 
-(defn add-app-id
-  "Add `app_id` to Collections that are linked with an App."
-  {:batched-hydrate :app_id}
-  [collections]
+(md/defmethod t2.hydrate/batched-hydrate [Collection :app_id]
+  [_model _k collections]
   (if-let [coll-ids (seq (into #{}
                                (comp (map :id)
                                      ;; The ID "root" breaks the query.

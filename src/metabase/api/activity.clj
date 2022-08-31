@@ -36,11 +36,11 @@
                                                         (:card_id dashcard)))})))))
 
 (defn- referenced-objects->existing-objects
-  "Given a map of existing objects like the one returned by `activities->referenced-objects`, return a similar map of
-   models to IDs of objects *that exist*.
+  "Given a map of existing objects like the one returned by [[activities->referenced-objects]], return a similar map of
+  models to IDs of objects *that exist*.
 
-     (referenced-objects->existing-objects {\"dashboard\" #{41 42 43}, \"card\" #{100 101}, ...})
-     ;; -> {\"dashboard\" #{41 43}, \"card\" #{101}, ...}"
+    (referenced-objects->existing-objects {\"dashboard\" #{41 42 43}, \"card\" #{100 101}, ...})
+    ;; -> {\"dashboard\" #{41 43}, \"card\" #{101}, ...}"
   [referenced-objects]
   (merge
    (when-let [card-ids (get referenced-objects "card")]
@@ -84,10 +84,14 @@
                                     (contains? (get existing-objects "card")
                                                (:card_id dashcard))))))))))))
 
+(def ^:private activity-limit
+  "This is here so we can redef the limit when running tests."
+  40)
+
 (defendpoint GET "/"
   "Get recent activity."
   []
-  (filter mi/can-read? (-> (db/select Activity, {:order-by [[:timestamp :desc]], :limit 40})
+  (filter mi/can-read? (-> (db/select Activity, {:order-by [[:timestamp :desc]], :limit activity-limit})
                            (hydrate :user :table :database)
                            add-model-exists-info)))
 

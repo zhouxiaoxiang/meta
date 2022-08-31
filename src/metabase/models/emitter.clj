@@ -7,8 +7,10 @@
    [metabase.models.dashboard :refer [Dashboard]]
    [metabase.models.interface :as mi]
    [metabase.util :as u]
+   [methodical.core :as md]
    [toucan.db :as db]
-   [toucan.models :as models]))
+   [toucan.models :as models]
+   [toucan2.tools.hydrate :as t2.hydrate]))
 
 (models/defmodel CardEmitter :card_emitter)
 (models/defmodel DashboardEmitter :dashboard_emitter)
@@ -46,39 +48,36 @@
   models/IModel
   Emitter-subtype-IModel-impl)
 
-(defn emitters
-  "Hydrate emitters onto a list of dashboards or cards."
-  {:batched-hydrate :emitters}
-  [items]
-  (if-let [[emitter-type join-column] (cond
-                                        (every? #(mi/instance-of? Dashboard %) items)
-                                        [DashboardEmitter :dashboard_id]
+(defn- hydrate-emitters [emitter-type join-column items]
+  (let [qualified-join-column (keyword (str "typed_emitter." (name join-column)))
+        emitters              (->> {:select [qualified-join-column
+                                             :emitter.id
+                                             :emitter.action_id
+                                             :emitter.options
+                                             :emitter.parameter_mappings
+                                             :emitter.created_at
+                                             :emitter.updated_at]
+                                    :from   [[emitter-type :typed_emitter]]
+                                    :join   [[Emitter :emitter] [:= :emitter.id :typed_emitter.emitter_id]]
+                                    :where  [:in qualified-join-column (map :id items)]}
+                                   (db/query)
+                                   (db/do-post-select Emitter)
+                                   (group-by join-column))]
+    (map #(m/assoc-some % :emitters (get emitters (:id %)))
+         items)))
 
-                                        (every? #(mi/instance-of? Card %) items)
-                                        [CardEmitter :card_id])]
-    (let [qualified-join-column (keyword (str "typed_emitter." (name join-column)))
-          emitters (->> {:select [qualified-join-column
-                                  :emitter.id
-                                  :emitter.action_id
-                                  :emitter.options
-                                  :emitter.parameter_mappings
-                                  :emitter.created_at
-                                  :emitter.updated_at]
-                         :from [[emitter-type :typed_emitter]]
-                         :join [[Emitter :emitter] [:= :emitter.id :typed_emitter.emitter_id]]
-                         :where [:in qualified-join-column (map :id items)]}
-                        (db/query)
-                        (db/do-post-select Emitter)
-                        (group-by join-column))]
-      (map #(m/assoc-some % :emitters (get emitters (:id %)))
-           items))
-    items))
+(md/defmethod t2.hydrate/batched-hydrate [Dashboard :emitters]
+  [_model _k items]
+  (hydrate-emitters DashboardEmitter :dashboard_id items))
 
-(defn card-emitter-usages
-  "Hydrates emitter usages given a list of cards, this is used e.g. to show the user what else deleting a card will
-  modify."
-  {:batched-hydrate :card/emitter-usages}
-  [cards]
+(md/defmethod t2.hydrate/batched-hydrate [Card :emitters]
+  [_model _k items]
+  (hydrate-emitters CardEmitter :card_id items))
+
+;;; Hydrates emitter usages given a list of cards, this is used e.g. to show the user what else deleting a card will
+;;; modify.
+(md/defmethod t2.hydrate/batched-hydrate [Card :card/emitter-usages]
+  [_model _k cards]
   (if-let [card-ids (seq (map :id (filter :is_write cards)))]
     (let [emitter-usages (db/query {:select [:query_action.card_id
                                              [(hsql/call "coalesce" :report_dashboard.id :report_card.id) :id]
@@ -100,11 +99,10 @@
         (m/assoc-some card :emitter-usages (get usage-by-card-id (:id card)))))
     cards))
 
-(defn action-emitter-usages
-    "Hydrates emitter usages given a list of cards, this is used e.g. to show the user what else deleting a card will
-  modify."
-  {:batched-hydrate :action/emitter-usages}
-  [actions]
+;;; Hydrates emitter usages given a list of cards, this is used e.g. to show the user what else deleting a card will
+;;; modify.
+(md/defmethod t2.hydrate/batched-hydrate [:default #_Action :action/emitter-usages]
+  [_model _k actions]
   (if-let [action-ids (seq (keep :id actions))]
     (let [emitter-usages (db/query {:select [:emitter.action_id
                                              [(hsql/call "coalesce" :report_dashboard.id :report_card.id) :id]

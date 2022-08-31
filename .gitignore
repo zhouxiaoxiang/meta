@@ -83,3 +83,9 @@ dev/src/dev/nocommit/
 *.code-workspace
 
 .calva/
+
+/.clj-kondo/babashka
+/.clj-kondo/better-cond
+/.clj-kondo/com.github.camsaul
+/.clj-kondo/com.github.seancorfield
+/.clj-kondo/methodical

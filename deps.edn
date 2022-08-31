@@ -60,6 +60,7 @@
                                              :exclusions  [org.clojure/clojure
                                                            org.flatland/ordered
                                                            org.yaml/snakeyaml]}
+  io.github.camsaul/toucan2                 {:local/root "../toucan2" #_:git/sha #_"99185b8af9a3757a3315cdeb0fa3b9ef78748517"}
   io.github.resilience4j/resilience4j-retry {:mvn/version "1.7.1"}              ; Support for retrying operations
   joda-time/joda-time                       {:mvn/version "2.10.13"}
   kixi/stats                                {:mvn/version "0.4.4"               ; Various statistic measures implemented as transducers

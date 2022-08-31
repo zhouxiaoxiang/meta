@@ -25,16 +25,24 @@
             [metabase.util :as u]
             [metabase.util.i18n :as i18n :refer [tru]]
             [metabase.util.schema :as su]
+            [methodical.core :as md]
             [schema.core :as s]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate]))
+
+(comment moderation/keep-me)
+
+(models/defmodel Dashboard :report_dashboard)
+
+(derive Dashboard ::perms/use-parent-collection-perms)
+
 
 ;;; --------------------------------------------------- Hydration ----------------------------------------------------
 
 (defn ordered-cards
   "Return the DashboardCards associated with `dashboard`, in the order they were created."
-  {:hydrate :ordered_cards}
   [dashboard-or-id]
   (db/do-post-select DashboardCard
     (db/query {:select    [:dashcard.* [:collection.authority_level :collection_authority_level]]
@@ -48,10 +56,13 @@
                             [:= :card.archived nil]]] ; e.g. DashCards with no corresponding Card, e.g. text Cards
                :order-by  [[:dashcard.created_at :asc]]})))
 
-(defn collections-authority-level
-  "Efficiently hydrate the `:collection_authority_level` of a sequence of dashboards."
-  {:batched-hydrate :collection_authority_level}
-  [dashboards]
+(md/defmethod t2.hydrate/simple-hydrate [Dashboard :ordered_cards]
+  [_model k dashboard]
+  (assoc dashboard k (ordered-cards dashboard)))
+
+;;; Efficiently hydrate the `:collection_authority_level` of a sequence of dashboards.
+(md/defmethod t2.hydrate/batched-hydrate [Dashboard :collection_authority_level]
+  [_model k dashboards]
   (let [coll-id->level (into {}
                              (map (juxt :id :authority_level))
                              (db/query {:select    [:dashboard.id :collection.authority_level]
@@ -59,13 +70,8 @@
                                         :left-join [[Collection :collection] [:= :collection.id :dashboard.collection_id]]
                                         :where     [:in :dashboard.id (into #{} (map u/the-id) dashboards)]}))]
     (for [dashboard dashboards]
-      (assoc dashboard :collection_authority_level (get coll-id->level (u/the-id dashboard))))))
+      (assoc dashboard k (get coll-id->level (u/the-id dashboard))))))
 
-(comment moderation/keep-me)
-
-(models/defmodel Dashboard :report_dashboard)
-
-(derive Dashboard ::perms/use-parent-collection-perms)
 
 ;;; ----------------------------------------------- Entity & Lifecycle -----------------------------------------------
 
@@ -145,6 +151,10 @@
 
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:name (serdes.hash/hydrated-hash :collection)])})
+
+(md/defmethod t2.hydrate/model-for-automagic-hydration [:default :dashboard]
+  [_original-model _k]
+  Dashboard)
 
 
 ;;; --------------------------------------------------- Revisions ----------------------------------------------------
@@ -382,7 +392,7 @@
    :mappings (s/maybe #{dashboard-card/ParamMapping})
    s/Keyword s/Any})
 
-(s/defn ^{:hydrate :resolved-params} dashboard->resolved-params :- (let [param-id su/NonBlankString]
+(s/defn dashboard->resolved-params :- (let [param-id su/NonBlankString]
                                                                      {param-id ParamWithMapping})
   "Return map of Dashboard parameter key -> param with resolved `:mappings`.
 
@@ -415,19 +425,23 @@
     (into {} (for [{param-key :id, :as param} (:parameters dashboard)]
                [(u/qualified-name param-key) (assoc param :mappings (get param-key->mappings param-key))]))))
 
+(md/defmethod t2.hydrate/simple-hydrate [Dashboard :resolved-params]
+  [_model k dashboard]
+  (assoc dashboard k (dashboard->resolved-params dashboard)))
+
 ;;; +----------------------------------------------------------------------------------------------------------------+
 ;;; |                                               SERIALIZATION                                                    |
 ;;; +----------------------------------------------------------------------------------------------------------------+
 (defmethod serdes.base/extract-query "Dashboard" [_ {:keys [user]}]
   ;; TODO This join over the subset of collections this user can see is shared by a few things - factor it out?
   (serdes.base/raw-reducible-query
-    "Dashboard"
-    {:select     [:dash.*]
-     :from       [[:report_dashboard :dash]]
-     :left-join  [[:collection :coll] [:= :coll.id :dash.collection_id]]
-     :where      (if user
-                   [:or [:= :coll.personal_owner_id user] [:is :coll.personal_owner_id nil]]
-                   [:is :coll.personal_owner_id nil])}))
+   "Dashboard"
+   {:select     [:dash.*]
+    :from       [[:report_dashboard :dash]]
+    :left-join  [[:collection :coll] [:= :coll.id :dash.collection_id]]
+    :where      (if user
+                  [:or [:= :coll.personal_owner_id user] [:is :coll.personal_owner_id nil]]
+                  [:is :coll.personal_owner_id nil])}))
 
 ;; TODO Maybe nest collections -> dashboards -> dashcards?
 (defmethod serdes.base/extract-one "Dashboard"

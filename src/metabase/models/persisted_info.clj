@@ -8,7 +8,9 @@
             [metabase.util.schema :as su]
             [schema.core :as s]
             [toucan.db :as db]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [methodical.core :as md]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (defn- field-metadata->field-defintion
   "Map containing the type and name of fields for dll. The type is :base-type and uses the effective_type else base_type
@@ -69,10 +71,8 @@
   (merge models/IModelDefaults
          {:types (constantly {:definition ::definition})}))
 
-(defn persisted?
-  "Hydrate a card :is_persisted for the frontend."
-  {:batched-hydrate :persisted}
-  [cards]
+(md/defmethod t2.hydrate/batched-hydrate [Card :persisted]
+  [_model _k cards]
   (when (seq cards)
     (let [existing-ids (db/select-field :card_id PersistedInfo
                                         :card_id [:in (map :id cards)]

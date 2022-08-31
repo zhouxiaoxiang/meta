@@ -27,9 +27,7 @@
 (def ^:private activity-defaults
   {:model_exists false
    :database_id  nil
-   :database     nil
    :table_id     nil
-   :table        nil
    :custom_id    nil})
 
 (defn- activity-user-info [user-kw]
@@ -61,6 +59,7 @@
                 (merge
                  activity-defaults
                  (db/select-one [Activity :id :user_id :details :model :model_id] :id (u/the-id activity))))]
+        ;; HOW ARE THESE SORTED!
         (is (= [(merge
                  (fetch-activity activity2)
                  {:topic "dashboard-create"
@@ -72,11 +71,11 @@
                 (merge
                  (fetch-activity activity1)
                  {:topic   "install"
-                  :user_id nil
-                  :user    nil})]
+                  :user_id nil})]
                ;; remove other activities from the API response just in case -- we're not interested in those
                (let [these-activity-ids (set (map u/the-id [activity1 activity2 activity3]))]
-                 (for [activity (mt/user-http-request :crowberto :get 200 "activity")
+                 (for [activity (with-redefs [api.activity/activity-limit 10000]
+                                  (mt/user-http-request :crowberto :get 200 "activity"))
                        :when    (contains? these-activity-ids (u/the-id activity))]
                    (dissoc activity :timestamp)))))))))
 

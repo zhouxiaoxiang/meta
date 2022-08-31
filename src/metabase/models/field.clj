@@ -15,9 +15,11 @@
             [metabase.util :as u]
             [metabase.util.honeysql-extensions :as hx]
             [metabase.util.i18n :refer [trs tru]]
+            [methodical.core :as md]
             [toucan.db :as db]
             [toucan.hydrate :refer [hydrate]]
-            [toucan.models :as models]))
+            [toucan.models :as models]
+            [toucan2.tools.hydrate :as t2.hydrate]))
 
 (comment mdb.connection/keep-me) ;; for [[memoize/ttl]]
 
@@ -182,8 +184,7 @@
 (u/strict-extend #_{:clj-kondo/ignore [:metabase/disallow-class-or-type-on-model]} (class Field)
   models/IModel
   (merge models/IModelDefaults
-         {:hydration-keys (constantly [:destination :field :origin :human_readable_field])
-          :types          (constantly {:base_type         ::base-type
+         {:types          (constantly {:base_type         ::base-type
                                        :effective_type    ::effective-type
                                        :coercion_strategy ::coercion-strategy
                                        :semantic_type     ::semantic-type
@@ -197,6 +198,11 @@
 
   serdes.hash/IdentityHashable
   {:identity-hash-fields (constantly [:name (serdes.hash/hydrated-hash :table)])})
+
+(doseq [k [:destination :field :origin :human_readable_field]]
+  (md/defmethod t2.hydrate/model-for-automagic-hydration [:default k]
+    [_original-model _k]
+    Field))
 
 
 ;;; ---------------------------------------------- Hydration / Util Fns ----------------------------------------------
@@ -248,7 +254,6 @@
 
 (defn with-values
   "Efficiently hydrate the `FieldValues` for a collection of `fields`."
-  {:batched-hydrate :values}
   [fields]
   ;; In 44 we added a new concept of Advanced FieldValues, so FieldValues are no longer have an one-to-one relationship
   ;; with Field. See the doc in [[metabase.models.field-values]] for more.
@@ -258,20 +263,20 @@
     (for [field fields]
       (assoc field :values (get id->field-values (:id field) [])))))
 
-(defn with-normal-values
-  "Efficiently hydrate the `FieldValues` for visibility_type normal `fields`."
-  {:batched-hydrate :normal_values}
-  [fields]
+(md/defmethod t2.hydrate/batched-hydrate [Field :values]
+  [_model _k fields]
+  (with-values fields))
+
+(md/defmethod t2.hydrate/batched-hydrate [Field :normal_values]
+  [_model _k fields]
   (let [id->field-values (select-field-id->instance (filter field-values/field-should-have-field-values? fields)
                                                     [FieldValues :id :human_readable_values :values :field_id]
                                                     :type :full)]
     (for [field fields]
       (assoc field :values (get id->field-values (:id field) [])))))
 
-(defn with-dimensions
-  "Efficiently hydrate the `Dimension` for a collection of `fields`."
-  {:batched-hydrate :dimensions}
-  [fields]
+(md/defmethod t2.hydrate/batched-hydrate [Field :dimensions]
+  [_model _k fields]
   ;; TODO - it looks like we obviously thought this code would return *all* of the Dimensions for a Field, not just
   ;; one! This code is obviously wrong! It will either assoc a single Dimension or an empty vector under the
   ;; `:dimensions` key!!!!
@@ -306,11 +311,10 @@
      :search
      :none)))
 
-(defn with-has-field-values
-  "Infer what the value of the `has_field_values` should be for Fields where it's not set. See documentation for
-  `has-field-values-options` above for a more detailed explanation of what these values mean."
-  {:batched-hydrate :has_field_values}
-  [fields]
+;;; Infer what the value of the `has_field_values` should be for Fields where it's not set. See documentation for
+;;; `has-field-values-options` above for a more detailed explanation of what these values mean.
+(md/defmethod t2.hydrate/batched-hydrate [Field :has_field_values]
+  [_model _k fields]
   (for [field fields]
     (when field
       (assoc field :has_field_values (infer-has-field-values field)))))
@@ -324,7 +328,6 @@
 
 (defn with-targets
   "Efficiently hydrate the FK target fields for a collection of `fields`."
-  {:batched-hydrate :target}
   [fields]
   (let [target-field-ids (set (for [field fields
                                     :when (and (isa? (:semantic_type field) :type/FK)
@@ -336,6 +339,9 @@
           :let  [target-id (:fk_target_field_id field)]]
       (assoc field :target (id->target-field target-id)))))
 
+(md/defmethod t2.hydrate/batched-hydrate [Field :target]
+  [_model _k fields]
+  (with-targets fields))
 
 (defn qualified-name-components
   "Return the pieces that represent a path to `field`, of the form `[table-name parent-fields-name* field-name]`."
