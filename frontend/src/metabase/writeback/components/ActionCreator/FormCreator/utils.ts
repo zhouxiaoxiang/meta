@@ -2,7 +2,7 @@ import { t } from "ttag";
 import _ from "underscore";
 
 import validate from "metabase/lib/validate";
-import { slugify } from "metabase/lib/formatting";
+import { slugify, humanize } from "metabase/lib/formatting";
 
 import type {
   ActionFormSettings,
