@@ -124,6 +124,7 @@ function App({
           </AppContentContainer>
         </AppContainer>
       </ScrollToTop>
+      <div id="portal" />
     </ErrorBoundary>
   );
 }

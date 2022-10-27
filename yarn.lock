@@ -3027,6 +3027,14 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.2.tgz#30aa825f11d438671d585bd44e7fd564535fc210"
   integrity sha512-82cpyJyKRoQoRi+14ibCeGPu0CwypgtBAdBhq1WfvagpCZNKqwXbKwXllYSMG91DhmG4jt9gN8eP6lGOtozuaw==
 
+"@glideapps/glide-data-grid@^5.1.4":
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/@glideapps/glide-data-grid/-/glide-data-grid-5.1.4.tgz#4a4f64baa8e9ad6c2645579f04d0ca2e6e37082d"
+  integrity sha512-YQ2fpIg1DdYumJcbokGH6zYc4+cOIyoWcVwO3GMiu6Tg1D2BsvTVf76m6QGICobHefqWeP0PMaBOENuTIUp9pg==
+  dependencies:
+    canvas-hypertxt "^0.0.7"
+    react-number-format "^5.0.0"
+
 "@humanwhocodes/config-array@^0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.5.0.tgz#1407967d4c6eecd7388f83acf1eaf4d0c6e58ef9"
@@ -8184,6 +8192,11 @@ caniuse-lite@^1.0.30001400:
   version "1.0.30001418"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001418.tgz#5f459215192a024c99e3e3a53aac310fc7cf24e6"
   integrity sha512-oIs7+JL3K9JRQ3jPZjlH6qyYDp+nBTCais7hjh0s+fuBwufc7uZ7hPYMXrDOJhV360KGMTcczMRObk0/iMqZRg==
+
+canvas-hypertxt@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/canvas-hypertxt/-/canvas-hypertxt-0.0.7.tgz#7daf5419e39fc75342d5e2569911eb8098cce11c"
+  integrity sha512-XPXJvvaEQddHl0KaDdnnEowcCiYiL2gJz4M8ANK1GvZPcZimgvjRubnChtUospZWFSiNJtE06VkLnQs2vve5tQ==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -15817,6 +15830,11 @@ marked@^4.0.15:
   resolved "https://registry.yarnpkg.com/marked/-/marked-4.0.19.tgz#d36198d1ac1255525153c351c68c75bc1d7aee46"
   integrity sha512-rgQF/OxOiLcvgUAj1Q1tAf4Bgxn5h5JZTp04Fx4XUkVhs7B+7YA9JEWJhJpoO8eJt8MkZMwqLCNeNqj1bCREZQ==
 
+marked@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-4.1.1.tgz#2f709a4462abf65a283f2453dc1c42ab177d302e"
+  integrity sha512-0cNMnTcUJPxbA6uWmCmjWz4NJRe/0Xfk2NhXCUHjew9qJzFN20krFnsUe7QynwqOwa5m1fZ4UDg0ycKFVC0ccw==
+
 material-colors@^1.2.1:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/material-colors/-/material-colors-1.2.6.tgz#6d1958871126992ceecc72f4bcc4d8f010865f46"
@@ -19104,6 +19122,13 @@ react-draggable@^4.4.3:
     clsx "^1.1.1"
     prop-types "^15.6.0"
 
+react-easy-swipe@^0.0.21:
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/react-easy-swipe/-/react-easy-swipe-0.0.21.tgz#ce9384d576f7a8529dc2ca377c1bf03920bac8eb"
+  integrity sha512-OeR2jAxdoqUMHIn/nS9fgreI5hSpgGoL5ezdal4+oO7YSSgJR8ga+PkYGJrSrJ9MKlPcQjMQXnketrD7WNmNsg==
+  dependencies:
+    prop-types "^15.5.8"
+
 react-element-to-jsx-string@^13.1.0:
   version "13.2.0"
   resolved "https://registry.yarnpkg.com/react-element-to-jsx-string/-/react-element-to-jsx-string-13.2.0.tgz#550bb9670e4d8c82977934c14db14469d156a70d"
@@ -19229,6 +19254,13 @@ react-motion@0.5.2:
     prop-types "^15.5.8"
     raf "^3.1.0"
 
+react-number-format@^5.0.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/react-number-format/-/react-number-format-5.1.0.tgz#64f3d760395df4d34b09fb6bf2d483e1a2ea50d3"
+  integrity sha512-zAJokH+4czPhvXbvWWQvWoa0/HNMvGGGT09xBgfoiXYnsJYWqxvHfAl0eDhIZ+BJQ5ssiHZK8OW54fj2Dc8HMQ==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-popper-tooltip@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/react-popper-tooltip/-/react-popper-tooltip-3.1.1.tgz#329569eb7b287008f04fcbddb6370452ad3f9eac"
@@ -19296,6 +19328,15 @@ react-resizable@^3.0.1:
   dependencies:
     prop-types "15.x"
     react-draggable "^4.0.3"
+
+react-responsive-carousel@^3.2.23:
+  version "3.2.23"
+  resolved "https://registry.yarnpkg.com/react-responsive-carousel/-/react-responsive-carousel-3.2.23.tgz#4c0016ff54603e604bb5c1f9e7ef2d1eda133f1d"
+  integrity sha512-pqJLsBaKHWJhw/ItODgbVoziR2z4lpcJg+YwmRlSk4rKH32VE633mAtZZ9kDXjy4wFO+pgUZmDKPsPe1fPmHCg==
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.5.8"
+    react-easy-swipe "^0.0.21"
 
 react-router-dom@^6.0.0:
   version "6.3.0"
