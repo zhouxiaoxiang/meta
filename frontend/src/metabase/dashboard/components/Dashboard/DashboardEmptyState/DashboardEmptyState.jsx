@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { t } from "ttag";
 
 import EmptyState from "metabase/components/EmptyState";
+import AddDataToPageModal from "metabase/writeback/containers/AddDataToPageModal";
 import { Container } from "./DashboardEmptyState.styled";
 
 const propTypes = {
@@ -21,8 +22,9 @@ const DashboardEmptyState = ({ isDataApp, isNightMode }) => (
           ? t`This page is looking empty.`
           : t`This dashboard is looking empty.`
       }
-      message={t`Add a question to start making it useful!`}
+      message={!isDataApp && t`Add a question to start making it useful!`}
     />
+    {isDataApp && <AddDataToPageModal />}
   </Container>
 );
 
