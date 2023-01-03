@@ -14,7 +14,8 @@
    [metabase.util :as u]
    [metabase.util.i18n :refer [deferred-tru trs tru]]
    [schema.core :as s]
-   [toucan.db :as db]))
+   [toucan.db :as db]
+   [metabase.models.interface :as mi]))
 
 ;; Load EE implementation if available
 (u/ignore-exceptions (classloader/require 'metabase-enterprise.enhancements.integrations.google))
@@ -110,7 +111,7 @@
   ;; things hairy and only enforce those for non-Google Auth users
   (user/create-new-google-auth-user! new-user))
 
-(s/defn ^:private google-auth-fetch-or-create-user! :- metabase.models.user.UserInstance
+(s/defn ^:private google-auth-fetch-or-create-user! :- (mi/InstanceOf User)
   [first-name last-name email]
   (or (db/select-one [User :id :email :last_login] :%lower.email (u/lower-case-en email))
       (google-auth-create-new-user! {:first_name first-name

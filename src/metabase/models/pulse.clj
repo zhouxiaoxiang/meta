@@ -207,18 +207,18 @@
 
 (s/defn ^:private cards* :- [HybridPulseCard]
   [notification-or-id]
-  (map (partial models/do-post-select Card)
-       (db/query
-        {:select    [:c.id :c.name :c.description :c.collection_id :c.display :pc.include_csv :pc.include_xls
-                     :pc.dashboard_card_id :dc.dashboard_id [nil :parameter_mappings]] ;; :dc.parameter_mappings - how do you select this?
-         :from      [[Pulse :p]]
-         :join      [[PulseCard :pc] [:= :p.id :pc.pulse_id]
-                     [Card :c] [:= :c.id :pc.card_id]]
-         :left-join [[DashboardCard :dc] [:= :pc.dashboard_card_id :dc.id]]
-         :where     [:and
-                     [:= :p.id (u/the-id notification-or-id)]
-                     [:= :c.archived false]]
-         :order-by [[:pc.position :asc]]})))
+  (db/select
+   Card
+   {:select    [:c.id :c.name :c.description :c.collection_id :c.display :pc.include_csv :pc.include_xls
+                :pc.dashboard_card_id :dc.dashboard_id [nil :parameter_mappings]] ;; :dc.parameter_mappings - how do you select this?
+    :from      [[Pulse :p]]
+    :join      [[PulseCard :pc] [:= :p.id :pc.pulse_id]
+                [Card :c] [:= :c.id :pc.card_id]]
+    :left-join [[DashboardCard :dc] [:= :pc.dashboard_card_id :dc.id]]
+    :where     [:and
+                [:= :p.id (u/the-id notification-or-id)]
+                [:= :c.archived false]]
+    :order-by [[:pc.position :asc]]}))
 
 (mi/define-simple-hydration-method cards
   :cards
@@ -280,9 +280,6 @@
           hydrate-notification
           notification->alert))
 
-(defn- query-as [model query]
-  (db/do-post-select model (db/query query)))
-
 (s/defn retrieve-alerts :- [(mi/InstanceOf Pulse)]
   "Fetch all Alerts."
   ([]
@@ -305,7 +302,7 @@
                                [:= :p.creator_id user-id]
                                [:= :pcr.user_id user-id]])]
                 :order-by  [[:lower-name :asc]]}]
-     (for [alert (hydrate-notifications (query-as Pulse query))
+     (for [alert (hydrate-notifications (db/select Pulse query))
            :let [alert (notification->alert alert)]
           ;; if for whatever reason the Alert doesn't have a Card associated with it (e.g. the Card was deleted) don't
           ;; return the Alert -- it's basically orphaned/invalid at this point. See #13575 -- we *should* be deleting
@@ -340,7 +337,7 @@
                                [:= :p.creator_id user-id]
                                [:= :pcr.user_id user-id]]])]
                :order-by  [[:lower-name :asc]]}]
-    (for [pulse (query-as Pulse query)]
+    (for [pulse (db/select Pulse query)]
       (-> pulse
           (dissoc :lower-name)
           hydrate-notification
@@ -352,7 +349,7 @@
     :or   {archived? false}}]
   (assert boolean? archived?)
   (map (comp notification->alert hydrate-notification)
-       (query-as Pulse
+       (db/select Pulse
                  {:select [:p.*]
                   :from   [[Pulse :p]]
                   :join   [[PulseCard :pc] [:= :p.id :pc.pulse_id]
@@ -370,7 +367,7 @@
     :or   {archived? false}}]
   (when (seq card-ids)
     (map (comp notification->alert hydrate-notification)
-         (query-as Pulse
+         (db/select Pulse
                    {:select [:p.*]
                     :from   [[Pulse :p]]
                     :join   [[PulseCard :pc] [:= :p.id :pc.pulse_id]]

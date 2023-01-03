@@ -204,23 +204,23 @@
   [field-ids :- IDs]
   ;; remove any IDs for Fields that have already been fetched
   (when-let [ids-to-fetch (seq (remove (set (keys (:fields @*store*))) field-ids))]
-    (let [fetched-fields (db/do-post-select Field
-                           (db/query
-                            {:select    (for [column-kw field-columns-to-fetch]
-                                          [(keyword (str "field." (name column-kw)))
-                                           column-kw])
-                             :from      [[Field :field]]
-                             :left-join [[Table :table] [:= :field.table_id :table.id]]
-                             :where     [:and
-                                         [:in :field.id (set ids-to-fetch)]
-                                         [:= :table.db_id (db-id)]]}))
+    (let [fetched-fields (db/select
+                          Field
+                          {:select    (for [column-kw field-columns-to-fetch]
+                                        [(keyword (str "field." (name column-kw)))
+                                         column-kw])
+                           :from      [[Field :field]]
+                           :left-join [[Table :table] [:= :field.table_id :table.id]]
+                           :where     [:and
+                                       [:in :field.id (set ids-to-fetch)]
+                                       [:= :table.db_id (db-id)]]})
           fetched-ids    (set (map :id fetched-fields))]
       ;; make sure all Fields in field-ids were fetched, or throw an Exception
       (doseq [id ids-to-fetch]
         (when-not (fetched-ids id)
           (throw
            (ex-info (tru "Failed to fetch Field {0}: Field does not exist, or belongs to a different Database." id)
-             {:field id, :database (db-id)}))))
+                    {:field id, :database (db-id)}))))
       ;; ok, now store them all in the Store
       (doseq [field fetched-fields]
         (store-field! field)))))

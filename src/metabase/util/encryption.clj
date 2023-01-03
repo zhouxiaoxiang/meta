@@ -11,7 +11,8 @@
    [environ.core :as env]
    [metabase.util :as u]
    [metabase.util.i18n :refer [trs]]
-   [ring.util.codec :as codec]))
+   [ring.util.codec :as codec]
+   [clojure.spec.alpha :as s]))
 
 (defn secret-key->hash
   "Generate a 64-byte byte array hash of `secret-key` using 100,000 iterations of PBKDF2+SHA512."
@@ -141,24 +142,33 @@
                       (codec/base64-decode s))]
       (possibly-encrypted-bytes? b))))
 
+(s/def ::maybe-decrypt-args
+  (s/cat :secret-key (s/? bytes?)
+         :v          (some-fn string? bytes?)
+         :options    (s/*
+                      (s/cat
+                       :k #{:log-errors?}
+                       :v any?))))
+
 (defn maybe-decrypt
   "If `MB_ENCRYPTION_SECRET_KEY` is set and `v` is encrypted, decrypt `v`; otherwise return `s` as-is. Attempts to check
   whether `v` is an encrypted String, in which case the decrypted String is returned, or whether `v` is encrypted bytes,
   in which case the decrypted bytes are returned."
   {:arglists '([secret-key? s & {:keys [log-errors?], :or {log-errors? true}}])}
   [& args]
-  (let [[secret-key & more]        (if (and (bytes? (first args)) (string? (second args))) ;TODO: fix hackiness
-                                     args
-                                     (cons default-secret-key args))
-        [v & options]              more
-        {:keys [log-errors?]
-         :or   {log-errors? true}} (apply hash-map options)
-        log-error-fn (fn [kind ^Throwable e]
-                       (when log-errors?
-                         (log/warn (trs "Cannot decrypt encrypted {0}. Have you changed or forgot to set MB_ENCRYPTION_SECRET_KEY?"
-                                        kind)
-                                   (.getMessage e)
-                                   (u/pprint-to-str (u/filtered-stacktrace e)))))]
+  (s/assert* ::maybe-decrypt-args args)
+  (let [{:keys [secret-key v options]} (-> (merge {:secret-key default-secret-key}
+                                                  (s/conform ::maybe-decrypt-args ["S" :log-errors? true]))
+                                           (update :options #(into {} (map (juxt :k :v)) %)))
+        secret-key                     (or secret-key
+                                           default-secret-key)
+        log-errors?                    (get options :log-errors? false)
+        log-error-fn                   (fn [kind ^Throwable e]
+                                         (when log-errors?
+                                           (log/warn (trs "Cannot decrypt encrypted {0}. Have you changed or forgot to set MB_ENCRYPTION_SECRET_KEY?"
+                                                          kind)
+                                                     (.getMessage e)
+                                                     (u/pprint-to-str (u/filtered-stacktrace e)))))]
 
     (cond (not (some? secret-key))
           v

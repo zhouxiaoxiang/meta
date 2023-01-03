@@ -44,17 +44,17 @@
   :ordered_cards
   "Return the DashboardCards associated with `dashboard`, in the order they were created."
   [dashboard-or-id]
-  (db/do-post-select DashboardCard
-    (db/query {:select    [:dashcard.* [:collection.authority_level :collection_authority_level]]
-               :from      [[DashboardCard :dashcard]]
-               :left-join [[Card :card] [:= :dashcard.card_id :card.id]
-                           [Collection :collection] [:= :collection.id :card.collection_id]]
-               :where     [:and
-                           [:= :dashcard.dashboard_id (u/the-id dashboard-or-id)]
-                           [:or
-                            [:= :card.archived false]
-                            [:= :card.archived nil]]] ; e.g. DashCards with no corresponding Card, e.g. text Cards
-               :order-by  [[:dashcard.created_at :asc]]})))
+  (db/select DashboardCard
+             {:select    [:dashcard.* [:collection.authority_level :collection_authority_level]]
+              :from      [[DashboardCard :dashcard]]
+              :left-join [[Card :card] [:= :dashcard.card_id :card.id]
+                          [Collection :collection] [:= :collection.id :card.collection_id]]
+              :where     [:and
+                          [:= :dashcard.dashboard_id (u/the-id dashboard-or-id)]
+                          [:or
+                           [:= :card.archived false]
+                           [:= :card.archived nil]]] ; e.g. DashCards with no corresponding Card, e.g. text Cards
+              :order-by  [[:dashcard.created_at :asc]]}))
 
 (mi/define-batched-hydration-method collections-authority-level
   :collection_authority_level

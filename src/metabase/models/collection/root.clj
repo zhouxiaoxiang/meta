@@ -38,11 +38,8 @@
          :read  perms/collection-read-path
          :write perms/collection-readwrite-path) collection)}))
 
-(extend RootCollection
-  models/IModel
-  (merge
-   models/IModelDefaults
-    {:types {:type :keyword}}))
+;;; TODO -- not 100% sure if we need any of the other methods as well
+(models/deftypes RootCollection {:type :keyword})
 
 (def ^RootCollection root-collection
   "Special placeholder object representing the Root Collection, which isn't really a real Collection."

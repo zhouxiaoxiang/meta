@@ -14,6 +14,7 @@
    [metabase.models.interface :as mi]
    [metabase.models.setting :as setting]
    [metabase.test :as mt]
+   [metabase.test-runner.parallel :as test-runner.parallel]
    [metabase.test.data.interface :as tx]
    [metabase.test.fixtures :as fixtures]
    [metabase.util :as u]
@@ -25,19 +26,28 @@
   (:import
    (java.nio.charset StandardCharsets)))
 
+(comment models/keep-me)
+
+(set! *warn-on-reflection* true)
+
 (use-fixtures :once (fixtures/initialize :db))
 
-(defn do-with-model-type
-  [mtype in-type-fns f]
-  (let [type-fns        (var-get #'models/type-fns)
-        before-type-fns @type-fns]
-    (swap! type-fns update mtype merge in-type-fns)
+(defn- do-with-model-type
+  [type-keyword type-functions thunk]
+  (test-runner.parallel/assert-test-is-not-parallel "with-model-type")
+  (let [^clojure.lang.MultiFn mf @(resolve 'toucan.models/type-fn)
+        original-type-functions  (mapv (fn [[direction]]
+                                         [direction (get-method mf [type-keyword direction])])
+                                       type-functions)]
     (try
-      (f)
+      (doseq [[direction f] type-functions]
+        (.addMethod mf [type-keyword direction] (constantly f)))
+      (thunk)
       (finally
-        (reset! type-fns before-type-fns)))))
+        (doseq [[direction f] original-type-functions]
+          (.addMethod mf [type-keyword direction] f))))))
 
-(defmacro with-model-type
+(defmacro ^:private with-model-type
   [mtype type-fns & body]
   `(do-with-model-type ~mtype ~type-fns (fn [] ~@body)))
 

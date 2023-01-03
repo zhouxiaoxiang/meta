@@ -27,7 +27,8 @@
    [metabase.util.i18n :refer [trs]]
    [potemkin.types :as p]
    [toucan.db :as db]
-   [toucan.hydrate :refer [hydrate]])
+   [toucan.hydrate :refer [hydrate]]
+   [toucan2.core :as t2])
   (:import
    (java.util TimeZone)
    (org.quartz ObjectAlreadyExistsException Trigger)))
@@ -156,34 +157,34 @@
   after a sufficient delay to ensure no queries are running against them and to allow changing mind. Also selects
   persisted info records pointing to cards that are no longer models and archived cards/models."
   []
-  (->> (db/query {:select    [:p.*]
-                  :from      [[PersistedInfo :p]]
-                  :left-join [[Card :c] [:= :c.id :p.card_id]]
-                  :where     [:or
-                              [:and
-                               [:in :state prunable-states]
-                               ;; Buffer deletions for an hour if the
-                               ;; prune job happens soon after setting state.
-                               ;; 1. so that people have a chance to change their mind.
-                               ;; 2. if a query is running against the cache, it doesn't get ripped out.
-                               [:< :state_change_at
-                                (sql.qp/add-interval-honeysql-form (mdb/db-type) :%now -1 :hour)]]
-                              [:= :c.dataset false]
-                              [:= :c.archived true]]})
-       (db/do-post-select PersistedInfo)))
+  (db/select PersistedInfo
+             {:select    [:p.*]
+              :from      [[PersistedInfo :p]]
+              :left-join [[Card :c] [:= :c.id :p.card_id]]
+              :where     [:or
+                          [:and
+                           [:in :state prunable-states]
+                           ;; Buffer deletions for an hour if the
+                           ;; prune job happens soon after setting state.
+                           ;; 1. so that people have a chance to change their mind.
+                           ;; 2. if a query is running against the cache, it doesn't get ripped out.
+                           [:< :state_change_at
+                            (sql.qp/add-interval-honeysql-form (mdb/db-type) :%now -1 :hour)]]
+                          [:= :c.dataset false]
+                          [:= :c.archived true]]}))
 
 (defn- refreshable-models
   "Returns refreshable models for a database id. Must still be models and not archived."
   [database-id]
-  (->> (db/query {:select    [:p.* :c.dataset :c.archived :c.name]
-                  :from      [[PersistedInfo :p]]
-                  :left-join [[Card :c] [:= :c.id :p.card_id]]
-                  :where     [:and
-                              [:= :p.database_id database-id]
-                              [:in :p.state refreshable-states]
-                              [:= :c.archived false]
-                              [:= :c.dataset true]]})
-       (db/do-post-select PersistedInfo)))
+  (db/select PersistedInfo
+             {:select    [:p.* :c.dataset :c.archived :c.name]
+              :from      [[(keyword (t2/table-name PersistedInfo)) :p]]
+              :left-join [[(keyword (t2/table-name Card)) :c] [:= :c.id :p.card_id]]
+              :where     [:and
+                          [:= :p.database_id database-id]
+                          [:in :p.state refreshable-states]
+                          [:= :c.archived false]
+                          [:= :c.dataset true]]}))
 
 (defn- prune-all-deletable!
   "Prunes all deletable PersistInfos, should not be called from tests as

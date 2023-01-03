@@ -1,7 +1,6 @@
 (ns metabase.server.middleware.session
   "Ring middleware related to session (binding current user and permissions)."
   (:require
-   [clojure.java.jdbc :as jdbc]
    [clojure.tools.logging :as log]
    [honeysql.core :as hsql]
    [honeysql.helpers :as hh]
@@ -31,7 +30,8 @@
    [metabase.util.i18n :as i18n :refer [deferred-trs deferred-tru tru]]
    [ring.util.response :as response]
    [schema.core :as s]
-   [toucan.db :as db])
+   [toucan.db :as db]
+   [toucan2.core :as t2])
   (:import
    (java.util UUID)))
 
@@ -268,7 +268,7 @@
           params (concat [session-id]
                          (when (seq anti-csrf-token)
                            [anti-csrf-token]))]
-      (some-> (first (jdbc/query (db/connection) (cons sql params)))
+      (some-> (t2/query-one (cons sql params))
               ;; is-group-manager? could return `nil, convert it to boolean so it's guaranteed to be only true/false
               (update :is-group-manager? boolean)))))
 

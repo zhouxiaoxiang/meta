@@ -1,6 +1,5 @@
 (ns metabase.query-processor.middleware.cache-backend.db
   (:require
-   [clojure.java.jdbc :as jdbc]
    [clojure.tools.logging :as log]
    [honeysql.core :as hsql]
    [java-time :as t]
@@ -9,7 +8,8 @@
    [metabase.query-processor.middleware.cache-backend.interface :as i]
    [metabase.util.date-2 :as u.date]
    [metabase.util.i18n :refer [trs]]
-   [toucan.db :as db])
+   [toucan.db :as db]
+   [toucan2.core :as t2])
   (:import
    (java.sql Connection PreparedStatement ResultSet Types)))
 
@@ -54,17 +54,18 @@
         (throw e)))))
 
 (defn- cached-results [query-hash max-age-seconds respond]
-  (with-open [conn (jdbc/get-connection (db/connection))
-              stmt (prepare-statement conn query-hash max-age-seconds)
-              rs   (.executeQuery stmt)]
-    ;; VERY IMPORTANT! Bind [[db/*db-connection*]] so it will get reused elsewhere for the duration of results
-    ;; reduction, otherwise we can potentially end up deadlocking if we need to acquire another connection for one
-    ;; reason or another, such as recording QueryExecutions
-    (binding [db/*db-connection* {:connection conn}]
-      (if-not (.next rs)
-        (respond nil)
-        (with-open [is (.getBinaryStream rs 1)]
-          (respond is))))))
+  (t2/with-connection [^java.sql.Connection conn]
+    (with-open [stmt (prepare-statement conn query-hash max-age-seconds)
+                rs   (.executeQuery stmt)]
+      ;; VERY IMPORTANT! Bind [[db/*db-connection*]] so it will get reused elsewhere for the duration of results
+      ;; reduction, otherwise we can potentially end up deadlocking if we need to acquire another connection for one
+      ;; reason or another, such as recording QueryExecutions
+
+      (t2/with-connection [_ conn]
+        (if-not (.next rs)
+          (respond nil)
+          (with-open [is (.getBinaryStream rs 1)]
+            (respond is)))))))
 
 (defn- purge-old-cache-entries!
   "Delete any cache entries that are older than the global max age `max-cache-entry-age-seconds` (currently 3 months)."

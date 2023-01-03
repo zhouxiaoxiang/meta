@@ -37,7 +37,8 @@
    [metabase.test.fixtures :as fixtures]
    [metabase.test.util :as tu]
    [metabase.util :as u]
-   [toucan.db :as db])
+   [toucan.db :as db]
+   [toucan2.core :as t2])
   (:import
    (java.sql Connection)
    (java.util UUID)))
@@ -286,7 +287,7 @@
                            ["setting" "value"]
                            ["task_history" "task_details"]
                            ["view_log" "metadata"]]]
-        (with-open [conn (jdbc/get-connection (db/connection))]
+        (t2/with-connection [^java.sql.Connection conn]
           (doseq [[tbl-nm col-nms] (group-by first all-text-cols)]
             (let [^String exp-type (case driver/*driver*
                                      :mysql "longtext"
@@ -310,7 +311,7 @@
 (deftest convert-query-cache-result-to-blob-test
   (testing "the query_cache.results column was changed to"
     (impl/test-migrations ["v42.00-064"] [migrate!]
-      (with-open [conn (jdbc/get-connection (db/connection))]
+      (t2/with-connection [^java.sql.Connection conn]
         (when (= :mysql driver/*driver*)
           ;; simulate the broken app DB state that existed prior to the fix from #16095
           (with-open [stmt (.prepareStatement conn "ALTER TABLE query_cache MODIFY results BLOB NULL;")]

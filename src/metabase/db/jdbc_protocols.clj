@@ -1,7 +1,7 @@
 (ns metabase.db.jdbc-protocols
-  "Implementations of `clojure.java.jdbc` protocols for the Metabase application database. These handle type mappings
-  for setting parameters and for reading results from the DB — mainly by automatically converting CLOBs to Strings and
-  using new `java.time` classes."
+  "Implementations of [[clojure.java.jdbc]] and [[next.jdbc]] protocols for the Metabase application database. These
+  handle type mappings for setting parameters and for reading results from the DB — mainly by automatically converting
+  CLOBs to Strings and using new `java.time` classes."
   (:require
    [clojure.java.jdbc :as jdbc]
    [clojure.string :as str]
@@ -9,11 +9,15 @@
    [java-time :as t]
    [metabase.db.connection :as mdb.connection]
    [metabase.util :as u]
-   [metabase.util.date-2 :as u.date])
+   [metabase.util.date-2 :as u.date]
+   [methodical.core :as methodical]
+   [toucan2.jdbc.read :as t2.jdbc.read])
   (:import
    (java.io BufferedReader)
    (java.sql PreparedStatement ResultSet ResultSetMetaData Types)
    (java.time Instant LocalDate LocalDateTime LocalTime OffsetDateTime OffsetTime ZonedDateTime)))
+
+(set! *warn-on-reflection* true)
 
 (defn- set-object
   [^PreparedStatement stmt ^Integer index object ^Integer target-sql-type]
@@ -163,3 +167,13 @@
      (-> (read-column rs rsmeta i)
          (jdbc/result-set-read-column rsmeta i)))
    indexes))
+
+;;;; [[next.jdbc]] and Toucan 2 mappings
+
+(methodical/defmethod t2.jdbc.read/read-column-thunk [:default :default java.sql.Types/OTHER]
+  "Read Postgres `citext` columns out as Strings."
+  [^java.sql.Connection conn model ^java.sql.ResultSet rset ^java.sql.ResultSetMetaData rsmeta ^Long i]
+  (if (= (.getColumnTypeName rsmeta i) "citext")
+    (fn get-citext-as-string []
+      (.getString rset i))
+    (next-method conn model rset rsmeta i)))

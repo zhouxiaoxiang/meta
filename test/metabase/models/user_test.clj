@@ -430,7 +430,8 @@
         (is (thrown-with-msg?
              Exception
              #"Assert failed: \(i18n/available-locale\? locale\)"
-             (mt/with-temp User [_ {:locale "en_XX"}])))))
+             (mt/with-temp User [_ {:locale "en_XX"}]
+               nil)))))
 
     (testing "updating a User"
       (mt/with-temp User [{user-id :id} {:locale "en_US"}]

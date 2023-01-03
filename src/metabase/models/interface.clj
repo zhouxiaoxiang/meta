@@ -2,6 +2,7 @@
   (:require
    [buddy.core.codecs :as codecs]
    [cheshire.core :as json]
+   [cheshire.generate :as json.generate]
    [clojure.core.memoize :as memoize]
    [clojure.spec.alpha :as s]
    [clojure.tools.logging :as log]
@@ -11,21 +12,24 @@
    [metabase.mbql.schema :as mbql.s]
    [metabase.models.dispatch :as models.dispatch]
    [metabase.models.json-migration :as jm]
-   [metabase.plugins.classloader :as classloader]
    [metabase.util :as u]
    [metabase.util.cron :as u.cron]
    [metabase.util.encryption :as encryption]
    [metabase.util.i18n :refer [trs tru]]
+   [methodical.core :as methodical]
    [potemkin :as p]
    [schema.core :as schema]
    [taoensso.nippy :as nippy]
    [toucan.db :as db]
-   [toucan.hydrate :as hydrate]
-   [toucan.models :as models])
+   [toucan.models :as models]
+   [toucan2.core :as t2]
+   [toucan2.instance])
   (:import
    (java.io BufferedInputStream ByteArrayInputStream DataInputStream)
    (java.sql Blob)
    (java.util.zip GZIPInputStream)))
+
+(comment toucan2.instance/keep-me)
 
 (p/import-vars
  [models.dispatch
@@ -257,8 +261,9 @@
   and H2 and `now(6)` for MySQL/MariaDB (`now()` for MySQL only return second resolution; `now(6)` uses the
   max (nanosecond) resolution)."
   []
-  (classloader/require 'metabase.driver.sql.query-processor)
-  ((resolve 'metabase.driver.sql.query-processor/current-datetime-honeysql-form) (mdb.connection/db-type)))
+  (case (mdb.connection/db-type)
+    (:h2 :postgres) :%now
+    :mysql          [:raw "now(6)"]))
 
 (defn- add-created-at-timestamp [obj & _]
   (cond-> obj
@@ -302,25 +307,6 @@
          :fn-tail       (s/alt :arity-1 :clojure.core.specs.alpha/params+body
                                :arity-n (s/+ (s/spec :clojure.core.specs.alpha/params+body)))))
 
-(defonce ^:private defined-hydration-methods
-  (atom {}))
-
-(defn- define-hydration-method [hydration-type fn-name hydration-key fn-tail]
-  {:pre [(#{:hydrate :batched-hydrate} hydration-type)]}
-  ;; let's be nice and clear the Toucan 1 hydration method cache while we're at it, so that redefined hydration
-  ;; functions get picked up.
-  (hydrate/flush-hydration-key-caches!)
-  ;; Let's  be EXTRA nice and make sure there are no duplicate hydration keys!
-  (let [fn-symb (symbol (str (ns-name *ns*)) (name fn-name))]
-    (when-let [existing-fn-symb (get @defined-hydration-methods hydration-key)]
-      (when (not= fn-symb existing-fn-symb)
-        (throw (ex-info (format "Hydration key %s already exists at %s" hydration-key existing-fn-symb)
-                        {:hydration-key       hydration-key
-                         :existing-definition existing-fn-symb}))))
-    (swap! defined-hydration-methods assoc hydration-key fn-symb))
-  `(defn ~(vary-meta fn-name assoc hydration-type hydration-key)
-     ~@fn-tail))
-
 (defmacro define-simple-hydration-method
   "Define a Toucan hydration function (Toucan 1) or method (Toucan 2) to do 'simple' hydration (this function is called
   for each individual object that gets hydrated). This helper is in place to make the switch to Toucan 2 easier to
@@ -329,7 +315,11 @@
   this function, and eventually remove it entirely."
   {:style/indent :defn}
   [fn-name hydration-key & fn-tail]
-  (define-hydration-method :hydrate fn-name hydration-key fn-tail))
+  `(do
+     (defn ~fn-name ~@fn-tail)
+     (methodical/defmethod t2/simple-hydrate [:default ~hydration-key]
+       [instance#]
+       (~fn-name instance#))))
 
 (s/fdef define-simple-hydration-method
   :args ::define-hydration-method
@@ -342,7 +332,11 @@
   See docstring for [[define-simple-hydration-method]] for more information as to why this macro exists."
   {:style/indent :defn}
   [fn-name hydration-key & fn-tail]
-  (define-hydration-method :batched-hydrate fn-name hydration-key fn-tail))
+  `(do
+     (defn ~fn-name ~@fn-tail)
+     (methodical/defmethod t2/batched-hydrate [:default ~hydration-key]
+       [instances#]
+       (~fn-name instances#))))
 
 (s/fdef define-batched-hydration-method
   :args ::define-hydration-method
@@ -534,47 +528,25 @@
 
 ;;;; [[define-methods]]
 
-(defn- validate-properties [properties]
-  (doseq [k (keys properties)]
-    (assert (namespace k) "All :properties keys should be namespaced!")
-    (assert (contains? (set (keys @@#'models/property-fns)) k)
-            (str "Invalid property: " k))))
-
 (defn define-methods
   "Helper for defining [[toucan.models/IModel]] methods for a `model`. Prefer this over using `extend` directly, because
   it's easier to swap a single function when we make the switch to Toucan 2 in the future than to update all the
   various model namespaces."
   {:style/indent [:form]}
   [model method-map]
-  (when-let [properties-method (:properties method-map)]
-    (validate-properties (properties-method model)))
-  (extend (class model)
-    models/IModel
-    (merge
-     models/IModelDefaults
-     method-map)))
+  (models/define-methods-with-IModel-method-map model method-map))
 
-;;;; redefs
+;;;; JSON Encoding
 
-;;; swap out [[models/defmodel]] with a special magical version that avoids redefining stuff if the definition has not
-;;; changed at all. This is important to make the stuff in [[models.dispatch]] work properly, since we're dispatching
-;;; off of the model objects themselves e.g. [[metabase.models.user/User]] -- it is important that they do not change
-;;;
-;;; This code is temporary until the switch to Toucan 2.
+(methodical/defmulti encode-instance-as-json
+  {:arglists '([instance json-generator])}
+  (fn [instance _json-generator]
+    (t2/model instance)))
 
-(defonce ^:private original-defmodel @(resolve `models/defmodel))
+(methodical/defmethod encode-instance-as-json :default
+  [instance json-generator]
+  (json.generate/encode-map (u/snake-keys instance) json-generator))
 
-(defmacro ^:private defmodel [model & args]
-  (let [varr           (ns-resolve *ns* model)
-        existing-hash  (some-> varr meta ::defmodel-hash)
-        has-same-hash? (= existing-hash (hash &form))]
-    (when has-same-hash?
-      (println model "has not changed, skipping redefinition"))
-    (when-not has-same-hash?
-      `(do
-         ~(apply original-defmodel &form &env model args)
-         (alter-meta! (var ~model) assoc ::defmodel-hash ~(hash &form))))))
-
-(alter-var-root #'models/defmodel (constantly @#'defmodel))
-(alter-meta! #'models/defmodel (fn [mta]
-                                 (merge mta (select-keys (meta #'defmodel) [:file :line :column :ns]))))
+(json.generate/add-encoder
+ toucan2.instance.Instance
+ encode-instance-as-json)

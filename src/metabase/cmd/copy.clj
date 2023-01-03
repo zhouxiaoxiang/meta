@@ -56,7 +56,8 @@
             ViewLog]]
    [metabase.util :as u]
    [metabase.util.i18n :refer [trs]]
-   [schema.core :as s])
+   [schema.core :as s]
+   [toucan2.core :as t2])
   (:import
    (java.sql SQLException)))
 
@@ -166,12 +167,13 @@
 
 (defn- copy-data! [^javax.sql.DataSource source-data-source target-db-type target-db-conn-spec]
   (with-open [source-conn (.getConnection source-data-source)]
-    (doseq [{table-name :table, :as entity} entities
-            :let                            [fragment (table-select-fragments (str/lower-case (name table-name)))
-                                             sql      (str "SELECT * FROM "
-                                                           (name table-name)
-                                                           (when fragment (str " " fragment)))
-                                             results (jdbc/reducible-query {:connection source-conn} sql)]]
+    (doseq [entity entities
+            :let   [table-name (t2/table-name entity)
+                    fragment (table-select-fragments (str/lower-case (name table-name)))
+                    sql      (str "SELECT * FROM "
+                                  (name table-name)
+                                  (when fragment (str " " fragment)))
+                    results (jdbc/reducible-query {:connection source-conn} sql)]]
       (transduce
        (partition-all chunk-size)
        ;; cnt    = the total number we've inserted so far
@@ -291,11 +293,11 @@
                       (log/debug (u/colorize :yellow sql))
                       (.addBatch stmt sql))]
               ;; do these in reverse order so child rows get deleted before parents
-              (doseq [{table-name :table} (reverse entities)]
+              (doseq [model (reverse entities)]
                 (add-batch! (format (if (= target-db-type :postgres)
                                       "TRUNCATE TABLE %s CASCADE;"
                                       "TRUNCATE TABLE %s;")
-                                    (name table-name)))))
+                                    (t2/table-name model)))))
             (.executeBatch stmt)
             (.commit conn)
             (catch Throwable e
@@ -338,7 +340,7 @@
     (step (trs "Setting H2 sequence ids to proper values...")
           (doseq [e     entities
                   :when (not (contains? entities-without-autoinc-ids e))
-                  :let  [table-name (name (:table e))
+                  :let  [table-name (t2/table-name e)
                          sql        (format "ALTER TABLE %s ALTER COLUMN ID RESTART WITH COALESCE((SELECT MAX(ID) + 1 FROM %s), 1)"
                                             table-name table-name)]]
             (jdbc/execute! target-db-conn sql)))))

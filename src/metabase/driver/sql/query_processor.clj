@@ -11,7 +11,8 @@
    [metabase.driver.common :as driver.common]
    [metabase.mbql.schema :as mbql.s]
    [metabase.mbql.util :as mbql.u]
-   [metabase.models.field]
+   [metabase.models.field :refer [Field]]
+   [metabase.models.interface :as mi]
    [metabase.models.table :refer [Table]]
    [metabase.query-processor.error-type :as qp.error-type]
    [metabase.query-processor.middleware.annotate :as annotate]
@@ -27,7 +28,6 @@
    [pretty.core :refer [PrettyPrintable]]
    [schema.core :as s])
   (:import
-   (metabase.models.field FieldInstance)
    (metabase.util.honeysql_extensions Identifier TypedHoneySQLForm)))
 
 (comment metabase.models.field/keep-me) ; for FieldInstance
@@ -865,8 +865,8 @@
 (defn- correct-null-behaviour
   [driver [op & args]]
   (let [field-arg (mbql.u/match-one args
-                    FieldInstance &match
-                    :field        &match)]
+                    (_ :guard (partial mi/instance-of? Field)) &match
+                    :field                                     &match)]
     ;; We must not transform the head again else we'll have an infinite loop
     ;; (and we can't do it at the call-site as then it will be harder to fish out field references)
     [:or

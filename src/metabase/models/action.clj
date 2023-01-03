@@ -102,13 +102,13 @@
 
 (defn- normalize-query-actions [actions]
   (when (seq actions)
-    (let [cards (->> (db/query {:select [:card.*
-                                         [:db.settings :db_settings]
-                                         :query_action.action_id]
-                                :from [[:report_card :card]]
-                                :join [:query_action [:= :query_action.card_id :card.id]
-                                       [:metabase_database :db] [:= :card.database_id :db.id]]
-                                :where [:= :card.is_write true]})
+    (let [cards (->> (db/select 'Card {:select [:card.*
+                                                [:db.settings :db_settings]
+                                                :query_action.action_id]
+                                       :from [[:report_card :card]]
+                                       :join [:query_action [:= :query_action.card_id :card.id]
+                                              [:metabase_database :db] [:= :card.database_id :db.id]]
+                                       :where [:= :card.is_write true]})
                      (map (fn [card]
                             (let [disabled (or (:archived card)
                                                (-> card
@@ -119,18 +119,17 @@
                                                    not))]
                               (-> card
                                   (assoc ::disabled disabled)
-                                  (dissoc :db_settings)))))
-                     (db/do-post-select 'Card))
+                                  (dissoc :db_settings))))))
           cards-by-action-id (m/index-by :action_id cards)]
       (keep (fn [action]
               (let [{card-name :name :keys [description] :as card} (get cards-by-action-id (:id action))]
                 (-> action
                     (merge
-                      {:name card-name
-                       :description description
-                       :disabled (::disabled card)
-                       :card (dissoc card ::disabled)}
-                      (select-keys card [:parameters :parameter_mappings :visualization_settings])))))
+                     {:name card-name
+                      :description description
+                      :disabled (::disabled card)
+                      :card (dissoc card ::disabled)}
+                     (select-keys card [:parameters :parameter_mappings :visualization_settings])))))
             actions))))
 
 (defn- normalize-http-actions [actions]

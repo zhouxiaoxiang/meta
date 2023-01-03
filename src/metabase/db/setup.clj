@@ -8,6 +8,7 @@
   DB setup steps on arbitrary databases -- useful for functionality like the `load-from-h2` or `dump-to-h2` commands."
   (:require
    [clojure.tools.logging :as log]
+   [honey.sql :as sql]
    [honeysql.format :as hformat]
    [metabase.db.connection :as mdb.connection]
    [metabase.db.jdbc-protocols :as mdb.jdbc-protocols]
@@ -162,6 +163,11 @@
 
 (alter-var-root #'hformat/quote-fns assoc ::application-db quote-for-application-db)
 (db/set-default-quoting-style! ::application-db)
+
+(sql/register-dialect!
+ ::application-db
+ (assoc (sql/get-dialect :ansi)
+        :quote quote-for-application-db))
 
 ;;; Define the default Toucan JDBC connection spec; it's just a proxy DataSource that ultimately calls
 ;;; [[mdb.connection/data-source]]

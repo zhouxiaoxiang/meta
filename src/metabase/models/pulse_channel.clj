@@ -1,6 +1,5 @@
 (ns metabase.models.pulse-channel
   (:require
-   [cheshire.generate :refer [add-encoder encode-map]]
    [clojure.set :as set]
    [medley.core :as m]
    [metabase.models.interface :as mi]
@@ -12,6 +11,7 @@
    [metabase.plugins.classloader :as classloader]
    [metabase.util :as u]
    [metabase.util.i18n :refer [tru]]
+   [methodical.core :as methodical]
    [schema.core :as s]
    [toucan.db :as db]
    [toucan.models :as models]))
@@ -347,16 +347,14 @@
     ;; return the id of our newly created channel
     id))
 
+(methodical/defmethod mi/encode-instance-as-json PulseChannel
+  "Don't include `:emails`, we use that purely internally."
+  [pulse-channel json-generator]
+  (next-method (m/dissoc-in pulse-channel [:details :emails])
+               json-generator))
 
-;; don't include `:emails`, we use that purely internally
-(add-encoder
- #_{:clj-kondo/ignore [:unresolved-symbol]}
- PulseChannelInstance
- (fn [pulse-channel json-generator]
-   (encode-map (m/dissoc-in pulse-channel [:details :emails])
-               json-generator)))
 
-; ----------------------------------------------------- Serialization -------------------------------------------------
+;; ----------------------------------------------------- Serialization -------------------------------------------------
 
 (defmethod serdes.base/serdes-generate-path "PulseChannel"
   [_ {:keys [pulse_id] :as channel}]

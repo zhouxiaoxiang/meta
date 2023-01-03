@@ -29,31 +29,30 @@
   "Returns a list of persisted info, annotated with database_name, card_name, and schema_name."
   [{:keys [persisted-info-id card-id db-ids]} limit offset]
   (let [site-uuid-str    (public-settings/site-uuid)
-        db-id->fire-time (task.persist-refresh/job-info-by-db-id)]
-    (-> (cond-> {:select    [:p.id :p.database_id :p.definition
-                             :p.active :p.state :p.error
-                             :p.refresh_begin :p.refresh_end
-                             :p.table_name :p.creator_id
-                             :p.card_id [:c.name :card_name]
-                             [:c.archived :card_archived]
-                             [:c.dataset :card_dataset]
-                             [:db.name :database_name]
-                             [:col.id :collection_id] [:col.name :collection_name]
-                             [:col.authority_level :collection_authority_level]]
-                 :from      [[PersistedInfo :p]]
-                 :left-join [[Database :db] [:= :db.id :p.database_id]
-                             [Card :c] [:= :c.id :p.card_id]
-                             [Collection :col] [:= :c.collection_id :col.id]]
-                 :order-by  [[:p.refresh_begin :desc]]}
-          persisted-info-id (hh/merge-where [:= :p.id persisted-info-id])
-          (seq db-ids) (hh/merge-where [:in :p.database_id db-ids])
-          card-id (hh/merge-where [:= :p.card_id card-id])
-          limit (hh/limit limit)
-          offset (hh/offset offset))
-        (db/query)
+        db-id->fire-time (task.persist-refresh/job-info-by-db-id)
+        query            (cond-> {:select    [:p.id :p.database_id :p.definition
+                                              :p.active :p.state :p.error
+                                              :p.refresh_begin :p.refresh_end
+                                              :p.table_name :p.creator_id
+                                              :p.card_id [:c.name :card_name]
+                                              [:c.archived :card_archived]
+                                              [:c.dataset :card_dataset]
+                                              [:db.name :database_name]
+                                              [:col.id :collection_id] [:col.name :collection_name]
+                                              [:col.authority_level :collection_authority_level]]
+                                  :from      [[PersistedInfo :p]]
+                                  :left-join [[Database :db] [:= :db.id :p.database_id]
+                                              [Card :c] [:= :c.id :p.card_id]
+                                              [Collection :col] [:= :c.collection_id :col.id]]
+                                  :order-by  [[:p.refresh_begin :desc]]}
+                           persisted-info-id (hh/merge-where [:= :p.id persisted-info-id])
+                           (seq db-ids)      (hh/merge-where [:in :p.database_id db-ids])
+                           card-id           (hh/merge-where [:= :p.card_id card-id])
+                           limit             (hh/limit limit)
+                           offset            (hh/offset offset))]
+    (-> (db/select PersistedInfo query)
         (hydrate :creator)
-        (->> (db/do-post-select PersistedInfo)
-             (map (fn [{:keys [database_id] :as pi}]
+        (->> (map (fn [{:keys [database_id] :as pi}]
                     (assoc pi
                            :schema_name (ddl.i/schema-name {:id database_id} site-uuid-str)
                            :next-fire-time (get-in db-id->fire-time [database_id :next-fire-time]))))))))

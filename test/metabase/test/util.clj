@@ -58,7 +58,10 @@
    [metabase.util.files :as u.files]
    [toucan.db :as db]
    [toucan.models :as models]
-   [toucan.util.test :as tt])
+   [toucan.util.test :as tt]
+   [methodical.core :as methodical]
+   [toucan2.core :as t2]
+   [toucan2.tools.with-temp :as t2.with-temp])
   (:import
    (java.io File FileInputStream)
    (java.net ServerSocket)
@@ -125,6 +128,9 @@
 
 (defn- rasta-id [] (user-id :rasta))
 
+;;; TODO -- we can just replace these all with direct implementations of [[t2.with-temp/with-temp-defaults]] in the
+;;; future and remove [[set-with-temp-defaults!]] entirely.
+
 (def ^:private with-temp-defaults-fns
   {Card
    (fn [_] {:creator_id             (rasta-id)
@@ -184,8 +190,8 @@
             :query_hash    (random-hash)
             :definition    {:table-name (random-name)
                             :field-definitions (repeatedly
-                                                 4
-                                                 #(do {:field-name (random-name) :base-type "type/Text"}))}
+                                                4
+                                                #(do {:field-name (random-name) :base-type "type/Text"}))}
             :table_name    (random-name)
             :active        true
             :state         "persisted"
@@ -264,41 +270,11 @@
 
 (defn- set-with-temp-defaults! []
   (doseq [[model defaults-fn] with-temp-defaults-fns]
-    ;; make sure we have the latest version of the class in case it was redefined since we imported it
-    (extend (Class/forName (.getCanonicalName (class model)))
-      tt/WithTempDefaults
-      {:with-temp-defaults defaults-fn})))
+    (methodical/defmethod t2.with-temp/with-temp-defaults model
+      [_model]
+      (defaults-fn))))
 
 (set-with-temp-defaults!)
-
-;; if any of the models get redefined, reload the `with-temp-defaults` so they apply to the new version of the model
-(doseq [model-var [#'Card
-                   #'Collection
-                   #'Dashboard
-                   #'DashboardCardSeries
-                   #'Database
-                   #'Dimension
-                   #'Field
-                   #'Metric
-                   #'NativeQuerySnippet
-                   #'Permissions
-                   #'PermissionsGroup
-                   #'Pulse
-                   #'PulseCard
-                   #'PulseChannel
-                   #'Revision
-                   #'Segment
-                   #'Table
-                   #'TaskHistory
-                   #'Timeline
-                   #'User]]
-  (remove-watch model-var ::reload)
-  (add-watch
-   model-var
-   ::reload
-   (fn [_key _reference _old-state _new-state]
-     (println (format "%s changed, reloading with-temp-defaults" model-var))
-     (set-with-temp-defaults!))))
 
 
 ;;; ------------------------------------------------- Other Util Fns -------------------------------------------------

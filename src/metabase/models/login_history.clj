@@ -8,7 +8,8 @@
    [metabase.util.date-2 :as u.date]
    [metabase.util.i18n :as i18n :refer [trs tru]]
    [toucan.db :as db]
-   [toucan.models :as models]))
+   [toucan.models :as models]
+   [metabase.models.interface :as mi]))
 
 (defn- timezone-display-name [^java.time.ZoneId zone-id]
   (when zone-id
@@ -86,10 +87,8 @@
 (defn- pre-update [_login-history]
   (throw (RuntimeException. (tru "You can''t update a LoginHistory after it has been created."))))
 
-(extend #_{:clj-kondo/ignore [:metabase/disallow-class-or-type-on-model]} (class LoginHistory)
-  models/IModel
-  (merge
-   models/IModelDefaults
-   {:post-select post-select
-    :post-insert post-insert
-    :pre-update  pre-update}))
+(mi/define-methods
+ LoginHistory
+ {:post-select post-select
+  :post-insert post-insert
+  :pre-update  pre-update})

@@ -3,7 +3,6 @@
   (:require
    [clojure.core.async :as a]
    [clojure.core.memoize :as memoize]
-   [clojure.java.jdbc :as jdbc]
    [clojure.string :as str]
    [clojure.walk :as walk]
    [honeysql.core :as hsql]
@@ -11,7 +10,8 @@
    [honeysql.helpers :as hh]
    [java-time :as t]
    [medley.core :as m]
-   [metabase-enterprise.audit-app.query-processor.middleware.handle-audit-queries :as qp.middleware.audit]
+   [metabase-enterprise.audit-app.query-processor.middleware.handle-audit-queries
+    :as qp.middleware.audit]
    [metabase.db :as mdb]
    [metabase.driver.sql-jdbc.execute :as sql-jdbc.execute]
    [metabase.driver.sql-jdbc.sync :as sql-jdbc.sync]
@@ -23,7 +23,8 @@
    [metabase.util.i18n :refer [tru]]
    [metabase.util.urls :as urls]
    [schema.core :as s]
-   [toucan.db :as db]))
+   [toucan.db :as db]
+   [toucan2.core :as t2]))
 
 (def ^:private ^:const default-limit Integer/MAX_VALUE)
 
@@ -93,7 +94,8 @@
   ;; another
   (let [timezone (memoize/ttl sql-jdbc.sync/db-default-timezone :ttl/threshold (u/hours->ms 1))]
     (fn []
-      (timezone (mdb/db-type) (db/connection)))))
+      (t2/with-connection [conn]
+        (timezone (mdb/db-type) {:connection conn})))))
 
 (defn- compile-honeysql [driver honeysql-query]
   (try
@@ -114,14 +116,14 @@
     ;; instead of mocking up a chunk of regular QP pipeline.
     (binding [qp.timezone/*results-timezone-id-override* (application-db-default-timezone)]
       (try
-        (with-open [conn (jdbc/get-connection (db/connection))
-                    stmt (sql-jdbc.execute/prepared-statement driver conn sql params)
-                    rs   (sql-jdbc.execute/execute-prepared-statement! driver stmt)]
-          (let [rsmeta   (.getMetaData rs)
-                cols     (sql-jdbc.execute/column-metadata driver rsmeta)
-                metadata {:cols cols}
-                rf       (rff metadata)]
-            (reduce rf init (sql-jdbc.execute/reducible-rows driver rs rsmeta canceled-chan))))
+        (t2/with-connection [^java.sql.Connection conn]
+          (with-open [stmt (sql-jdbc.execute/prepared-statement driver conn sql params)
+                      rs   (sql-jdbc.execute/execute-prepared-statement! driver stmt)]
+            (let [rsmeta   (.getMetaData rs)
+                  cols     (sql-jdbc.execute/column-metadata driver rsmeta)
+                  metadata {:cols cols}
+                  rf       (rff metadata)]
+              (reduce rf init (sql-jdbc.execute/reducible-rows driver rs rsmeta canceled-chan)))))
         (catch InterruptedException e
           (a/>!! canceled-chan :cancel)
           (throw e))

@@ -52,8 +52,7 @@
    [toucan.hydrate :refer [hydrate]])
   (:import
    (clojure.core.async.impl.channels ManyToManyChannel)
-   (java.util UUID)
-   (metabase.models.card CardInstance)))
+   (java.util UUID)))
 
 ;;; ----------------------------------------------- Filtered Fetch Fns -----------------------------------------------
 
@@ -92,7 +91,7 @@
   [_ table-id]
   (db/select Card, :table_id table-id, :archived false, {:order-by [[:%lower.name :asc]]}))
 
-(s/defn ^:private cards-with-ids :- (s/maybe [CardInstance])
+(s/defn ^:private cards-with-ids :- (s/maybe [(mi/InstanceOf Card)])
   "Return unarchived Cards with `card-ids`.
   Make sure cards are returned in the same order as `card-ids`; `[in card-ids]` won't preserve the order."
   [card-ids :- [su/IntGreaterThanZero]]

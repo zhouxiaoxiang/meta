@@ -47,18 +47,22 @@
     collections))
 
 (defn- app-cards [app]
-  (->> (db/query {:union
-                  [{:select [:c.*]
-                    :from [[:report_card :c]]
-                    :where [:and
-                            [:= :c.collection_id (:collection_id app)]]}
-                   {:select [:c.*]
-                    :from [[:report_card :c]]
-                    :join [[:report_dashboardcard :dc] [:= :dc.card_id :c.id]
-                           [:report_dashboard :d] [:= :d.id :dc.dashboard_id]]
-                    :where [:and
-                            [:= :d.collection_id (:collection_id app)]]}]})
-       (db/do-post-select 'Card)))
+  (db/select 'Card
+             ;; FIXME the wrapper `SELECT *` is a workaround for
+             ;; https://trello.com/c/RW1TNh0P/526-db-select-should-not-include-defaults-when-union-or-union-all-is-present-in-query
+             {:select [:*]
+              :from   [[{:union
+                         [{:select [:c.*]
+                           :from   [[:report_card :c]]
+                           :where  [:and
+                                    [:= :c.collection_id (:collection_id app)]]}
+                          {:select [:c.*]
+                           :from   [[:report_card :c]]
+                           :join   [[:report_dashboardcard :dc] [:= :dc.card_id :c.id]
+                                    [:report_dashboard :d] [:= :d.id :dc.dashboard_id]]
+                           :where  [:and
+                                    [:= :d.collection_id (:collection_id app)]]}]}
+                        :t]]}))
 
 (defn- referenced-models [cards]
   (when-let [model-ids

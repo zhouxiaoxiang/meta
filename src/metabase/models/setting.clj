@@ -138,9 +138,7 @@
 
 (declare admin-writable-site-wide-settings get-value-of-type set-value-of-type!)
 
-(models/defmodel Setting
-  "The model that underlies [[defsetting]]."
-  :setting)
+(models/defmodel Setting :setting)
 
 (mi/define-methods
  Setting
@@ -571,14 +569,9 @@
   "Update an existing Setting. Used internally by [[set-value-of-type!]] for `:string` below; do not use directly."
   [setting-name new-value]
   (assert (not= setting-name setting.cache/settings-last-updated-key)
-    (tru "You cannot update `settings-last-updated` yourself! This is done automatically."))
-  ;; This is indeed a very annoying way of having to do things, but `update-where!` doesn't call `pre-update` (in case
-  ;; it updates thousands of objects). So we need to manually trigger `pre-update` behavior by calling `do-pre-update`
-  ;; so that `value` can get encrypted if `MB_ENCRYPTION_SECRET_KEY` is in use. Then take that possibly-encrypted
-  ;; value and pass that into `update-where!`.
-  (let [{maybe-encrypted-new-value :value} (models/do-pre-update Setting {:value new-value})]
-    (db/update-where! Setting {:key setting-name}
-      :value maybe-encrypted-new-value)))
+          (tru "You cannot update `settings-last-updated` yourself! This is done automatically."))
+  (db/update-where! Setting {:key setting-name}
+                    :value new-value))
 
 (defn- set-new-setting!
   "Insert a new row for a Setting. Used internally by [[set-value-of-type!]] for `:string` below; do not use directly."

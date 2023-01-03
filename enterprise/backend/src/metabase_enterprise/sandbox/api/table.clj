@@ -2,34 +2,33 @@
   (:require
    [clojure.set :as set]
    [compojure.core :refer [GET]]
-   [metabase-enterprise.sandbox.models.group-table-access-policy :refer [GroupTableAccessPolicy]]
+   [metabase-enterprise.sandbox.models.group-table-access-policy
+    :refer [GroupTableAccessPolicy]]
    [metabase.api.common :as api]
    [metabase.api.table :as api.table]
    [metabase.mbql.util :as mbql.u]
    [metabase.models.card :refer [Card]]
    [metabase.models.interface :as mi]
    [metabase.models.permissions :as perms]
-   [metabase.models.permissions-group-membership :refer [PermissionsGroupMembership]]
+   [metabase.models.permissions-group-membership
+    :refer [PermissionsGroupMembership]]
    [metabase.models.table :as table :refer [Table]]
    [metabase.util :as u]
    [metabase.util.schema :as su]
    [schema.core :as s]
-   [toucan.db :as db]
-   [toucan.models :as models]))
+   [toucan.db :as db]))
 
 (s/defn ^:private find-gtap-question :- (s/maybe (mi/InstanceOf Card))
   "Find the associated GTAP question (if there is one) for the given `table-or-table-id` and
   `user-or-user-id`. Returns nil if no question was found."
   [table-or-table-id user-or-user-id]
-  (some->> (db/query {:select [:c.id :c.dataset_query]
-                      :from [[GroupTableAccessPolicy :gtap]]
-                      :join [[PermissionsGroupMembership :pgm] [:= :gtap.group_id :pgm.group_id]
-                             [Card :c] [:= :c.id :gtap.card_id]]
-                      :where [:and
-                              [:= :gtap.table_id (u/the-id table-or-table-id)]
-                              [:= :pgm.user_id (u/the-id user-or-user-id)]]})
-           first
-           (models/do-post-select Card)))
+  (db/select-one Card {:select [:c.id :c.dataset_query]
+                       :from [[GroupTableAccessPolicy :gtap]]
+                       :join [[PermissionsGroupMembership :pgm] [:= :gtap.group_id :pgm.group_id]
+                              [Card :c] [:= :c.id :gtap.card_id]]
+                       :where [:and
+                               [:= :gtap.table_id (u/the-id table-or-table-id)]
+                               [:= :pgm.user_id (u/the-id user-or-user-id)]]}))
 
 (s/defn only-segmented-perms? :- s/Bool
   "Returns true if the user has only segemented and not full table permissions. If the user has full table permissions
