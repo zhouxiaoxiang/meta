@@ -33,7 +33,7 @@
   (:import
    (java.sql DatabaseMetaData ResultSet ResultSetMetaData Types)
    (java.time LocalDateTime OffsetDateTime OffsetTime ZonedDateTime)
-   (metabase.util.honeysql_extensions Identifier)))
+   (metabase.util.honey_sql_1_extensions Identifier)))
 (comment
   mysql.ddl/keep-me)
 

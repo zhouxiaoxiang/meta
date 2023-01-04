@@ -15,7 +15,7 @@
    [metabase.models.serialization.hash :as serdes.hash]
    [metabase.models.serialization.util :as serdes.util]
    [metabase.util :as u]
-   [metabase.util.honeysql-extensions :as hx]
+   [metabase.util.honey-sql-2-extensions :as h2x]
    [metabase.util.i18n :refer [trs tru]]
    [toucan.db :as db]
    [toucan.hydrate :refer [hydrate]]
@@ -228,18 +228,18 @@
 
   Suppose you have the child with corresponding identifier
 
-  (metabase.util.honeysql-extensions/identifier :field \"blah -> boop\")
+  (metabase.util.honey-sql-2-extensions/identifier :field \"blah -> boop\")
 
   Ultimately, this is just a way to get the parent identifier
 
-  (metabase.util.honeysql-extensions/identifier :field \"blah\")"
+  (metabase.util.honey-sql-2-extensions/identifier :field \"blah\")"
   [field-identifier field]
   (let [nfc-path          (:nfc_path field)
         parent-components (-> (:components field-identifier)
                               (vec)
                               (pop)
                               (conj (first nfc-path)))]
-    (apply hx/identifier (cons :field parent-components))))
+    (apply h2x/identifier (cons :field parent-components))))
 
 (mi/define-batched-hydration-method with-values
   :values

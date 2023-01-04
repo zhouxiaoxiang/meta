@@ -251,7 +251,8 @@
         (is (thrown-with-msg?
              clojure.lang.ExceptionInfo
              #"Invalid Field Filter: Field \d+ \"VENUES\"\.\"NAME\" belongs to Database \d+ \"test-data\", but the query is against Database \d+ \"sample-dataset\""
-             (mt/with-temp Card [_ bad-card-data]))))
+             (mt/with-temp Card [_ bad-card-data]
+               nil))))
       (testing "Should not be able to update a Card to have a filter with the wrong Database ID"
         (mt/with-temp Card [{card-id :id} good-card-data]
           (is (thrown-with-msg?
@@ -300,7 +301,8 @@
       (is (thrown-with-msg?
            clojure.lang.ExceptionInfo
            #":parameters must be a sequence of maps with :id and :type keys"
-           (mt/with-temp Card [_ {:parameters {:a :b}}])))
+           (mt/with-temp Card [_ {:parameters {:a :b}}]
+             nil)))
 
      (mt/with-temp Card [card {:parameters [{:id   "valid-id"
                                              :type "id"}]}]
@@ -333,7 +335,8 @@
       (is (thrown-with-msg?
            clojure.lang.ExceptionInfo
            #":parameter_mappings must be a sequence of maps with :parameter_id and :type keys"
-           (mt/with-temp Card [_ {:parameter_mappings {:a :b}}])))
+           (mt/with-temp Card [_ {:parameter_mappings {:a :b}}]
+             nil)))
 
      (mt/with-temp Card [card {:parameter_mappings [{:parameter_id "valid-id"
                                                      :target       [:field 1000 nil]}]}]

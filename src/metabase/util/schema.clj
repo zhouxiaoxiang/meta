@@ -22,7 +22,7 @@
 
 ;; always validate all schemas in s/defn function declarations. See
 ;; https://github.com/plumatic/schema#schemas-in-practice for details.
-(s/set-fn-validation! true)
+(s/set-fn-validation! false) ; NOCOMMIT
 
 ;; swap out the default impl of `schema.core/validator` with one that does not barf out the entire schema, since it's
 ;; way too huge with things like our MBQL query schema

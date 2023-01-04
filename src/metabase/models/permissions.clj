@@ -185,7 +185,7 @@
     :as premium-features
     :refer [defenterprise]]
    [metabase.util :as u]
-   [metabase.util.honeysql-extensions :as hx]
+   [metabase.util.honey-sql-2-extensions :as h2x]
    [metabase.util.i18n :refer [trs tru]]
    [metabase.util.regex :as u.regex]
    [metabase.util.schema :as su]
@@ -760,8 +760,8 @@
   []
   (let [permissions     (db/select [Permissions [:group_id :group-id] [:object :path]]
                                    {:where [:or
-                                            [:= :object (hx/literal "/")]
-                                            [:like :object (hx/literal "%/db/%")]]})
+                                            [:= :object (h2x/literal "/")]
+                                            [:like :object (h2x/literal "%/db/%")]]})
         db-ids          (delay (db/select-ids 'Database))
         group-id->paths (reduce
                          (fn [m {:keys [group-id path]}]
@@ -809,7 +809,7 @@
                              :and
                              [:= :group_id (u/the-id group-or-id)]
                              [:or
-                              [:like path (hx/concat :object (hx/literal "%"))]
+                              [:like path (h2x/concat :object (h2x/literal "%"))]
                               [:like :object (str path "%")]]
                              other-conditions)}]
     (when-let [revoked (db/select-field :object Permissions where)]
@@ -964,8 +964,8 @@
                    {:where [:and
                             [:= :group_id group-id]
                             [:or
-                             [:= :object (hx/literal "/")]
-                             [:like :object (hx/literal "/download/%")]]]}))
+                             [:= :object (h2x/literal "/")]
+                             [:like :object (h2x/literal "/download/%")]]]}))
 
 (defn- download-permissions-level
   [permissions-set db-id & [schema-name table-id]]

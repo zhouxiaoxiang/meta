@@ -28,7 +28,7 @@
   (:import [com.google.cloud.bigquery Field$Mode FieldValue]
            [java.time LocalDate LocalDateTime LocalTime OffsetDateTime OffsetTime ZonedDateTime]
            metabase.driver.common.parameters.FieldFilter
-           [metabase.util.honeysql_extensions Identifier TypedHoneySQLForm]))
+           [metabase.util.honey_sql_1_extensions Identifier TypedHoneySQLForm]))
 
 (defn- valid-project-identifier?
   "Is String `s` a valid BigQuery project identifier (a.k.a. project-id)? Identifiers are only allowed to contain

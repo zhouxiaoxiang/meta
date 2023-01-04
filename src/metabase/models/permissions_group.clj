@@ -65,7 +65,7 @@
 (defn- check-name-not-already-taken
   [group-name]
   (when (exists-with-name? group-name)
-    (throw (ex-info (tru "A group with that name already exists.") {:status-code 400}))))
+    (throw (ex-info (tru "A group with that name already exists.") {:status-code 400, :group-name group-name}))))
 
 (defn- check-not-magic-group
   "Make sure we're not trying to edit/delete one of the magic groups, or throw an exception."

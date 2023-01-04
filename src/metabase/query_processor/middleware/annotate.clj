@@ -19,7 +19,8 @@
    [metabase.util :as u]
    [metabase.util.i18n :refer [deferred-tru tru]]
    [metabase.util.schema :as su]
-   [schema.core :as s]))
+   [schema.core :as s]
+   [toucan2.magic-map :as t2.magic-map]))
 
 (def ^:private Col
   "Schema for a valid map of column info as found in the `:cols` key of the results after this namespace has ran."
@@ -27,16 +28,16 @@
   ;; unaliased aggregations like COUNT(*) (this only applies to native queries, since we determine our own names for
   ;; MBQL.)
   {:name                           s/Str
-   :display_name                   s/Str
+   :display-name                   s/Str
    ;; type of the Field. For Native queries we look at the values in the first 100 rows to make an educated guess
-   :base_type                      su/FieldType
+   :base-type                      su/FieldType
    ;; effective_type, coercion, etc don't go here. probably best to rename base_type to effective type in the return
    ;; from the metadata but that's for another day
    ;; where this column came from in the original query.
    :source                         (s/enum :aggregation :fields :breakout :native)
    ;; a field clause that can be used to refer to this Field if this query is subsequently used as a source query.
    ;; Added by this middleware as one of the last steps.
-   (s/optional-key :field_ref)     mbql.s/FieldOrAggregationReference
+   (s/optional-key :field-ref)     mbql.s/FieldOrAggregationReference
    ;; various other stuff from the original Field can and should be included such as `:settings`
    s/Any                           s/Any})
 
@@ -655,7 +656,9 @@
   this namespace."
   [query {cols-returned-by-driver :cols, :as result}]
   (deduplicate-cols-names
-   (merge-cols-returned-by-driver (column-info query result) cols-returned-by-driver)))
+   (map
+    t2.magic-map/magic-map
+    (merge-cols-returned-by-driver (column-info query result) cols-returned-by-driver))))
 
 (defn base-type-inferer
   "Native queries don't have the type information from the original `Field` objects used in the query.

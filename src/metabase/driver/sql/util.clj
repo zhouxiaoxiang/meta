@@ -11,7 +11,7 @@
    [metabase.util.i18n :refer [trs tru]]
    [schema.core :as s])
   (:import
-   (metabase.util.honeysql_extensions Identifier)))
+   (metabase.util.honey_sql_1_extensions Identifier)))
 
 (s/defn quote-name
   "Quote unqualified string or keyword identifier(s) by passing them to `hx/identifier`, then calling HoneySQL `format`

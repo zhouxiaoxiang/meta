@@ -132,8 +132,8 @@
 (def ^:private FieldOrColumn
   "Schema that allows a `metabase.model.field/Field` or a column from a query resultset"
   {:name                           s/Str ; Some DBs such as MSSQL can return columns with blank name
-   :base_type                      s/Keyword
-   (s/optional-key :semantic_type) (s/maybe s/Keyword)
+   :base-type                      s/Keyword
+   (s/optional-key :semantic-type) (s/maybe s/Keyword)
    s/Any                           s/Any})
 
 (s/defn infer-semantic-type :- (s/maybe s/Keyword)

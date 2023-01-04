@@ -508,7 +508,8 @@
       "true"  true
       "false" false
       (throw (Exception.
-              (tru "Invalid value for string: must be either \"true\" or \"false\" (case-insensitive)."))))))
+              (tru "Invalid value for string: must be either \"true\" or \"false\" (case-insensitive). Got: {0}"
+                   (pr-str string-value)))))))
 
 ;; Strings are parsed as follows:
 ;;

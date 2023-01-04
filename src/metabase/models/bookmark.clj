@@ -6,7 +6,7 @@
    [metabase.models.card :refer [Card]]
    [metabase.models.collection :refer [Collection]]
    [metabase.models.dashboard :refer [Dashboard]]
-   [metabase.util.honeysql-extensions :as hx]
+   [metabase.util.honey-sql-2-extensions :as h2x]
    [metabase.util.schema :as su]
    [schema.core :as s]
    [toucan.db :as db]
@@ -54,12 +54,12 @@
 
 (defn- bookmarks-union-query
   [user-id]
-  (let [as-null (when (= (mdb.connection/db-type) :postgres) (hx/->integer nil))]
+  (let [as-null (when (= (mdb.connection/db-type) :postgres) (h2x/->integer nil))]
     {:union-all [{:select [:card_id
                            [as-null :dashboard_id]
                            [as-null :collection_id]
                            [:card_id :item_id]
-                           [(hx/literal "card") :type]
+                           [(h2x/literal "card") :type]
                            :created_at]
                   :from   [CardBookmark]
                   :where  [:= :user_id user-id]}
@@ -67,7 +67,7 @@
                            :dashboard_id
                            [as-null :collection_id]
                            [:dashboard_id :item_id]
-                           [(hx/literal "dashboard") :type]
+                           [(h2x/literal "dashboard") :type]
                            :created_at]
                   :from   [DashboardBookmark]
                   :where  [:= :user_id user-id]}
@@ -75,7 +75,7 @@
                            [as-null :dashboard_id]
                            :collection_id
                            [:collection_id :item_id]
-                           [(hx/literal "collection") :type]
+                           [(h2x/literal "collection") :type]
                            :created_at]
                   :from   [CollectionBookmark]
                   :where  [:= :user_id user-id]}]}))

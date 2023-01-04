@@ -31,31 +31,7 @@
             (instance-of? model x))
           (format "instance of a %s" (name model))))
 
-(p/defprotocol+ Model
-  :extend-via-metadata true ;; useful for testing. Not used in application proper
-  (model [this]
-    "Given either a Toucan model or a Toucan instance, return the Toucan model. Otherwise return `nil`."))
-
-(extend-protocol Model
-  Object
-  (model [this]
-    (cond
-      (models/model? this)
-      this
-
-      (toucan-instance? this)
-      (let [model-symb (symbol (name this))]
-        (db/resolve-model model-symb))
-
-      :else
-      nil))
-
-  clojure.lang.Symbol
-  (model [symb]
-    (db/resolve-model symb))
-
-  nil
-  (model [_this] nil))
+(p/import-vars [t2 model])
 
 (defn instance
   "Create a new instance of Toucan `model` with a map `m`.

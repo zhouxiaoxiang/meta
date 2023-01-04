@@ -136,7 +136,7 @@
 (defn send-user-joined-admin-notification-email!
   "Send an email to the `invitor` (the Admin who invited `new-user`) letting them know `new-user` has joined."
   [new-user & {:keys [google-auth?]}]
-  {:pre [(map? new-user)]}
+  {:pre [(map? new-user) (seq (:common_name new-user))]}
   (let [recipients (all-admin-recipients)]
     (email/send-message!
      :subject      (str (if google-auth?

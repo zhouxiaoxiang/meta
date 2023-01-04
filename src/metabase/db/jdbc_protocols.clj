@@ -11,7 +11,8 @@
    [metabase.util :as u]
    [metabase.util.date-2 :as u.date]
    [methodical.core :as methodical]
-   [toucan2.jdbc.read :as t2.jdbc.read])
+   [toucan2.jdbc.read :as t2.jdbc.read]
+   [next.jdbc.prepare])
   (:import
    (java.io BufferedReader)
    (java.sql PreparedStatement ResultSet ResultSetMetaData Types)
@@ -169,6 +170,11 @@
    indexes))
 
 ;;;; [[next.jdbc]] and Toucan 2 mappings
+
+(extend-protocol next.jdbc.prepare/SettableParameter
+  ZonedDateTime
+  (set-parameter [t stmt i]
+    (next.jdbc.prepare/set-parameter (t/offset-date-time t) stmt i)))
 
 (methodical/defmethod t2.jdbc.read/read-column-thunk [:default :default java.sql.Types/OTHER]
   "Read Postgres `citext` columns out as Strings."

@@ -158,7 +158,7 @@
   [& args]
   (s/assert* ::maybe-decrypt-args args)
   (let [{:keys [secret-key v options]} (-> (merge {:secret-key default-secret-key}
-                                                  (s/conform ::maybe-decrypt-args ["S" :log-errors? true]))
+                                                  (s/conform ::maybe-decrypt-args args))
                                            (update :options #(into {} (map (juxt :k :v)) %)))
         secret-key                     (or secret-key
                                            default-secret-key)

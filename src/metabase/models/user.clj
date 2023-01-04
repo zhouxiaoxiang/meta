@@ -107,9 +107,9 @@
   ;; delete all subscriptions to pulses/alerts/etc. if the User is getting archived (`:is_active` status changes)
   (when (false? active?)
     (db/delete! 'PulseChannelRecipient :user_id id))
-  ;; If we're setting the reset_token then encrypt it before it goes into the DB
   (cond-> user
     true        (merge (hashed-password-values user))
+    ;; If we're setting the reset_token then encrypt it before it goes into the DB
     reset-token (update :reset_token u.password/hash-bcrypt)
     locale      (update :locale i18n/normalized-locale-string)
     email       (update :email u/lower-case-en)))
@@ -120,10 +120,12 @@
   (let [common-name (if (or first_name last_name)
                       (str/trim (str first_name " " last_name))
                       email)]
+    (println "common-name:" common-name) ; NOCOMMIT
     (cond-> user
       common-name (assoc :common_name common-name))))
 
 (defn- post-select [user]
+  (println "user:" user) ; NOCOMMIT
   (add-common-name user))
 
 (def ^:private default-user-columns
@@ -274,18 +276,18 @@
 
 (def NewUser
   "Required/optionals parameters needed to create a new user (for any backend)"
-  {(schema/optional-key :first_name)       (schema/maybe su/NonBlankString)
-   (schema/optional-key :last_name)        (schema/maybe su/NonBlankString)
+  {(schema/optional-key :first-name)       (schema/maybe su/NonBlankString)
+   (schema/optional-key :last-name)        (schema/maybe su/NonBlankString)
    :email                                  su/Email
    (schema/optional-key :password)         (schema/maybe su/NonBlankString)
-   (schema/optional-key :login_attributes) (schema/maybe LoginAttributes)
-   (schema/optional-key :google_auth)      schema/Bool
-   (schema/optional-key :ldap_auth)        schema/Bool})
+   (schema/optional-key :login-attributes) (schema/maybe LoginAttributes)
+   (schema/optional-key :google-auth)      schema/Bool
+   (schema/optional-key :ldap-auth)        schema/Bool})
 
 (def ^:private Invitor
   "Map with info about the admin creating the user, used in the new user notification code"
   {:email      su/Email
-   :first_name (schema/maybe su/NonBlankString)
+   :first-name (schema/maybe su/NonBlankString)
    schema/Any  schema/Any})
 
 (schema/defn ^:private insert-new-user!

@@ -23,7 +23,8 @@
    [toucan.db :as db]
    [toucan.models :as models]
    [toucan2.core :as t2]
-   [toucan2.instance])
+   [toucan2.instance]
+   [toucan2.tools.before-insert :as t2.before-insert])
   (:import
    (java.io BufferedInputStream ByteArrayInputStream DataInputStream)
    (java.sql Blob)
@@ -297,6 +298,8 @@
 (models/add-property! ::entity-id
   :insert add-entity-id)
 
+(methodical/prefer-method! #'t2.before-insert/before-insert ::timestamped? ::entity-id)
+
 
 ;;;; [[define-simple-hydration-method]] and [[define-batched-hydration-method]]
 
@@ -318,7 +321,7 @@
   `(do
      (defn ~fn-name ~@fn-tail)
      (methodical/defmethod t2/simple-hydrate [:default ~hydration-key]
-       [instance#]
+       [_model# _k# instance#]
        (~fn-name instance#))))
 
 (s/fdef define-simple-hydration-method
@@ -335,7 +338,7 @@
   `(do
      (defn ~fn-name ~@fn-tail)
      (methodical/defmethod t2/batched-hydrate [:default ~hydration-key]
-       [instances#]
+       [_model# _k# instances#]
        (~fn-name instances#))))
 
 (s/fdef define-batched-hydration-method

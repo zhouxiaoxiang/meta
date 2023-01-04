@@ -40,7 +40,7 @@
 
 (def ^:private values-that-can-be-set
   "Columns of Field that classifiers are allowed to set."
-  #{:semantic_type :preview_display :has_field_values :entity_type})
+  #{:semantic-type :preview-display :has-field-values :entity-type})
 
 (def ^:private FieldOrTableInstance (s/either i/FieldInstance i/TableInstance))
 

@@ -59,7 +59,9 @@
                               :name                "not expected 3"
                               :description         "Old fingerprint, already analzed"
                               :fingerprint_version (dec i/latest-fingerprint-version)
-                              :last_analyzed       #t "2017-08-09"}]])))
+                              :last_analyzed       #t "2017-08-09"}]]
+      ;; TODO -- is this really not supposed to be asserting anything?
+      nil)))
 
 (deftest classify-fields-for-db!-test
   (testing "We classify decimal fields that have specially handled NaN values"

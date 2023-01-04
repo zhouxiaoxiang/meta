@@ -18,9 +18,11 @@
    [metabase.query-processor.error-type :as qp.error-type]
    [metabase.query-processor.store :as qp.store]
    [metabase.util :as u]
+   [metabase.util.honey-sql-2-extensions :as h2x]
    [metabase.util.honeysql-extensions :as hx]
    [metabase.util.i18n :refer [deferred-tru tru]]
-   [metabase.util.ssh :as ssh])
+   [metabase.util.ssh :as ssh]
+   [honey.sql :as sql])
   (:import
    (java.sql Clob ResultSet ResultSetMetaData)
    (java.time OffsetTime)
@@ -157,7 +159,10 @@
     (recur driver hsql-form (* amount 1000.0) :millisecond)
 
     :else
-    (hsql/call :dateadd (hx/literal unit) (hx/cast :long amount) (hx/cast :datetime hsql-form))))
+    ((case hx/*honey-sql-version*
+       1 hsql/call
+       2 sql/call)
+     :dateadd (hx/literal unit) (hx/cast :long amount) (hx/cast :datetime hsql-form))))
 
 (defmethod driver/humanize-connection-error-message :h2
   [_ message]

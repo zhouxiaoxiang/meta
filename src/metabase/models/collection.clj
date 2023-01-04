@@ -22,7 +22,7 @@
    [metabase.models.serialization.util :as serdes.util]
    [metabase.public-settings.premium-features :as premium-features]
    [metabase.util :as u]
-   [metabase.util.honeysql-extensions :as hx]
+   [metabase.util.honey-sql-2-extensions :as h2x]
    [metabase.util.i18n :refer [trs tru]]
    [metabase.util.schema :as su]
    [potemkin :as p]
@@ -311,17 +311,17 @@
                               "/"
                               (format "%%/%s/" (str parent-id)))]
     (into
-      ; if the collection-ids are empty, the whole into turns into nil and we have a dangling [:and] clause in query.
-      ; the [:= 1 1] is to prevent this
-      [:and [:= 1 1]]
-      (if (= collection-ids :all)
-        ; In the case that visible-collection-ids is all, that means there's no invisible collection ids
-        ; meaning, the effective children are always the direct children. So check for being a direct child.
-        [[:like :location (hx/literal child-literal)]]
-        (let [to-disj-ids         (location-path->ids (or (:effective_location parent-collection) "/"))
-              disj-collection-ids (apply disj collection-ids (conj to-disj-ids parent-id))]
-          (for [visible-collection-id disj-collection-ids]
-            [:not-like :location (hx/literal (format "%%/%s/%%" (str visible-collection-id)))]))))))
+     ;; if the collection-ids are empty, the whole into turns into nil and we have a dangling [:and] clause in query.
+     ;; the [:= 1 1] is to prevent this
+     [:and [:= 1 1]]
+     (if (= collection-ids :all)
+       ;; In the case that visible-collection-ids is all, that means there's no invisible collection ids
+       ;; meaning, the effective children are always the direct children. So check for being a direct child.
+       [[:like :location (h2x/literal child-literal)]]
+       (let [to-disj-ids         (location-path->ids (or (:effective_location parent-collection) "/"))
+             disj-collection-ids (apply disj collection-ids (conj to-disj-ids parent-id))]
+         (for [visible-collection-id disj-collection-ids]
+           [:not-like :location (h2x/literal (format "%%/%s/%%" (str visible-collection-id)))]))))))
 
 
 (s/defn ^:private effective-location-path* :- (s/maybe LocationPath)
@@ -477,19 +477,19 @@
   (let [visible-collection-ids (permissions-set->visible-collection-ids @*current-user-permissions-set*)]
     ;; Collection B is an effective child of Collection A if...
     (into
-      [:and
-       ;; it is a descendant of Collection A
-       [:like :location (hx/literal (str (children-location collection) "%"))]
-       ;; it is visible.
-       (visible-collection-ids->honeysql-filter-clause :id visible-collection-ids)
-       ;; it is NOT a descendant of a visible Collection other than A
-       (visible-collection-ids->direct-visible-descendant-clause (hydrate collection :effective_location) visible-collection-ids)
-       ;; if it is a personal Collection, it belongs to the current User.
-       [:or
-        [:= :personal_owner_id nil]
-        [:= :personal_owner_id *current-user-id*]]]
-      ;; (any additional conditions)
-      additional-honeysql-where-clauses)))
+     [:and
+      ;; it is a descendant of Collection A
+      [:like :location (h2x/literal (str (children-location collection) "%"))]
+      ;; it is visible.
+      (visible-collection-ids->honeysql-filter-clause :id visible-collection-ids)
+      ;; it is NOT a descendant of a visible Collection other than A
+      (visible-collection-ids->direct-visible-descendant-clause (hydrate collection :effective_location) visible-collection-ids)
+      ;; if it is a personal Collection, it belongs to the current User.
+      [:or
+       [:= :personal_owner_id nil]
+       [:= :personal_owner_id *current-user-id*]]]
+     ;; (any additional conditions)
+     additional-honeysql-where-clauses)))
 
 (s/defn effective-children-query :- {:select s/Any :from s/Any :where s/Any}
   "Return a query for the descendant Collections of a `collection`

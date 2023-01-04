@@ -135,8 +135,8 @@
    (testing "if an Advanced FeildValues Exists, make sure we still returns the full FieldValues"
      (mt/with-temp FieldValues [_ {:field_id (mt/id :categories :name)
                                    :type     :sandbox
-                                   :hash_key "random-hash"}])
-     (is (= :full (:type (field-values/get-or-create-full-field-values! (db/select-one Field :id (mt/id :categories :name)))))))))
+                                   :hash_key "random-hash"}]
+       (is (= :full (:type (field-values/get-or-create-full-field-values! (db/select-one Field :id (mt/id :categories :name))))))))))
 
 (deftest normalize-human-readable-values-test
   (testing "If FieldValues were saved as a map, normalize them to a sequence on the way out"
@@ -203,7 +203,8 @@
       (is (thrown-with-msg?
            clojure.lang.ExceptionInfo
            #"Invalid human-readable-values"
-           (mt/with-temp FieldValues [_ {:field_id (mt/id :venues :id), :human_readable_values {"1" "A", "2", "B"}}]))))
+           (mt/with-temp FieldValues [_ {:field_id (mt/id :venues :id), :human_readable_values {"1" "A", "2", "B"}}]
+             nil))))
     (testing "updating"
       (mt/with-temp FieldValues [{:keys [id]} {:field_id (mt/id :venues :id), :human_readable_values []}]
         (is (thrown-with-msg?
@@ -241,15 +242,17 @@
           clojure.lang.ExceptionInfo
           #"Full FieldValues shouldnt have hash_key"
           (mt/with-temp FieldValues [_ {:field_id (mt/id :venues :id)
-                                        :type :full
-                                        :hash_key "random-hash"}]))))
+                                        :type     :full
+                                        :hash_key "random-hash"}]
+            nil))))
 
   (testing "Advanced fieldvalues requires a hash_key"
     (is (thrown-with-msg?
           clojure.lang.ExceptionInfo
           #"Advanced FieldValues requires a hash_key"
           (mt/with-temp FieldValues [_ {:field_id (mt/id :venues :id)
-                                        :type :sandbox}])))))
+                                        :type     :sandbox}]
+            nil)))))
 
 (deftest insert-full-field-values-should-remove-all-cached-field-values
   (mt/with-temp* [FieldValues [sandbox-fv {:field_id (mt/id :venues :id)

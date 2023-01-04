@@ -23,7 +23,7 @@
    [metabase.search.util :as search-util]
    [metabase.server.middleware.offset-paging :as mw.offset-paging]
    [metabase.util :as u]
-   [metabase.util.honeysql-extensions :as hx]
+   [metabase.util.honey-sql-2-extensions :as h2x]
    [metabase.util.schema :as su]
    [schema.core :as s]
    [toucan.db :as db]))
@@ -125,7 +125,7 @@
         :let                  [maybe-aliased-col (get col-alias->honeysql-clause search-col)]]
     (cond
       (= search-col :model)
-      [(hx/literal model) :model]
+      [(h2x/literal model) :model]
 
       ;; This is an aliased column, no need to include the table alias
       (sequential? maybe-aliased-col)
@@ -143,7 +143,7 @@
       ;; For MySQL, this is not needed.
       :else
       [(when-not (= (mdb/db-type) :mysql)
-         (hx/cast col-type nil))
+         (h2x/cast col-type nil))
        search-col])))
 
 (s/defn ^:private select-clause-for-model :- [HoneySQLColumn]
@@ -284,7 +284,7 @@
   [_model search-ctx :- SearchContext]
   (-> (shared-card-impl true search-ctx)
       (update :select (fn [columns]
-                        (cons [(hx/literal "dataset") :model] (rest columns))))))
+                        (cons [(h2x/literal "dataset") :model] (rest columns))))))
 
 (defn- shared-collection-impl
   [model search-ctx]
@@ -306,7 +306,7 @@
   [model search-ctx :- SearchContext]
   (-> (shared-collection-impl model search-ctx)
       (update :select (fn [columns]
-                        (cons [(hx/literal model) :model] (rest columns))))))
+                        (cons [(h2x/literal model) :model] (rest columns))))))
 
 (s/defmethod search-query-for-model "database"
   [model search-ctx :- SearchContext]
@@ -330,7 +330,7 @@
   [model search-ctx :- SearchContext]
   (-> (shared-dashboard-impl model search-ctx)
       (update :select (fn [columns]
-                        (cons [(hx/literal model) :model] (rest columns))))))
+                        (cons [(h2x/literal model) :model] (rest columns))))))
 
 (s/defmethod search-query-for-model "pulse"
   [model search-ctx :- SearchContext]
@@ -364,14 +364,14 @@
              :from   [[(merge
                          base-query
                          {:select [:id :schema :db_id :name :description :display_name :updated_at :initial_sync_status
-                                   [(hx/concat (hx/literal "/db/")
+                                   [(h2x/concat (h2x/literal "/db/")
                                                :db_id
-                                               (hx/literal "/schema/")
+                                               (h2x/literal "/schema/")
                                                (hsql/call :case
                                                           [:not= :schema nil] :schema
-                                                          :else               (hx/literal ""))
-                                               (hx/literal "/table/") :id
-                                               (hx/literal "/read/"))
+                                                          :else               (h2x/literal ""))
+                                               (h2x/literal "/table/") :id
+                                               (h2x/literal "/read/"))
                                     :path]]})
                        :table]]
              :where  (if (seq data-perms)

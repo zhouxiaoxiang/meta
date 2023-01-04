@@ -271,8 +271,8 @@
 (defn- set-with-temp-defaults! []
   (doseq [[model defaults-fn] with-temp-defaults-fns]
     (methodical/defmethod t2.with-temp/with-temp-defaults model
-      [_model]
-      (defaults-fn))))
+      [model]
+      (defaults-fn model))))
 
 (set-with-temp-defaults!)
 

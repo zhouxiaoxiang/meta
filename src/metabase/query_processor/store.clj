@@ -21,7 +21,9 @@
    [metabase.util.i18n :refer [tru]]
    [metabase.util.schema :as su]
    [schema.core :as s]
-   [toucan.db :as db]))
+   [toucan.db :as db]
+   [toucan2.core :as t2]
+   [toucan2.magic-map :as t2.magic-map]))
 
 ;;; ---------------------------------------------- Setting up the Store ----------------------------------------------
 
@@ -109,18 +111,18 @@
   (s/both
    (mi/InstanceOf Field)
    {:name                               su/NonBlankString
-    :display_name                       su/NonBlankString
+    :display-name                       su/NonBlankString
     :description                        (s/maybe s/Str)
-    :database_type                      su/NonBlankString
-    :base_type                          su/FieldType
+    :database-type                      su/NonBlankString
+    :base-type                          su/FieldType
     ;; there's a tension as we sometimes store fields from the db, and sometimes store computed fields. ideally we
-    ;; would make everything just use base_type.
-    (s/optional-key :effective_type)    (s/maybe su/FieldType)
-    (s/optional-key :coercion_strategy) (s/maybe su/CoercionStrategy)
-    :semantic_type                      (s/maybe su/FieldSemanticOrRelationType)
+    ;; would make everything just use base-type.
+    (s/optional-key :effective-type)    (s/maybe su/FieldType)
+    (s/optional-key :coercion-strategy) (s/maybe su/CoercionStrategy)
+    :semantic-type                      (s/maybe su/FieldSemanticOrRelationType)
     :fingerprint                        (s/maybe su/Map)
-    :parent_id                          (s/maybe su/IntGreaterThanZero)
-    :nfc_path                           (s/maybe [su/NonBlankString])
+    :parent-id                          (s/maybe su/IntGreaterThanZero)
+    :nfc-path                           (s/maybe [su/NonBlankString])
     s/Any                               s/Any}))
 
 
@@ -209,8 +211,9 @@
                           {:select    (for [column-kw field-columns-to-fetch]
                                         [(keyword (str "field." (name column-kw)))
                                          column-kw])
-                           :from      [[Field :field]]
-                           :left-join [[Table :table] [:= :field.table_id :table.id]]
+                           :from      [[(keyword (t2/table-name Field)) :field]]
+                           :left-join [[(keyword (t2/table-name Table)) :table]
+                                       [:= :field.table_id :table.id]]
                            :where     [:and
                                        [:in :field.id (set ids-to-fetch)]
                                        [:= :table.db_id (db-id)]]})

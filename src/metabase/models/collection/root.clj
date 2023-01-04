@@ -1,12 +1,12 @@
 (ns metabase.models.collection.root
   (:require
-   [metabase.models.dispatch :as models.dispatch]
    [metabase.models.interface :as mi]
    [metabase.models.permissions :as perms]
    [metabase.public-settings.premium-features :as premium-features]
    [metabase.util :as u]
    [potemkin.types :as p.types]
-   [toucan.models :as models]))
+   [toucan.models :as models]
+   [toucan2.protocols :as t2.protocols]))
 
 ;;; +----------------------------------------------------------------------------------------------------------------+
 ;;; |                                   Root Collection Special Placeholder Object                                   |
@@ -22,7 +22,8 @@
   (derive ::mi/read-policy.full-perms-for-perms-set)
   (derive ::mi/write-policy.full-perms-for-perms-set))
 
-(extend-protocol models.dispatch/Model
+;;; This seems questionable
+(extend-protocol t2.protocols/IModel
   RootCollection
   (model [_this]
     RootCollection))

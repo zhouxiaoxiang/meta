@@ -34,12 +34,13 @@
    [metabase.util.honeysql-extensions :as hx]
    [metabase.util.i18n :refer [trs]]
    [potemkin :as p]
-   [pretty.core :refer [PrettyPrintable]])
+   [pretty.core :refer [PrettyPrintable]]
+   [honey.sql :as sql])
   (:import
    (java.sql ResultSet ResultSetMetaData Time Types)
    (java.time LocalDateTime OffsetDateTime OffsetTime)
    (java.util Date UUID)
-   (metabase.util.honeysql_extensions Identifier)))
+   (metabase.util.honey_sql_1_extensions Identifier)))
 
 (comment
   ;; method impls live in these namespaces.
@@ -89,13 +90,24 @@
 (defn- ->timestamp [honeysql-form]
   (hx/cast-unless-type-in "timestamp" #{"timestamp" "timestamptz" "date"} honeysql-form))
 
+(defn- format-interval [_fn [amount unit]]
+  {:pre [(number? amount)]}
+  [(format "(INTERVAL '%s %s')" amount (name unit))])
+
+(sql/register-fn! ::interval format-interval)
+
+(defn- interval [amount unit]
+  (case hx/*honey-sql-version*
+    1 (hsql/raw (format "(INTERVAL '%s %s')" amount (name unit)))
+    2 [::interval amount unit]))
+
 (defmethod sql.qp/add-interval-honeysql-form :postgres
   [driver hsql-form amount unit]
   ;; Postgres doesn't support quarter in intervals (#20683)
   (if (= unit :quarter)
     (recur driver hsql-form (* 3 amount) :month)
     (let [hsql-form (->timestamp hsql-form)]
-      (-> (hx/+ hsql-form (hsql/raw (format "(INTERVAL '%s %s')" amount (name unit))))
+      (-> (hx/+ hsql-form (interval amount unit))
           (hx/with-type-info (hx/type-info hsql-form))))))
 
 (defmethod driver/humanize-connection-error-message :postgres

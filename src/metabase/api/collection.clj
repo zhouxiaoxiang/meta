@@ -35,7 +35,7 @@
    [metabase.models.timeline :as timeline :refer [Timeline]]
    [metabase.server.middleware.offset-paging :as mw.offset-paging]
    [metabase.util :as u]
-   [metabase.util.honeysql-extensions :as hx]
+   [metabase.util.honey-sql-2-extensions :as h2x]
    [metabase.util.schema :as su]
    [schema.core :as s]
    [toucan.db :as db]
@@ -198,7 +198,7 @@
                    :p.name
                    :p.entity_id
                    :p.collection_position
-                   [(hx/literal "pulse") :model]]
+                   [(h2x/literal "pulse") :model]]
        :modifiers [:distinct]
        :from      [[Pulse :p]]
        :left-join [[PulseCard :pc] [:= :p.id :pc.pulse_id]]
@@ -220,7 +220,7 @@
 
 (defmethod collection-children-query :snippet
   [_ collection {:keys [archived?]}]
-  {:select [:id :name :entity_id [(hx/literal "snippet") :model]]
+  {:select [:id :name :entity_id [(h2x/literal "snippet") :model]]
    :from   [[NativeQuerySnippet :nqs]]
    :where  [:and
             [:= :collection_id (:id collection)]
@@ -228,7 +228,7 @@
 
 (defmethod collection-children-query :timeline
   [_ collection {:keys [archived? pinned-state]}]
-  {:select [:id :name [(hx/literal "timeline") :model] :description :entity_id :icon]
+  {:select [:id :name [(h2x/literal "timeline") :model] :description :entity_id :icon]
    :from   [[Timeline :timeline]]
    :where  [:and
             (poison-when-pinned-clause pinned-state)
@@ -253,7 +253,7 @@
 (defn- card-query [dataset? collection {:keys [archived? pinned-state]}]
   (-> {:select    [:c.id :c.name :c.description :c.entity_id :c.collection_position :c.display :c.collection_preview
                    :c.dataset_query
-                   [(hx/literal (if dataset? "dataset" "card")) :model]
+                   [(h2x/literal (if dataset? "dataset" "card")) :model]
                    [:u.id :last_edit_user] [:u.email :last_edit_email]
                    [:u.first_name :last_edit_first_name] [:u.last_name :last_edit_last_name]
                    [:r.timestamp :last_edit_timestamp]
@@ -278,7 +278,7 @@
                                                   [:< :r1.id :r2.id]]]
                      :where [:and
                              [:= :r2.id nil]
-                             [:= :r1.model (hx/literal "Card")]]} :r]
+                             [:= :r1.model (h2x/literal "Card")]]} :r]
                    [:= :r.model_id :c.id]
                    [:core_user :u] [:= :u.id :r.user_id]]
        :where     [:and
@@ -352,7 +352,7 @@
 
 (defn- dashboard-query [collection {:keys [page? archived? pinned-state]}]
   (-> {:select    [:d.id :d.name :d.description :d.entity_id :d.collection_position
-                   [(hx/literal (if page? "page" "dashboard")) :model]
+                   [(h2x/literal (if page? "page" "dashboard")) :model]
                    [:u.id :last_edit_user] [:u.email :last_edit_email]
                    [:u.first_name :last_edit_first_name] [:u.last_name :last_edit_last_name]
                    [:r.timestamp :last_edit_timestamp]]
@@ -365,7 +365,7 @@
                                                   [:< :r1.id :r2.id]]]
                      :where [:and
                              [:= :r2.id nil]
-                             [:= :r1.model (hx/literal "Dashboard")]]} :r]
+                             [:= :r1.model (h2x/literal "Dashboard")]]} :r]
                    [:= :r.model_id :d.id]
                    [:core_user :u] [:= :u.id :r.user_id]]
        :where     [:and
@@ -406,7 +406,7 @@
                       :description
                       :entity_id
                       :personal_owner_id
-                      [(hx/literal (if app? "app" "collection")) :model]
+                      [(h2x/literal (if app? "app" "collection")) :model]
                       :authority_level
                       :app_id]
              ;; A simple left join would force us qualifying :id from
@@ -516,7 +516,7 @@
     (map (fn [col]
            (let [[col-name typpe] (u/one-or-many col)]
              (get columns col-name (if (and typpe (= (mdb/db-type) :postgres))
-                                     [(hx/cast typpe nil) col-name]
+                                     [(h2x/cast typpe nil) col-name]
                                      [nil col-name]))))
          necessary-columns)))
 

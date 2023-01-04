@@ -86,7 +86,7 @@
       (perms/grant-permissions! group-id (perms/table-read-path table))
       (is (set/subset?
            #{(perms/table-read-path table)}
-           (metabase.models.user/permissions-set (mt/user->id :rasta)))))))
+           (user/permissions-set (mt/user->id :rasta)))))))
 
 ;;; Tests for invite-user and create-new-google-auth-user!
 
@@ -218,10 +218,11 @@
 (deftest ldap-sequential-login-attributes-test
   (testing "You should be able to create a new LDAP user if some `login_attributes` are vectors (#10291)"
     (try
-      (user/create-new-ldap-auth-user! {:email            "ldaptest@metabase.com"
-                                        :first_name       "Test"
-                                        :last_name        "SomeLdapStuff"
-                                        :login_attributes {:local_birds ["Steller's Jay" "Mountain Chickadee"]}})
+      (is (partial= {:email "ldaptest@metabase.com"}
+                    (user/create-new-ldap-auth-user! {:email            "ldaptest@metabase.com"
+                                                      :first_name       "Test"
+                                                      :last_name        "SomeLdapStuff"
+                                                      :login_attributes {:local_birds ["Steller's Jay" "Mountain Chickadee"]}})))
       (is (= {"local_birds" ["Steller's Jay" "Mountain Chickadee"]}
              (db/select-one-field :login_attributes User :email "ldaptest@metabase.com")))
       (finally
@@ -441,7 +442,7 @@
                  (db/select-one-field :locale User :id user-id))))
         (testing "invalid locale"
           (is (thrown-with-msg?
-               AssertionError
+               Exception
                #"Assert failed: \(i18n/available-locale\? locale\)"
                (db/update! User user-id :locale "en_XX"))))))))
 

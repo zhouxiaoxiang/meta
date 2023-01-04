@@ -14,8 +14,8 @@
 ;; let's make sure the `:metabase-query`/`:metric-segment-definition`/`::dashboard-card/parameter-mappings`
 ;; normalization functions respond gracefully to invalid stuff when pulling them out of the Database. See #8914
 
-(defn type-fn [toucan-type in-or-out]
-  (-> @@#'models/type-fns toucan-type in-or-out))
+(defn type-fn [type-name direction]
+  (#'models/type-fn type-name direction))
 
 (deftest ^:parallel handle-bad-template-tags-test
   (testing (str "an malformed template tags map like the one below is invalid. Rather than potentially destroy an entire API "

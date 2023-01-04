@@ -27,6 +27,7 @@
    [metabase.public-settings.premium-features :as premium-features]
    [metabase.server.request.util :as request.u]
    [metabase.util :as u]
+   [metabase.util.honeysql-extensions :as hx]
    [metabase.util.i18n :as i18n :refer [deferred-trs deferred-tru tru]]
    [ring.util.response :as response]
    [schema.core :as s]
@@ -231,31 +232,32 @@
   (memoize
    (fn [db-type max-age-minutes session-type enable-advanced-permissions?]
      (first
-      (db/honeysql->sql
-       (cond->
-         {:select    [[:session.user_id :metabase-user-id]
-                      [:user.is_superuser :is-superuser?]
-                      [:user.locale :user-locale]]
-          :from      [[Session :session]]
-          :left-join [[User :user] [:= :session.user_id :user.id]]
-          :where     [:and
-                      [:= :user.is_active true]
-                      [:= :session.id (hsql/raw "?")]
-                      (let [oldest-allowed (sql.qp/add-interval-honeysql-form db-type :%now (- max-age-minutes) :minute)]
-                        [:> :session.created_at oldest-allowed])
-                      [:= :session.anti_csrf_token (case session-type
-                                                     :normal         nil
-                                                     :full-app-embed "?")]]
-          :limit     1}
+      (binding [hx/*honey-sql-version* 2]
+        (db/honeysql->sql
+         (cond->
+             {:select    [[:session.user_id :metabase-user-id]
+                          [:user.is_superuser :is-superuser?]
+                          [:user.locale :user-locale]]
+              :from      [[Session :session]]
+              :left-join [[User :user] [:= :session.user_id :user.id]]
+              :where     [:and
+                          [:= :user.is_active true]
+                          [:= :session.id (hsql/raw "?")]
+                          (let [oldest-allowed (sql.qp/add-interval-honeysql-form db-type :%now (- max-age-minutes) :minute)]
+                            [:> :session.created_at oldest-allowed])
+                          [:= :session.anti_csrf_token (case session-type
+                                                         :normal         nil
+                                                         :full-app-embed "?")]]
+              :limit     1}
 
-         enable-advanced-permissions?
-         (->
-          (hh/merge-select
-           [:pgm.is_group_manager :is-group-manager?])
-          (hh/merge-left-join
-           [PermissionsGroupMembership :pgm] [:and
-                                              [:= :pgm.user_id :user.id]
-                                              [:is :pgm.is_group_manager true]]))))))))
+           enable-advanced-permissions?
+           (->
+            (hh/merge-select
+             [:pgm.is_group_manager :is-group-manager?])
+            (hh/merge-left-join
+             [PermissionsGroupMembership :pgm] [:and
+                                                [:= :pgm.user_id :user.id]
+                                                [:is :pgm.is_group_manager true]])))))))))
 
 (defn- current-user-info-for-session
   "Return User ID and superuser status for Session with `session-id` if it is valid and not expired."
