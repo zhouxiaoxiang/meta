@@ -12,24 +12,64 @@ import {
   setupCollectionVirtualSchemaEndpoints,
   setupDatabasesEndpoints,
 } from "__support__/server-mocks";
-import {
-  SAMPLE_DATABASE,
-  ANOTHER_DATABASE,
-  MULTI_SCHEMA_DATABASE,
-} from "__support__/sample_database_fixture";
 
 import { ROOT_COLLECTION } from "metabase/entities/collections";
 
 import { Collection } from "metabase-types/api";
-import { createMockCard, createMockCollection } from "metabase-types/api/mocks";
+import {
+  createMockCard,
+  createMockCollection,
+  createMockDatabase,
+  createMockTable,
+} from "metabase-types/api/mocks";
 import { createMockSettingsState } from "metabase-types/store/mocks";
-
-import Database from "metabase-lib/metadata/Database";
-import Table from "metabase-lib/metadata/Table";
 
 import type { DataPickerValue, DataPickerFiltersProp } from "../types";
 import useDataPickerValue from "../useDataPickerValue";
 import DataPicker from "../DataPickerContainer";
+
+export const SAMPLE_DATABASE = createMockDatabase({
+  id: 1,
+  name: "Sample Database",
+  tables: [
+    createMockTable({
+      id: 1,
+      name: "Products",
+    }),
+    createMockTable({
+      id: 2,
+      name: "Orders",
+    }),
+    createMockTable({
+      id: 3,
+      name: "People",
+    }),
+  ],
+});
+
+export const MULTI_SCHEMA_DATABASE = createMockDatabase({
+  id: 2,
+  name: "Multi Schema Database",
+  tables: [
+    createMockTable({
+      id: 1,
+      db_id: 2,
+      name: "First schema table",
+      schema: "first_schema",
+    }),
+    createMockTable({
+      id: 2,
+      db_id: 2,
+      name: "Second schema table",
+      schema: "second_schema",
+    }),
+  ],
+});
+
+export const ANOTHER_DATABASE = createMockDatabase({
+  id: 3,
+  name: "Empty Database",
+});
 
 export const SAMPLE_COLLECTION = createMockCollection({
   id: 1,
@@ -130,14 +170,14 @@ export async function setup({
   const scope = nock(location.origin);
 
   if (hasDataAccess) {
-    const databases = [getDatabaseObject(SAMPLE_DATABASE)];
+    const databases = [SAMPLE_DATABASE];
 
     if (hasMultiSchemaDatabase) {
-      databases.push(getDatabaseObject(MULTI_SCHEMA_DATABASE));
+      databases.push(MULTI_SCHEMA_DATABASE);
     }
 
     if (hasEmptyDatabase) {
-      databases.push(getDatabaseObject(ANOTHER_DATABASE));
+      databases.push(ANOTHER_DATABASE);
     }
 
     setupDatabasesEndpoints(scope, databases);
@@ -186,25 +226,12 @@ export async function setup({
       storeInitialState: {
         settings,
       },
-      withSampleDatabase: hasDataAccess,
     },
   );
 
-  await waitForElementToBeRemoved(() => screen.queryByText(/Loading/i));
+  await waitForElementToBeRemoved(() => screen.queryByText(/Loading/i), {
+    timeout: 100000,
+  });
 
   return { onChange };
-}
-
-function getDatabaseObject(database: Database) {
-  return {
-    ...database.getPlainObject(),
-    tables: database.tables.map(getTableObject),
-  };
-}
-
-function getTableObject(table: Table) {
-  return {
-    ...table.getPlainObject(),
-    schema: table.schema_name,
-  };
 }
