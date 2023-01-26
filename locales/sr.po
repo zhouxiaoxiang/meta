@@ -26288,3 +26288,13 @@ msgstr "Узорак базе података није могао да се е�
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Конфигурационим датотекама метабазе је потребан Премиум токен са функцијом :адванцед-цонфиг."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Графикони у претплатама могу изгледати мало другачије од графикона на контролној табли."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Примаоци ће видети ове податке баш онако како их ви видите, без обзира на њихове дозволе."
+

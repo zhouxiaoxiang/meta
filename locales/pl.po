@@ -101,7 +101,7 @@ msgstr "Tylko w przypadku dodawania nowego widżetu filtru"
 #: frontend/src/metabase/admin/databases/components/widgets/CacheFieldValuesScheduleWidget.jsx:55
 msgid "When a user adds a new filter to a dashboard or a SQL question, Metabase will\n"
 "scan the field(s) mapped to that filter in order to show the list of selectable values."
-msgstr "Gdy użytkownik doda nowy filtr do pulpitu lub zapytania SQL, \n"
+msgstr "Gdy użytkownik doda nowy filtr do pulpitu lub pytania SQL, \n"
 "Metabase będzie skanować pole(a) mapowane do tego filtru w celu wyświetlenia listy wartości do wyboru."
 
 #: frontend/src/metabase/admin/databases/components/widgets/CacheFieldValuesScheduleWidget.jsx:63
@@ -354,7 +354,7 @@ msgstr "Usuwanie..."
 
 #: frontend/src/metabase/admin/databases/components/DatabaseList/DatabaseList.jsx:135
 msgid "Loading ..."
-msgstr "Ładowanie..."
+msgstr "Wczytywanie..."
 
 #: frontend/src/metabase/admin/databases/containers/DatabaseListApp.jsx:189
 msgid "Bring the sample dataset back"
@@ -685,7 +685,7 @@ msgstr "Filtrowanie w tym polu"
 
 #: frontend/src/metabase/admin/datamodel/containers/FieldApp.jsx:332
 msgid "When this field is used in a filter, what should people use to enter the value they want to filter on?"
-msgstr "Kiedy to pole jest używane w filtrze, jakie osoby powinny używać do wprowadzania wartości, którą chce filtrować?"
+msgstr "Kiedy to pole jest używane w filtrze, czego ludzie powinni użyć, aby wprowadzić wartość, według której chcą filtrować?"
 
 #: frontend/src/metabase/admin/datamodel/containers/FieldApp.jsx:446
 msgid "No description for this field yet"
@@ -1491,7 +1491,7 @@ msgstr "Zaloguj przez Google"
 #: frontend/src/metabase/admin/settings/auth/containers/GoogleAuthCard/GoogleAuthCard.tsx:16
 #: frontend/src/metabase/admin/settings/components/SettingsGoogleForm/SettingsGoogleForm.tsx:60
 msgid "Allows users with existing Metabase accounts to login with a Google account that matches their email address in addition to their Metabase username and password."
-msgstr "Umożliwia użytkownikom z istniejącymi kontami Metabase logowanie się za pomocą konta Google, które oprócz nazwy użytkownika i hasła Metabase odpowiada ich adresom e-mail."
+msgstr "Umożliwia użytkownikom z istniejącymi kontami Metabase logowanie się przy użyciu konta Google, które jest zgodne z ich adresem email oprócz nazwy użytkownika i hasła Metabase."
 
 #: frontend/src/metabase/components/ChannelSetupMessage.jsx:32
 msgid "Configure"
@@ -1504,7 +1504,7 @@ msgstr "LDAP"
 
 #: frontend/src/metabase/admin/settings/auth/containers/LdapAuthCard/LdapAuthCard.tsx:12
 msgid "Allows users within your LDAP directory to log in to Metabase with their LDAP credentials, and allows automatic mapping of LDAP groups to Metabase groups."
-msgstr "Umożliwia użytkownikom w katalogu LDAP zalogować się do Metabase przy użyciu poświadczeń LDAP i umożliwia automatyczne mapowanie grup LDAP na grupy Metabase."
+msgstr "Umożliwia użytkownikom w katalogu LDAP zalogować się do Metabase przy użyciu poświadczeń LDAP i pozwala na automatyczne mapowanie grup LDAP na grupy Metabase."
 
 #: frontend/src/metabase/admin/settings/components/SettingsBatchForm.jsx:19
 #: frontend/src/metabase/admin/settings/components/SettingsBatchForm.jsx:23
@@ -1613,11 +1613,11 @@ msgstr "Tworzenie użytkownika Slack bot dla MetaBot"
 
 #: frontend/src/metabase/admin/settings/components/SettingsSlackForm.jsx:255
 msgid "Once you're there, give it a name and click {0}. Then copy and paste the Bot API Token into the field below. Once you are done, create a \"metabase_files\" channel in Slack. Metabase needs this to upload graphs."
-msgstr "Gdy już tam jesteś, nadaj mu nazwę i kliknij {0}. Następnie skopiuj i wklej token API bota w polu poniżej. Gdy skończysz, utworzyć \"metabase_files\" kanał w Slack. Metabase wymaga tego, aby przesyłać wykresy."
+msgstr "Gdy już tam jesteś, nadaj nazwę i kliknij {0}. Następnie skopiuj i wklej token API bota w polu poniżej. Gdy skończysz, utwórz kanał \"metabase_files\" w Slack. Metabase wymaga tego, aby przesyłać wykresy."
 
 #: frontend/src/metabase/admin/settings/components/SettingsUpdatesForm/VersionUpdateNotice/VersionUpdateNotice.jsx:54
 msgid "You're running Metabase {0} which is the latest and greatest!"
-msgstr "Używasz Metabase {0}, która jest najnowsza i Najlepsza!"
+msgstr "Używasz Metabase {0}, która jest najnowsza i najlepsza!"
 
 #: frontend/src/metabase/admin/settings/components/SettingsUpdatesForm.jsx:100
 msgid "Metabase {0} is available.  You're running {1}"
@@ -1673,7 +1673,7 @@ msgstr "Usuń"
 #: frontend/src/metabase/query_builder/components/template_tags/TagEditorParam.jsx:165
 #: frontend/src/metabase/query_builder/components/template_tags/TagEditorParam.jsx:223
 msgid "Select…"
-msgstr "Pobierz..."
+msgstr "Wybierz..."
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:285
 msgid "Sample values:"
@@ -1693,15 +1693,15 @@ msgstr "Jak byś chciał nazwać tą mapę?"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:329
 msgid "e.g. United Kingdom, Brazil, Mars"
-msgstr "np. United Kingdom, Brazil, Mars"
+msgstr "np. Polska, województwa, gminy"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:336
 msgid "URL for the GeoJSON file you want to use"
-msgstr "Adres URL pliku GEOJSON, którego chcesz użyć"
+msgstr "Adres URL pliku GeoJSON, którego chcesz użyć"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:342
 msgid "Like https://my-mb-server.com/maps/my-map.json"
-msgstr "Jak https://My-MB-Server.com/maps/my-map.JSON"
+msgstr "np. https://my-mb-server.com/maps/my-map.json"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:353
 #: frontend/src/metabase/admin/tasks/containers/ModelCacheRefreshJobs/ModelCacheRefreshJobs.tsx:87
@@ -1711,19 +1711,19 @@ msgstr "Odśwież"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:353
 msgid "Load"
-msgstr "Załaduj"
+msgstr "Wczytaj"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:359
 msgid "Which property specifies the region’s identifier?"
-msgstr "Która Właściwość określa identyfikator regionu?"
+msgstr "Który atrybut określa identyfikator regionu?"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:368
 msgid "Which property specifies the region’s display name?"
-msgstr "Która Właściwość określa nazwę wyświetlaną regionu?"
+msgstr "Która atrybut określa nazwę wyświetlaną regionu?"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:393
 msgid "Load a GeoJSON file to see a preview"
-msgstr "Wczytanie pliku GEOJSON w celu wyświetlenia podglądu"
+msgstr "Wczytaj plik GeoJSON, aby wyświetlić podgląd"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:411
 msgid "Save map"
@@ -1751,7 +1751,7 @@ msgstr "Włącz"
 
 #: frontend/src/metabase/admin/settings/components/widgets/EmbeddingLevel.jsx:28
 msgid "Premium embedding enabled"
-msgstr "Włączone osadzanie premii"
+msgstr "Osadzanie premium jest włączone"
 
 #: frontend/src/metabase/admin/settings/components/widgets/EmbeddingLevel.jsx:30
 msgid "Enter the token you bought from the Metabase Store"
@@ -1821,7 +1821,7 @@ msgstr "Lista kart publicznych"
 
 #: frontend/src/metabase/admin/settings/components/widgets/PublicLinksListing.jsx:141
 msgid "No questions have been publicly shared yet."
-msgstr "Żadne zapytania nie zostały jeszcze publicznie udostępnione."
+msgstr "Żadne pytania nie zostały jeszcze publicznie udostępnione."
 
 #: frontend/src/metabase/admin/settings/components/widgets/PublicLinksListing.jsx:150
 msgid "Embedded Dashboard Listing"
@@ -1857,13 +1857,13 @@ msgstr "Wygeneruj klucz"
 
 #: frontend/src/metabase/admin/settings/components/widgets/SettingToggle.jsx:15
 msgid "Enabled"
-msgstr "Włącz"
+msgstr "Włączone"
 
 #: frontend/src/metabase/admin/settings/components/widgets/SettingToggle.jsx:15
 #: frontend/src/metabase/admin/settings/selectors.js:118
 #: frontend/src/metabase/public/components/widgets/AdvancedSettingsPane.jsx:85
 msgid "Disabled"
-msgstr "Zablokowany"
+msgstr "Wyłączone"
 
 #: frontend/src/metabase/admin/settings/containers/SettingsEditorApp.jsx:131
 msgid "Unknown setting {0}"
@@ -1928,7 +1928,7 @@ msgstr "Zastępowanie spacjami podkreśleń i myślników"
 
 #: frontend/src/metabase/admin/settings/selectors.js:124
 msgid "Enable Nested Queries"
-msgstr "Włącz kwerendy zagnieżdżone"
+msgstr "Włącz pytania zagnieżdżone"
 
 #: frontend/src/metabase/admin/settings/selectors.js:135
 msgid "Updates"
@@ -2055,7 +2055,7 @@ msgstr "Mapy"
 
 #: frontend/src/metabase/admin/settings/selectors.js:238
 msgid "Map tile server URL"
-msgstr "Adres URL serwera kafelków mapy"
+msgstr "Adres URL serwera kafli mapy"
 
 #: frontend/src/metabase/admin/settings/selectors.js:239
 msgid "Metabase uses OpenStreetMaps by default."
@@ -2083,7 +2083,7 @@ msgstr "Udostępnione pulpity"
 
 #: frontend/src/metabase/admin/settings/selectors.js:324
 msgid "Shared Questions"
-msgstr "Wspólne pytania"
+msgstr "Udostępnione pytania"
 
 #: frontend/src/metabase/admin/settings/selectors.js:305
 msgid "Embedding in other Applications"
@@ -2296,7 +2296,7 @@ msgstr "Pulpity, kolekcje i pulsy w tej kolekcji również zostaną zarchiwizowa
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetModal.jsx:58
 #: frontend/src/metabase/routes.jsx:211
 msgid "Archive"
-msgstr "Archiwum"
+msgstr "Archiwizuj"
 
 #: frontend/src/metabase/containers/ErrorPages.jsx:51
 msgid "This {0} has been archived"
@@ -2457,7 +2457,7 @@ msgstr "Przenieść \"{0}\"?"
 #: frontend/src/metabase/timelines/common/components/MoveEventModal/MoveEventModal.tsx:60
 #: frontend/src/metabase/timelines/common/components/MoveTimelineModal/MoveTimelineModal.tsx:50
 msgid "Move"
-msgstr "Przesuń"
+msgstr "Przenieś"
 
 #: frontend/src/metabase/collections/components/CollectionEditMenu.jsx:15
 msgid "Edit this collection"
@@ -2553,12 +2553,12 @@ msgstr "Przypnij ten element"
 
 #: frontend/src/metabase/components/EntityItem.jsx:90
 msgid "Move this item"
-msgstr "Przesuń ten element"
+msgstr "Przenieś ten element"
 
 #: frontend/src/metabase/components/EntityMenu.info.js:26
 #: frontend/src/metabase/components/EntityMenu.info.js:82
 msgid "Edit this question"
-msgstr "Edytuj to zapytanie"
+msgstr "Edytuj to pytanie"
 
 #: frontend/src/metabase/components/EntityMenu.info.js:28
 #: frontend/src/metabase/components/EntityMenu.info.js:49
@@ -2792,7 +2792,7 @@ msgstr "Wystąpił błąd"
 
 #: frontend/src/metabase/components/LoadingAndErrorWrapper.jsx:36
 msgid "Loading..."
-msgstr "Ładowanie..."
+msgstr "Wczytywanie..."
 
 #: frontend/src/metabase/setup/components/NewsletterForm/NewsletterForm.tsx:51
 msgid "Metabase Newsletter"
@@ -4668,11 +4668,11 @@ msgstr "Aby osadzić {0} we własnej aplikacji:"
 
 #: frontend/src/metabase/public/components/widgets/EmbedCodePane.jsx:40
 msgid "Insert this code snippet in your server code to generate the signed embedding URL "
-msgstr "Wstaw ten urywek kodu w kodzie serwera by wygenerować podpisany adres URL osadzania "
+msgstr "Wstaw ten fragment kodu w kodzie serwera by wygenerować podpisany adres URL osadzania "
 
 #: frontend/src/metabase/public/components/widgets/EmbedCodePane.jsx:64
 msgid "Then insert this code snippet in your HTML template or single page app."
-msgstr "Następnie wstaw ten urywek kodu w szablonie HTML lub pojedynczej stronie aplikacji."
+msgstr "Następnie wstaw ten fragment kodu w szablonie HTML lub pojedynczej stronie aplikacji."
 
 #: frontend/src/metabase/public/components/widgets/EmbedCodePane.jsx:72
 msgid "Embed code snippet for your HTML or Frontend Application"
@@ -4705,7 +4705,7 @@ msgstr "Link publiczny"
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:116
 msgid "Share this {0} with people who don't have a Metabase account using the URL below:"
-msgstr "Udostępnij tę encję {0} osobom, które nie mają konta Metabase, korzystając z poniższego adresu URL:"
+msgstr "Udostępnij {0} osobom, które nie mają konta Metabase, korzystając z poniższego adresu URL:"
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:148
 msgid "Public embed"
@@ -4713,7 +4713,7 @@ msgstr "Publiczny embed"
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:149
 msgid "Embed this {0} in blog posts or web pages by copying and pasting this snippet:"
-msgstr "Osadź tę encję {0} w blogach lub stronach sieci Web, kopiując i wklejając ten urywek:"
+msgstr "Osadź {0} w blogach lub stronach sieci Web, kopiując i wklejając ten kod:"
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:165
 msgid "Embed this {0} in an application"
@@ -5553,7 +5553,7 @@ msgstr "Jak korzystać z tej rzeczy?"
 
 #: frontend/src/metabase/query_builder/components/RunButton.jsx:42
 msgid "Get Answer"
-msgstr "Pobierz odpowiedz"
+msgstr "Uzyskaj odpowiedź"
 
 #: frontend/src/metabase/query_builder/components/SavedQuestionIntroModal.jsx:15
 msgid "It's okay to play around with saved questions"
@@ -5702,7 +5702,7 @@ msgstr "Definicja segmentu"
 
 #: frontend/src/metabase/query_builder/components/dataref/TablePane.jsx:45
 msgid "An error occurred loading the table"
-msgstr "Podczas ładowania tabeli wystąpił błąd"
+msgstr "Podczas wczytywania tabeli wystąpił błąd"
 
 #: frontend/src/metabase/query_builder/components/dataref/TablePane.jsx:74
 msgid "See the raw data for {0}"
@@ -5743,7 +5743,7 @@ msgstr "Dowiedz się więcej"
 
 #: frontend/src/metabase/query_builder/components/expressions/ExpressionWidget.jsx:90
 msgid "Give it a name"
-msgstr "Nadaj mu nazwę"
+msgstr "Nadaj nazwę"
 
 #: frontend/src/metabase/query_builder/components/expressions/ExpressionWidget.jsx:96
 msgid "Something nice and descriptive"
@@ -6576,7 +6576,7 @@ msgstr "Zezwalaj na anonimowe zbieranie zdarzeń użycia Metabase"
 
 #: frontend/src/metabase/setup/components/PreferencesStep/PreferencesStep.tsx:84
 msgid "Metabase {0} collects anything about your data or question results."
-msgstr "Metabase {0} gromadzi wszelkie informacje na temat wyników danych lub pytań."
+msgstr "Metabase {0} nie gromadzi żadnych informacji na temat Twoich danych ani wyników pytań."
 
 #: frontend/src/metabase/lib/settings.ts:263
 #: frontend/src/metabase/setup/components/PreferencesStep/PreferencesStep.tsx:85
@@ -6585,15 +6585,15 @@ msgstr "nigdy"
 
 #: frontend/src/metabase/setup/components/PreferencesStep/PreferencesStep.tsx:87
 msgid "All collection is completely anonymous."
-msgstr "Cała kolekcja jest całkowicie anonimowa."
+msgstr "Wszystkie dane są całkowicie anonimowe."
 
 #: frontend/src/metabase/setup/components/PreferencesStep/PreferencesStep.tsx:88
 msgid "Collection can be turned off at any point in your admin settings."
-msgstr "Kolekcja może być wyłączona w dowolnym momencie w ustawieniach administratora."
+msgstr "Zbieranie danych możesz wyłączyć w dowolnym momencie w ustawieniach administratora."
 
 #: frontend/src/metabase/setup/components/SetupHelp/SetupHelp.tsx:10
 msgid "If you feel stuck"
-msgstr "Jeśli czujesz że utknąłeś"
+msgstr "Jeśli czujesz, że utknąłeś"
 
 #: frontend/src/metabase/setup/components/SetupHelp/SetupHelp.tsx:15
 msgid "our getting started guide"
@@ -6625,7 +6625,7 @@ msgstr "Zabierz mnie do Metabase"
 
 #: frontend/src/metabase/setup/components/UserStep/UserStep.tsx:63
 msgid "What should we call you?"
-msgstr "Jak powinniśmy Cie nazywać?"
+msgstr "Jak powinniśmy Cię nazywać?"
 
 #: frontend/src/metabase/setup/components/UserStep.jsx:156
 msgid "Hi, {0}. nice to meet you!"
@@ -6653,7 +6653,7 @@ msgstr "Potwierdź hasło"
 #: frontend/src/metabase/auth/components/ResetPasswordForm/ResetPasswordForm.tsx:79
 #: frontend/src/metabase/setup/components/UserForm/UserForm.tsx:92
 msgid "Shhh... but one more time so we get it right"
-msgstr "Shhh... więc jeszcze raz aby to prawidłowo zadziałało"
+msgstr "Szzz... więc jeszcze raz, aby to prawidłowo zadziałało"
 
 #: frontend/src/metabase/entities/users/forms.js:87
 msgid "Your company or team name"
@@ -7336,13 +7336,13 @@ msgstr "Liniowa"
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:546
 #: frontend/src/metabase/visualizations/visualizations/RowChart/utils/settings-definitions.js:42
 msgid "Power"
-msgstr "Moc silnika"
+msgstr "Potęgowa"
 
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:528
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:547
 #: frontend/src/metabase/visualizations/visualizations/RowChart/utils/settings-definitions.js:43
 msgid "Log"
-msgstr "Log"
+msgstr "Logarytmiczna"
 
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:530
 msgid "Histogram"
@@ -7820,11 +7820,11 @@ msgstr "Nieprawidłowy JSON URL lub zasób : {0}"
 
 #: metabase/api/geojson.clj:94
 msgid "JSON containing information about custom GeoJSON files for use in map visualizations instead of the default US State or World GeoJSON."
-msgstr "JSON zawierający informacje o niestandardowych plików GeoJSON do wykorzystania w wizualizacji map zamiast domyślnego stanu USA lub  World GeoJSON."
+msgstr "JSON zawierający informacje o niestandardowych plikach GeoJSON do wykorzystania w wizualizacji map zamiast domyślnego stanu USA lub  World GeoJSON."
 
 #: metabase/api/geojson.clj:129
 msgid "Invalid custom GeoJSON key: {0}"
-msgstr "Nieprawidłowy niestandardowy klucz GEOJSON: {0}"
+msgstr "Nieprawidłowy niestandardowy klucz GeoJSON: {0}"
 
 #. ...but if we *still* couldn't find a match, throw an Exception, because we don't want people
 #. trying to inject new params
@@ -8452,7 +8452,7 @@ msgstr "Sprawdź nazwę hosta i port."
 
 #: src/metabase/driver/common.clj target/classes/metabase/driver/common.clj
 msgid "Looks like the database name is incorrect."
-msgstr "Wygląda na to że nazwa bazy danych jest niepoprawna"
+msgstr "Wygląda na to, że nazwa bazy danych jest niepoprawna"
 
 #: src/metabase/driver/common.clj target/classes/metabase/driver/common.clj
 msgid "It looks like your host is invalid."
@@ -8994,7 +8994,7 @@ msgstr "Wczytywanie wtyczek w katalogu {0}..."
 
 #: src/metabase/plugins.clj
 msgid "Loading plugin {0}... "
-msgstr "Trwa ładowanie wtyczki {0}..."
+msgstr "Wczytywanie wtyczki {0}...␣"
 
 #: src/metabase/plugins.clj
 msgid "It looks like you have some external dependencies in your Metabase plugins directory."
@@ -9050,7 +9050,7 @@ msgstr "Włącz zbieranie anonimowych danych użycia w celu usprawnienia Metabas
 
 #: metabase/public_settings.clj:187
 msgid "The map tile server URL template used in map visualizations, for example from OpenStreetMaps or MapBox."
-msgstr "Nazwa szablonu kafli URL serwera map używana w wizualizacjach map, na przykład z OpenStreetMaps lub MapBox."
+msgstr "Szablon adresu URL serwera kafli mapy używany w wizualizacjach map, na przykład z OpenStreetMaps lub MapBox."
 
 #: metabase/public_settings.clj:198
 msgid "Enable admins to create publicly viewable links (and embeddable iframes) for Questions and Dashboards?"
@@ -9272,7 +9272,7 @@ msgstr "Ukończonych kroków \"{0}\""
 
 #: metabase/task.clj:66
 msgid "Loading tasks namespace:"
-msgstr "Ładowanie obszaru nazw zadań:"
+msgstr "Wczytywanie przestrzeni nazw zadań:"
 
 #: src/metabase/task.clj
 msgid "Starting Quartz Scheduler"
@@ -10466,7 +10466,7 @@ msgstr "defekowane ciągi opisów muszą być `: internal?` lub internacjonalizo
 
 #: src/metabase/plugins.clj
 msgid "Loading plugin {0}... {1}"
-msgstr "Ładowanie wtyczki {0} ... {1}"
+msgstr "Wczytywanie wtyczki {0} ... {1}"
 
 #: metabase/public_settings.clj:401
 msgid "Object keyed by type, containing formatting settings"
@@ -12215,7 +12215,7 @@ msgstr "Nie udało się powiadomić {0} baza danych {1} zaktualizowana"
 
 #: metabase/driver/impl.clj:73
 msgid "Loading driver {0} {1}"
-msgstr "Ładowanie sterownika {0} {1}"
+msgstr "Wczytywanie sterownika {0} {1}"
 
 #: metabase/driver/impl.clj:94
 msgid "Load driver {0}"
@@ -12223,7 +12223,7 @@ msgstr "Załaduj sterownik {0}"
 
 #: metabase/driver/impl.clj:101
 msgid "Driver not registered after loading: {0}"
-msgstr "Sterownik nie został zarejestrowany po załadowaniu: {0}"
+msgstr "Sterownik nie został zarejestrowany po wczytaniu: {0}"
 
 #: metabase/driver/impl.clj:113
 msgid "Error: attempting to change {0} property `:abstract?` from {1} to {2}."
@@ -12263,7 +12263,7 @@ msgstr "Closing connection pool for database {0} .."
 
 #: src/metabase/driver/util.clj
 msgid "Error loading namespace"
-msgstr "Błąd podczas ładowania przestrzeni nazw"
+msgstr "Błąd podczas wczytywania przestrzeni nazw"
 
 #: metabase/events.clj:39
 msgid "Starting events listener:"
@@ -12347,7 +12347,7 @@ msgstr "Nie można zainicjować wtyczki {0}"
 
 #: metabase/plugins.clj:166
 msgid "Loading plugins in {0}..."
-msgstr "Ładowanie wtyczek w {0} ..."
+msgstr "Wczytywanie wtyczek w {0} ..."
 
 #: src/metabase/plugins/classloader.clj
 msgid "Using Clojure base loader as shared context classloader: {0}"
@@ -12407,7 +12407,7 @@ msgstr "Zasób nie istnieje."
 
 #: metabase/plugins/init_steps.clj:20
 msgid "Loading plugin namespace {0}..."
-msgstr "Ładowanie przestrzeni nazw wtyczek {0} ..."
+msgstr "Wczytywanie przestrzeni nazw wtyczek {0} ..."
 
 #: metabase/plugins/initialize.clj:38
 msgid "Dependencies satisfied; these plugins will now be loaded: {0}"
@@ -12537,7 +12537,7 @@ msgstr "Startowanie Quartz Schedule {0}"
 
 #: metabase/task.clj:69
 msgid "Error loading tasks namespace {0}"
-msgstr "Błąd podczas ładowania przestrzeni nazw zadań {0}"
+msgstr "Błąd podczas wczytywania przestrzeni nazw zadań {0}"
 
 #. don't bother logging namespace for now, maybe in the future if there's tasks of the same name in multiple
 #. namespaces we can log it
@@ -13074,7 +13074,7 @@ msgstr "Całkowita liczba wierszy. \\ne.x. łączna liczba sprzedaży w czasie."
 #: frontend/src/metabase/query_builder/components/notebook/NotebookStep.jsx:58
 #: frontend/src/metabase/query_builder/components/view/QuestionFilters.jsx:165
 msgid "Filter"
-msgstr "Filtr"
+msgstr "Filtruj"
 
 #: frontend/src/metabase/modes/components/drill/UnderlyingRecordsDrill.jsx:18
 msgid "record"
@@ -13110,7 +13110,7 @@ msgstr "Korzystaj z zaawansowanego edytora notatników, aby łączyć dane, twor
 
 #: frontend/src/metabase/query_builder/components/AggregationPopover/AggregationPopover.jsx:23
 msgid "Basic Metrics"
-msgstr "Podstawowe Metryki"
+msgstr "Podstawowe metryki"
 
 #: enterprise/frontend/src/metabase-enterprise/whitelabel/components/FontWidget/FontWidget.tsx:29
 #: frontend/src/metabase/admin/settings/selectors.js:570
@@ -13225,7 +13225,7 @@ msgstr "Przekształć to pytanie w natywne zapytanie"
 
 #: frontend/src/metabase/query_builder/components/view/NativeQueryButton.jsx:27
 msgid "SQL for this question"
-msgstr "SQL dla tego zapytania"
+msgstr "SQL dla tego pytania"
 
 #: frontend/src/metabase/query_builder/components/view/NativeQueryButton.jsx:28
 msgid "Convert this question to SQL"
@@ -13308,7 +13308,7 @@ msgstr "Wybierz wizualizację"
 
 #: frontend/src/metabase/query_builder/components/filters/modals/BulkFilterModal/BulkFilterModal.tsx:259
 msgid "Filter by"
-msgstr "Fitruj po"
+msgstr "Filtruj po"
 
 #: frontend/src/metabase/query_builder/components/view/sidebars/SummarizeSidebar/SummarizeSidebar.jsx:102
 msgid "Summarize by"
@@ -13335,11 +13335,11 @@ msgstr "Zazwyczaj jest to dość szybkie, ale wydaje się, że zajmuje to teraz 
 
 #: frontend/src/metabase/visualizations/visualizations/ComboChart.jsx:15
 msgid "Combo"
-msgstr "Combo"
+msgstr "Wykres kombinacyjny"
 
 #: frontend/src/metabase/visualizations/visualizations/RowChart/RowChart.tsx:317
 msgid "Row"
-msgstr "wiersz"
+msgstr "Wiersz"
 
 #: frontend/src/metabase/visualizations/visualizations/SmartScalar.jsx:29
 msgid "Trend"
@@ -13712,11 +13712,11 @@ msgstr "Nie można znaleźć przykładowego pliku bazy danych \"{0}\"."
 
 #: target/classes/metabase/sample_data.clj
 msgid "Loading sample dataset..."
-msgstr "Ładowanie przykładowego zestawu danych ..."
+msgstr "Wczytywanie przykładowego zestawu danych ..."
 
 #: target/classes/metabase/sample_data.clj
 msgid "Failed to load sample dataset"
-msgstr "Nie udało się załadować przykładowego zestawu danych"
+msgstr "Nie udało się wczytać przykładowego zestawu danych"
 
 #: metabase/sync/sync_metadata/tables.clj:100
 msgid "Found new tables:"
@@ -14064,7 +14064,7 @@ msgstr "Nie można znaleźć pola o identyfikatorze: {0}"
 
 #: metabase/driver/impl.clj:77
 msgid "Error loading driver namespace"
-msgstr "Błąd podczas ładowania przestrzeni nazw sterownika"
+msgstr "Błąd podczas wczytywania przestrzeni nazw sterownika"
 
 #: metabase/driver/impl.clj:78
 msgid "Could not load {0} driver."
@@ -14980,7 +14980,7 @@ msgstr "Wybierz inne zapytanie"
 
 #: frontend/src/metabase/nav/containers/MainNavbar/NavbarLoadingView.tsx:12
 msgid "Loading…"
-msgstr "Ładowanie…"
+msgstr "Wczytywanie…"
 
 #: frontend/src/metabase/query_builder/components/template_tags/CardTagEditor.jsx:81
 msgid "Question #…"
@@ -15237,7 +15237,7 @@ msgstr "Ustawienie {0} jest wewnętrzne"
 
 #: metabase/plugins.clj:147
 msgid "Loading local plugin manifest at {0}"
-msgstr "Ładowanie lokalnego manifestu wtyczki w {0}"
+msgstr "Wczytywanie lokalnego manifestu wtyczki w {0}"
 
 #: metabase/public_settings.clj:173
 msgid "Google Analytics tracking code."
@@ -15521,7 +15521,7 @@ msgstr "Wpisz tutaj SQL aby móc go użyć później ponownie"
 
 #: frontend/src/metabase/entities/snippets.js:21
 msgid "Give your snippet a name"
-msgstr "Nadaj swojemu fragmentowi nazwę"
+msgstr "Nadaj swojemu fragmentowi kodu nazwę"
 
 #: frontend/src/metabase/entities/snippets.js:22
 msgid "Current Customers"
@@ -15561,28 +15561,28 @@ msgstr "Edytowanie {0}"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetModal.jsx:34
 msgid "Create your new snippet"
-msgstr "Utwórz nowy fragment"
+msgstr "Utwórz nowy fragment kodu"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:69
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:299
 msgid "Archived snippets"
-msgstr "Archiwalne fragmenty"
+msgstr "Archiwalne fragmenty kodu"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:112
 msgid "Snippets are reusable bits of SQL"
-msgstr "Fragmenty to reużywalne cząstki SQL"
+msgstr "Fragmenty kodu to reużywalne cząstki SQL"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:117
 msgid "Create a snippet"
-msgstr "Utwórz fragment"
+msgstr "Utwórz fragment kodu"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:148
 msgid "Snippets"
-msgstr "Fragmenty"
+msgstr "Fragmenty kodu"
 
 #: frontend/src/metabase/query_builder/components/view/SnippetSidebarButton.jsx:16
 msgid "SQL Snippets"
-msgstr "Fragmenty SQL"
+msgstr "Fragmenty kodu SQL"
 
 #: frontend/src/metabase/setup/components/LanguageStep/LanguageStep.tsx:45
 msgid "Your language is set to {0}"
@@ -15674,7 +15674,7 @@ msgstr "Nie można znaleźć Fragmentu - brakuje `:snippet-id`"
 
 #: metabase/driver/common/parameters/values.clj:174
 msgid "Snippet {0} {1} not found."
-msgstr "Fragment {0} {1} nie znaleziony"
+msgstr "Fragment kodu {0} {1} nie znaleziony"
 
 #: src/metabase/driver/common/parameters/values.clj
 msgid "Error determining value for parameter"
@@ -15972,7 +15972,7 @@ msgstr "SAML Keystore Password"
 
 #: enterprise/frontend/src/metabase-enterprise/auth/components/SettingsSAMLForm/SettingsSAMLForm.jsx:146
 msgid "Shh..."
-msgstr "Shh..."
+msgstr "Szzz..."
 
 #: enterprise/frontend/src/metabase-enterprise/auth/components/SettingsSAMLForm/SettingsSAMLForm.jsx:150
 #: enterprise/frontend/src/metabase-enterprise/auth/index.js:121
@@ -16360,7 +16360,7 @@ msgstr "Przydziel dostęp do edycji"
 
 #: frontend/src/metabase/admin/permissions/selectors.js:295
 msgid "Can modify snippets in this folder"
-msgstr "Może modyfikować fragmenty w tym folderze"
+msgstr "Może modyfikować fragmenty kodu w tym folderze"
 
 #: frontend/src/metabase/admin/permissions/selectors.js:300
 msgid "Grant View access"
@@ -16368,11 +16368,11 @@ msgstr "Przydziel dostęp do podglądu"
 
 #: frontend/src/metabase/admin/permissions/selectors.js:301
 msgid "Can insert and use snippets in this folder, but can't edit the SQL they contain"
-msgstr "Może wstawiać i używać snippetów w tym folderze, ale nie może edytować SQL, który zawierają"
+msgstr "Może wstawiać i używać fragmentów kodu w tym folderze, ale nie może edytować SQL, który zawierają"
 
 #: frontend/src/metabase/admin/permissions/selectors.js:307
 msgid "Can't view or insert snippets in this folder"
-msgstr "Nie można wyświetlać ani wstawiać fragmentów w tym folderze"
+msgstr "Nie może wyświetlać ani wstawiać fragmentów kodu w tym folderze"
 
 #: frontend/src/metabase/admin/permissions/selectors/collection-permissions.js:145
 msgid "Also change sub-folders"
@@ -16602,15 +16602,15 @@ msgstr "Edytujesz ten pulpit."
 
 #: frontend/src/metabase/dashboard/components/DashCardCardParameterMapper.jsx:167
 msgid "Column to filter on"
-msgstr "Kolumna do filtrowania na"
+msgstr "Kolumna do filtrowania"
 
 #: frontend/src/metabase/entities/snippet-collections.js:24
 msgid "snippet collection"
-msgstr "kolekcja skrawków"
+msgstr "kolekcja fragmentów kodu"
 
 #: frontend/src/metabase/entities/snippet-collections.js:25
 msgid "snippet collections"
-msgstr "zbiory skrawków"
+msgstr "kolekcje fragmentów kodu"
 
 #: frontend/src/metabase/entities/snippet-collections.js:76
 msgid "Give your folder a name"
@@ -17027,7 +17027,7 @@ msgstr "Wprowadź nazwy użytkowników lub adresy e-mail"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:209
 msgid "New snippet"
-msgstr "Nowy skrawek"
+msgstr "Nowy fragment kodu"
 
 #: frontend/src/metabase/lib/time.js:108
 msgid "{0}:00 PM"
@@ -17274,7 +17274,7 @@ msgstr "Całkowita długość pola wynosi > {0}."
 
 #: metabase/models/native_query_snippet.clj:74
 msgid "snippet names cannot include '}' or start with spaces"
-msgstr "nazwy fragmentów nie mogą zawierać \"}\" ani zaczynać się od spacji"
+msgstr "nazwy fragmentów kodu nie mogą zawierać \"}\" ani zaczynać się od spacji"
 
 #: metabase/models/params/chain_filter.clj:458
 msgid "Error executing chain filter query"
@@ -17558,7 +17558,7 @@ msgstr "Wysłano "
 #: frontend/src/metabase/lib/notifications.js:63
 #: frontend/src/metabase/sharing/components/PulsesListSidebar.jsx:243
 msgid "hourly"
-msgstr "godzinowo"
+msgstr "co godzinę"
 
 #: frontend/src/metabase/lib/notifications.js:66
 #: frontend/src/metabase/sharing/components/PulsesListSidebar.jsx:247
@@ -17744,7 +17744,7 @@ msgstr "Dump został wyprodukowany przy użyciu innej wersji Metabase. Rzeczy mo
 
 #: enterprise/backend/src/metabase_enterprise/serialization/cmd.clj
 msgid "Error loading dump: {0}"
-msgstr "Błędny wysypisko śmieci: {0}"
+msgstr "Błąd wczytywania zrzutu: {0}"
 
 #: metabase_enterprise/serialization/cmd.clj:147
 msgid "{0} is not a valid user"
@@ -17761,7 +17761,7 @@ msgstr "Nie znaleziono użytkowników administracyjnych! Przynajmniej jeden uży
 #: metabase_enterprise/serialization/load.clj:810
 #: metabase_enterprise/serialization/load.clj:813
 msgid "Error loading dependencies: reference to an unknown entity {0}"
-msgstr "Zależności ładowania błędów: odniesienie do nieznanej jednostki {0}"
+msgstr "Błąd podczas wczytywania zależności: odniesienie do nieznanej jednostki {0}"
 
 #: metabase_enterprise/serialization/names.clj:328
 msgid "Can''t resolve {0} in fully qualified name {1}"
@@ -18476,7 +18476,7 @@ msgstr "Zabronione są adresy URL odnoszące się do hostów, które dostarczaj�
 
 #: src/metabase/api/geojson.clj
 msgid "Invalid custom GeoJSON."
-msgstr "Nieważny niestandardowy GeoJSON."
+msgstr "Nieprawidłowy niestandardowy GeoJSON."
 
 #: metabase/query_processor/pivot.clj:50
 msgid "Invalid {0}: specified breakout at index {1}, but we only have {2} breakouts"
@@ -19080,7 +19080,7 @@ msgstr "String"
 
 #: frontend/src/metabase/query_builder/components/DataSelector.jsx:762
 msgid "Search for a table..."
-msgstr "Poszukaj stołu..."
+msgstr "Szukaj tabeli..."
 
 #: frontend/src/metabase-lib/expressions/diagnostics.js:59
 #: frontend/src/metabase-lib/expressions/recursive-parser.js:47
@@ -19155,7 +19155,7 @@ msgstr "Nie można znaleźć kontekstu dla w pełni kwalifikowanej nazwy karty {
 
 #: metabase_enterprise/serialization/load.clj:584
 msgid "Could not find context for fully qualified snippet name {0}"
-msgstr "Nie można znaleźć kontekstu dla w pełni kwalifikowanej nazwy snippetu {0}"
+msgstr "Nie można znaleźć kontekstu dla w pełni kwalifikowanej nazwy fragmentu kodu {0}"
 
 #: enterprise/backend/test/metabase_enterprise/serialization/load_test.clj
 msgid "Failed to execute query for loaded card \"{0}\": {1}"
@@ -19354,12 +19354,12 @@ msgstr "Nieprawidłowy niestandardowy GeoJSON"
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:87
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:92
 msgid "Invalid custom GeoJSON: does not contain features"
-msgstr "Nieprawidłowy niestandardowy GeoJSON: nie zawiera cech"
+msgstr "Nieprawidłowy niestandardowy GeoJSON: nie zawiera obiektów"
 
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:97
 #: frontend/src/metabase/admin/settings/components/widgets/CustomGeoJSONWidget.jsx:104
 msgid "Invalid custom GeoJSON: feature is misssing properties"
-msgstr "Nieprawidłowy niestandardowy GeoJSON: element źle sortuje właściwości"
+msgstr "Nieprawidłowy niestandardowy GeoJSON: obiekt nie ma właściwości"
 
 #: frontend/src/metabase/visualizations/components/ChartClickActions.jsx:261
 msgid "Break out by a…"
@@ -19367,7 +19367,7 @@ msgstr "Wyrwać się przez..."
 
 #: frontend/src/metabase/visualizations/components/ChartClickActions.jsx:265
 msgid "Automatic explorations"
-msgstr "Automatyczne eksplorację"
+msgstr "Automatyczna eksploracja"
 
 #: frontend/src/metabase/visualizations/components/ChartClickActions.jsx:276
 msgid "Filter by this value"
@@ -19697,7 +19697,7 @@ msgstr "Miesięcznie"
 
 #: frontend/src/metabase/components/SchedulePicker.jsx:183
 msgid "on"
-msgstr "na stronie"
+msgstr "w"
 
 #: frontend/src/metabase/entities/dashboards/forms.jsx:33
 msgid "Collection is required"
@@ -19975,7 +19975,7 @@ msgstr "Ten wpis nie będzie już miał wartości {0}."
 
 #: enterprise/frontend/src/metabase-enterprise/audit_app/components/AuditNotificationDeleteModal/AuditNotificationDeleteModal.jsx:91
 msgid "This dashboard will no longer be {0}."
-msgstr "Ta tablica rozdzielcza nie będzie już miała wartości {0}."
+msgstr "Ten pulpit już nie będzie {0}."
 
 #: enterprise/frontend/src/metabase-enterprise/audit_app/components/UnsubscribeUserForm/UnsubscribeUserForm.jsx:29
 msgid "Unsubscribe {0} from all subscriptions and alerts?"
@@ -19983,7 +19983,7 @@ msgstr "Wypisać się {0} ze wszystkich subskrypcji i powiadomień?"
 
 #: enterprise/frontend/src/metabase-enterprise/audit_app/components/UnsubscribeUserForm/UnsubscribeUserForm.jsx:42
 msgid "This will delete any dashboard subscriptions or alerts {0} has created, and remove them as a recipient from any other subscriptions or alerts."
-msgstr "Spowoduje to usunięcie wszelkich subskrypcji lub alertów tablicy rozdzielczej, które {0} utworzył, oraz usunięcie go jako odbiorcy wszelkich innych subskrypcji lub alertów."
+msgstr "Spowoduje to usunięcie wszystkich subskrypcji pulpitu lub alertów utworzonych przez {0} oraz usunięcie ich jako odbiorcy ze wszystkich innych subskrypcji lub alertów."
 
 #: enterprise/frontend/src/metabase-enterprise/audit_app/components/UnsubscribeUserForm/UnsubscribeUserForm.jsx:45
 msgid "This does not affect email distribution lists that are managed outside of Metabase."
@@ -20067,7 +20067,7 @@ msgstr " na {0}"
 
 #: frontend/src/metabase/account/notifications/components/NotificationList/NotificationList.jsx:40
 msgid "You receive or created these"
-msgstr "Otrzymałeś lub stworzyłeś te"
+msgstr "Otrzymałeś lub stworzyłeś"
 
 #: frontend/src/metabase/account/notifications/components/NotificationList/NotificationList.jsx:42
 msgid "Not seeing one here?"
@@ -20258,11 +20258,11 @@ msgstr "Błąd przetwarzania drzewa uprawnień {0}"
 
 #: metabase/models/pulse.clj:76
 msgid "collection ID of a dashboard subscription cannot be directly modified"
-msgstr "identyfikator kolekcji subskrypcji deski rozdzielczej nie może być bezpośrednio modyfikowany"
+msgstr "identyfikator kolekcji subskrypcji pulpitu nie może być bezpośrednio modyfikowany"
 
 #: metabase/models/pulse.clj:80
 msgid "dashboard ID of a dashboard subscription cannot be modified"
-msgstr "nie można zmienić ID tablicy rozdzielczej subskrypcji tablicy rozdzielczej"
+msgstr "nie można zmienić ID subskrybowanego pulpitu"
 
 #: metabase/pulse/render/js_engine.clj:38
 msgid "Javascript resource not found: {0}"
@@ -20345,7 +20345,7 @@ msgstr "Synchronizacja bazy danych..."
 
 #: frontend/src/metabase/containers/AddToDashSelectDashModal.jsx:57
 msgid "Add this model to a dashboard"
-msgstr "Dodaj ten model do tablicy rozdzielczej"
+msgstr "Dodaj ten model do pulpitu"
 
 #: frontend/src/metabase/entities/databases/big-query-fields.js:76
 msgid "Project ID to be used for authentication. You can omit this field if you are only querying datasets owned by your organization."
@@ -20691,7 +20691,7 @@ msgstr "Wyszukaj pytanie..."
 
 #: frontend/src/metabase/query_builder/components/DataSelector/DataSelector.jsx:1002
 msgid "Search for a table…"
-msgstr "Poszukaj stołu..."
+msgstr "Szukaj tabeli..."
 
 #: frontend/src/metabase/query_builder/components/DataSelector/DataSelector.jsx:1189
 msgid "All data"
@@ -20804,11 +20804,11 @@ msgstr "Pokaż opcje zaawansowane"
 
 #: frontend/src/metabase/dashboard/components/AddSeriesModal/QuestionList.jsx:160
 msgid "Loading"
-msgstr "Ładowanie"
+msgstr "Wczytywanie"
 
 #: frontend/src/metabase/dashboard/components/AddSeriesModal/QuestionList.jsx:160
 msgid "Load more"
-msgstr "Załaduj więcej"
+msgstr "Wczytaj więcej"
 
 #: frontend/src/metabase/query_builder/components/DatasetEditor/DatasetFieldMetadataSidebar/DatasetFieldMetadataSidebar.jsx:52
 msgid "Table and details views"
@@ -20840,7 +20840,7 @@ msgstr "Wybór biegu"
 
 #: frontend/src/metabase/query_builder/components/NativeQueryEditor/RightClickPopover/RightClickPopover.jsx:36
 msgid "Save as snippet"
-msgstr "Zapisz jako snippet"
+msgstr "Zapisz jako fragment kodu"
 
 #: frontend/src/metabase/query_builder/components/filters/modals/InlineCategoryPicker/SimpleCategoryFilterPicker.tsx:53
 msgid "empty"
@@ -20995,7 +20995,7 @@ msgstr "Nie można zaprosić użytkownika, ponieważ e-mail nie jest skonfigurow
 
 #: metabase/api/setup.clj:214
 msgid "Does your team use Slack? If so, you can send automated updates via dashboard subscriptions."
-msgstr "Czy Twój zespół używa Slacka? Jeśli tak, możesz wysyłać zautomatyzowane aktualizacje poprzez subskrypcje na pulpicie nawigacyjnym."
+msgstr "Czy Twój zespół używa Slacka? Jeśli tak, możesz wysyłać zautomatyzowane aktualizacje poprzez subskrypcję pulpitu."
 
 #: metabase/api/slack.clj:29
 msgid "invalid token"
@@ -21278,7 +21278,7 @@ msgstr "Nie masz uprawnień kuratora dla tej kolekcji."
 
 #: metabase/models/dashboard.clj:287
 msgid "Dashboard {0} does not have a DashboardCard with ID {1}"
-msgstr "Tablica rozdzielcza {0} nie posiada karty DashboardCard o ID {1}."
+msgstr "Pulpit {0} nie posiada karty DashboardCard o ID {1}."
 
 #: metabase/models/database.clj:88
 msgid "Deleting secret ID {0} from app DB because the owning database ({1}) is being deleted"
@@ -21458,7 +21458,7 @@ msgstr "Nie można znaleźć pliku przykładowej bazy danych DB ''{0}''."
 
 #: metabase/sample_data.clj:69
 msgid "Loading sample database"
-msgstr "Ładowanie przykładowej bazy danych"
+msgstr "Wczytywanie przykładowej bazy danych"
 
 #: metabase/sample_data.clj:77
 msgid "Failed to load sample database"
@@ -21643,7 +21643,7 @@ msgstr "Zbadaj przykładowe dane"
 
 #: frontend/src/metabase/query_builder/components/ImpossibleToCreateModelModal/ImpossibleToCreateModelModal.tsx:16
 msgid "SQL snippets"
-msgstr "Skróty SQL"
+msgstr "Fragmenty kodu SQL"
 
 #: frontend/src/metabase/query_builder/components/ImpossibleToCreateModelModal/ImpossibleToCreateModelModal.tsx:24
 msgid "reference the results of another saved question"
@@ -21722,7 +21722,7 @@ msgstr "Poniżej znajduje się pełna lista tego, co śledzimy i dlaczego."
 
 #: frontend/src/metabase/setup/components/PreferencesStep/PreferencesStep.tsx:92
 msgid "Finish"
-msgstr "Wykończenie"
+msgstr "Zakończ"
 
 #: frontend/src/metabase/setup/components/PreferencesStep/PreferencesStep.tsx:93
 msgid "Finishing…"
@@ -22128,7 +22128,7 @@ msgstr "A. Pytanie"
 
 #: frontend/src/metabase/collections/components/PinnedItemCard/PinnedItemCard.tsx:34
 msgid "A dashboard"
-msgstr "A tablica rozdzielcza"
+msgstr "Pulpit"
 
 #: frontend/src/metabase/collections/components/PinnedItemCard/PinnedItemCard.tsx:35
 msgid "A model"
@@ -22420,7 +22420,7 @@ msgstr "Dobrze cię widzieć, {0}"
 
 #: frontend/src/metabase/home/homepage/components/HomeHelpCard/HomeHelpCard.tsx:10
 msgid "Metabase tips"
-msgstr "Wskazówki dotyczące metabazy"
+msgstr "Wskazówki dotyczące Metabazy"
 
 #: frontend/src/metabase/home/homepage/components/HomePopularSection/HomePopularSection.tsx:41
 #: frontend/src/metabase/home/homepage/components/HomePopularSection/HomePopularSection.tsx:54
@@ -22718,7 +22718,7 @@ msgstr "0/{0} załadowany"
 
 #: frontend/src/metabase/dashboard/actions/data-fetching.js:114
 msgid "Your dashboard is ready"
-msgstr "Tablica rozdzielcza jest gotowa"
+msgstr "Twój pulpit jest gotowy"
 
 #: frontend/src/metabase/query_builder/actions/querying.js:163
 msgid "Doing Science..."
@@ -22882,7 +22882,7 @@ msgstr "Wszystkie pytania załadowane"
 
 #: frontend/src/metabase/dashboard/containers/DashboardApp.jsx:177
 msgid "Would you like to be notified when this dashboard is done loading?"
-msgstr "Czy chcesz otrzymać powiadomienie o zakończeniu ładowania tego pulpitu?"
+msgstr "Czy chcesz otrzymać powiadomienie o zakończeniu wczytywania tego pulpitu?"
 
 #: frontend/src/metabase-lib/expressions/diagnostics.js:135
 msgid "Custom columns do not support boolean expressions"
@@ -22898,11 +22898,11 @@ msgstr "Wszystko gotowe! Twoje pytanie jest gotowe."
 
 #: frontend/src/metabase/query_builder/containers/QueryBuilder.jsx:395
 msgid "{0} is loaded."
-msgstr "{0} jest załadowany."
+msgstr "{0} jest wczytany."
 
 #: frontend/src/metabase/query_builder/components/view/View.jsx:515
 msgid "Would you like to be notified when this question is done loading?"
-msgstr "Czy chcesz otrzymać powiadomienie o zakończeniu ładowania tego pytania?"
+msgstr "Czy chcesz otrzymać powiadomienie o zakończeniu wczytywania tego pytania?"
 
 #: frontend/src/metabase/query_builder/components/view/ViewFooter.jsx:256
 msgid "Switch to data"
@@ -23594,7 +23594,7 @@ msgstr "Edytuj metadane"
 
 #: frontend/src/metabase/query_builder/components/QuestionActions.tsx:171
 msgid "Turn into a model"
-msgstr "Zamień się w modelkę"
+msgstr "Zamień w model"
 
 #: frontend/src/metabase/query_builder/components/QuestionActions.tsx:179
 msgid "Turn back to saved question"
@@ -23662,7 +23662,7 @@ msgstr "Połącz bazę danych"
 
 #: frontend/src/metabase/setup/components/DatabaseStep/DatabaseStep.tsx:158
 msgid "Skip"
-msgstr "Pomijać"
+msgstr "Pomiń"
 
 #: frontend/src/metabase/setup/components/UserStep/UserStep.tsx:62
 msgid "Hi{0}. Nice to meet you!"
@@ -23787,7 +23787,7 @@ msgstr "Osadź pulpity nawigacyjne, pytania lub całą aplikację Metabase w swo
 
 #: frontend/src/metabase/admin/settings/components/widgets/EmbeddingLegalese/EmbeddingLegalese.tsx:29
 msgid "By enabling embedding you're agreeing to"
-msgstr "Włączając umieszczanie, wyrażasz zgodę"
+msgstr "Włączając osadzanie, wyrażasz zgodę"
 
 #: frontend/src/metabase/admin/settings/components/widgets/EmbeddingLegalese/EmbeddingLegalese.tsx:34
 msgid "our embedding license."
@@ -23857,7 +23857,7 @@ msgstr "kliknij przycisk poniżej, aby utworzyć aplikację Slack"
 
 #: frontend/src/metabase/query_builder/components/filters/modals/InlineCategoryPicker/InlineCategoryPicker.tsx:94
 msgid "There was an error loading the field values for this field"
-msgstr "Wystąpił błąd podczas ładowania wartości pól dla tego pola"
+msgstr "Wystąpił błąd podczas wczytywania wartości dla tego pola"
 
 #: frontend/src/metabase/query_builder/components/filters/modals/InlineDatePicker/InlineDatePicker.tsx:123
 msgid "more options"
@@ -23963,11 +23963,11 @@ msgstr "Uprawianie nauki..."
 
 #: enterprise/frontend/src/metabase-enterprise/whitelabel/lib/loading-message.ts:5
 msgid "Running query..."
-msgstr "Uruchamianie zapytania..."
+msgstr "Uruchamianie pytania..."
 
 #: enterprise/frontend/src/metabase-enterprise/whitelabel/lib/loading-message.ts:6
 msgid "Loading results..."
-msgstr "Ładowanie wyników..."
+msgstr "Wczytywanie wyników..."
 
 #: frontend/src/metabase-lib/queries/StructuredQuery.ts:893
 msgid "Summaries"
@@ -24041,7 +24041,7 @@ msgstr "Czcionka"
 
 #: enterprise/frontend/src/metabase-enterprise/whitelabel/index.js:75
 msgid "Loading message"
-msgstr "Wczytuję wiadomość"
+msgstr "Wczytywanie wiadomości"
 
 #: frontend/src/metabase/admin/settings/selectors.js:197
 msgid "From Name"
@@ -24057,11 +24057,11 @@ msgstr "To nie jest prawidłowy adres e-mail"
 
 #: frontend/src/metabase/admin/settings/selectors.js:313
 msgid "Enable admins to create publicly viewable links (and embeddable iframes) for Questions and Dashboards."
-msgstr "Zezwól administratorom na tworzenie publicznie widocznych linków (i osadzonych elementów iframe) do pytań i pulpitów nawigacyjnych."
+msgstr "Zezwól administratorom na tworzenie publicznie widocznych linków (i osadzonych elementów iframe) do pytań i pulpitów."
 
 #: frontend/src/metabase/admin/settings/selectors.js:359
 msgid "Allow questions, dashboards, and more to be embedded. {0}"
-msgstr "Zezwalaj na osadzanie pytań, pulpitów nawigacyjnych i nie tylko. {0}"
+msgstr "Zezwalaj na osadzanie pytań, pulpitów i nie tylko. {0}"
 
 #: frontend/src/metabase/admin/settings/selectors.js:385
 #: frontend/src/metabase/admin/settings/selectors.js:410
@@ -24295,7 +24295,7 @@ msgstr "Informacja o systemie:\n"
 
 #: metabase/driver/common.clj:163
 msgid "Metabase can scan the values present in each field in this database to enable checkbox filters in dashboards and questions. This can be a somewhat resource-intensive process, particularly if you have a very large database. When should Metabase automatically scan and cache field values?"
-msgstr "Metabaza może skanować wartości obecne w każdym polu w tej bazie danych, aby włączyć filtry pól wyboru w pulpitach nawigacyjnych i pytaniach. Może to wymagać nieco zasobów, zwłaszcza jeśli masz bardzo dużą bazę danych. Kiedy Metabase powinno automatycznie skanować i buforować wartości pól?"
+msgstr "Metabaza może skanować wartości obecne w każdym polu w tej bazie danych, aby włączyć filtry pól wyboru w pulpitach i pytaniach. Może to wymagać nieco zasobów, zwłaszcza jeśli masz bardzo dużą bazę danych. Kiedy Metabase powinno automatycznie skanować i buforować wartości pól?"
 
 #: metabase/driver/common.clj:223
 msgid "If your database is behind a firewall, you may need to allow connections from our Metabase [Cloud IP addresses](https://www.metabase.com/cloud/docs/ip-addresses-to-whitelist.html):"
@@ -24869,7 +24869,7 @@ msgstr "Wyświetl ilustrację latarni morskiej na stronie głównej i stronie lo
 
 #: metabase/public_settings/premium_features.clj:123
 msgid "Cached token status for premium features. This is to avoid an API request on the the first page load."
-msgstr "Stan tokena w pamięci podręcznej dla funkcji premium. Ma to na celu uniknięcie żądania API przy pierwszym załadowaniu strony."
+msgstr "Stan tokena w pamięci podręcznej dla funkcji premium. Ma to na celu uniknięcie żądania API przy pierwszym wczytaniu strony."
 
 #: metabase/server/middleware/session.clj:357
 msgid "Time before inactive users are logged out. By default, sessions last indefinitely."
@@ -24883,13 +24883,13 @@ msgstr "Osiągnięto limit rekurencji {0} w oprogramowaniu pośrednim \"apply-sa
 #: frontend/src/metabase/setup/components/InviteUserForm/InviteUserForm.tsx:52
 #: frontend/src/metabase/setup/components/UserForm/UserForm.tsx:60
 msgid "Johnny"
-msgstr "Jasio"
+msgstr "Jan"
 
 #: frontend/src/metabase/account/profile/components/UserProfileForm/UserProfileForm.tsx:73
 #: frontend/src/metabase/setup/components/InviteUserForm/InviteUserForm.tsx:59
 #: frontend/src/metabase/setup/components/UserForm/UserForm.tsx:67
 msgid "Appleseed"
-msgstr "Appleseed"
+msgstr "Kowalski"
 
 #: frontend/src/metabase/auth/components/PasswordButton/PasswordButton.tsx:21
 msgid "Sign in with username or email"
@@ -25575,7 +25575,7 @@ msgstr "Przycisk akcji"
 
 #: frontend/src/metabase/dashboard/components/DashboardMoveModal.jsx:24
 msgid "Move dashboard to…"
-msgstr "Przesuń pulpit do..."
+msgstr "Przenieś pulpit do..."
 
 #: frontend/src/metabase/dashboard/components/RemoveFromDashboardModal.jsx:30
 msgid "Remove this card?"
@@ -25583,7 +25583,7 @@ msgstr "Usunąć tą kartę?"
 
 #: frontend/src/metabase/dashboard/containers/DashboardApp.jsx:176
 msgid "Would you like to be notified when this page is done loading?"
-msgstr "Czy chcesz otrzymać powiadomienie, gdy ta strona zostanie załadowana?"
+msgstr "Czy chcesz otrzymać powiadomienie, gdy ta strona zostanie wczytana?"
 
 #: frontend/src/metabase/home/containers/SearchApp.jsx:32
 msgid "Apps"
@@ -26114,7 +26114,7 @@ msgstr "Nieprawidłowe identyfikatory kolekcji. Te kolekcje nie istnieją: {0}"
 
 #: metabase_enterprise/serialization/cmd.clj:78
 msgid "Loading serialized Metabase files from {0}"
-msgstr "Ładowanie serializowanych plików Metabazy z {0}"
+msgstr "Wczytywanie serializowanych plików Metabazy z {0}"
 
 #: metabase_enterprise/serialization/v2/seed_entity_ids.clj:58
 msgid "{0} tables have entity_id; expected to resolve the same number of models, but only got {1}"
@@ -26146,11 +26146,11 @@ msgstr "Logowanie Google"
 
 #: frontend/src/metabase/dashboard/components/DashboardCopyModal/DashboardCopyModalShallowCheckboxLabel/DashboardCopyModalShallowCheckboxLabel.tsx:11
 msgid "Only duplicate the dashboard"
-msgstr "Tylko powielanie tablicy rozdzielczej"
+msgstr "Tylko powielanie pulpitu"
 
 #: frontend/src/metabase/dashboard/components/DashboardCopyModal/DashboardCopyModalShallowCheckboxLabel/DashboardCopyModalShallowCheckboxLabel.tsx:13
 msgid "If you check this, the cards in the duplicated dashboard will reference the original questions."
-msgstr "Jeśli zaznaczysz to, karty w zduplikowanej tablicy rozdzielczej będą odnosić się do oryginalnych pytań."
+msgstr "Jeśli to zaznaczysz, karty w zduplikowanym pulpicie będą odnosić się do oryginalnych pytań."
 
 #: frontend/src/metabase/modes/components/drill/NativeDrillFallback/NativeDrillFallback.tsx:37
 msgid "Drill-through doesn’t work on SQL questions."
@@ -26355,4 +26355,14 @@ msgstr "Nie udało się wyodrębnić przykładowej bazy danych do katalogu plugi
 #: metabase_enterprise/advanced_config/file.clj:261
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Pliki konfiguracyjne metabaz wymagają tokena Premium z funkcją :advanced-config."
+
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Wykresy w subskrypcjach mogą wyglądać nieco inaczej niż wykresy w dashboardach."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Odbiorcy zobaczą te dane tak samo jak Ty, niezależnie od ich uprawnień."
 

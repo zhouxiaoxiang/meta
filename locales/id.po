@@ -26137,3 +26137,13 @@ msgstr "Database sampel tidak dapat diekstrak ke direktori plugins, yang dapat m
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "File konfigurasi metabase memerlukan token Premium dengan fitur :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Bagan di langganan mungkin terlihat sedikit berbeda dari bagan di dasbor."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Penerima akan melihat data ini seperti yang Anda lihat, terlepas dari izin mereka."
+

@@ -23639,7 +23639,7 @@ msgstr "Pagado"
 #: frontend/src/metabase/admin/settings/selectors.js:407
 #: frontend/src/metabase/admin/settings/selectors.js:458
 msgid "Embedding"
-msgstr "Incrustrando"
+msgstr "Incrustando"
 
 #: frontend/src/metabase/admin/settings/components/widgets/EmbeddingLegalese/EmbeddingLegalese.tsx:25
 msgid "Embed dashboards, questions, or the entire Metabase app into your application. Integrate with your server code to create a secure environment, limited to specific users or organizations."
@@ -26211,4 +26211,14 @@ msgstr "La base de datos de muestra no ha podido ser extraída al directorio de 
 #: metabase_enterprise/advanced_config/file.clj:261
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Los archivos de configuración de Metabase requieren un token Premium con la función :advanced-config."
+
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Los gráficos de las suscripciones pueden tener un aspecto ligeramente distinto al de los gráficos de los cuadros de mando."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Los destinatarios verán estos datos tal y como tú los ves, independientemente de sus permisos."
 

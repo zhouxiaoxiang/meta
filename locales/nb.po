@@ -26239,3 +26239,13 @@ msgstr "Eksempeldatabasen kunne ikke trekkes ut til plugins-katalogen, noe som k
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Metabase-konfigurasjonsfiler krever et Premium-token med funksjonen :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Diagrammer i abonnementer kan se litt annerledes ut enn diagrammer i dashbord."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Mottakere vil se disse dataene akkurat slik du ser dem, uavhengig av deres tillatelser."
+

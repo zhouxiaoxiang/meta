@@ -26203,3 +26203,13 @@ msgstr "La base de dades de mostra no s'ha pogut extreure al directori de connec
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Els fitxers de configuració de la metabase requereixen un testimoni Premium amb la funció :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Els gràfics de les subscripcions poden semblar lleugerament diferents dels gràfics dels taulers."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Els destinataris veuran aquestes dades tal com les veus tu, independentment dels seus permisos."
+

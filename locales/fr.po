@@ -854,7 +854,7 @@ msgstr "Raison des modifications"
 #: frontend/src/metabase/admin/datamodel/components/MetricForm/MetricForm.tsx:95
 #: frontend/src/metabase/admin/datamodel/components/SegmentForm/SegmentForm.tsx:94
 msgid "Leave a note to explain what changes you made and why they were required."
-msgstr "Laisser un mot d'explication sur les changements que vous avez fait et pourquoi ils étaient nécessaires."
+msgstr "Laisser un mot d’explication sur les changements que vous avez faits et pourquoi ils étaient nécessaires."
 
 #: frontend/src/metabase/admin/datamodel/components/MetricForm/MetricForm.tsx:100
 msgid "This will show up in the revision history for this metric to help everyone remember why things changed"
@@ -874,7 +874,7 @@ msgstr "Créez votre segment"
 
 #: frontend/src/metabase/admin/datamodel/components/SegmentForm/SegmentForm.tsx:59
 msgid "Make changes to your segment and leave an explanatory note."
-msgstr "Faites des changement à votre segment et laissez une note explicative"
+msgstr "Modifiez votre segment et laissez une note d’explication."
 
 #: frontend/src/metabase/admin/datamodel/containers/SegmentForm.jsx:109
 msgid "Select and add filters to create your new segment for the {0} table"
@@ -1088,7 +1088,7 @@ msgstr "Supprimer le groupe"
 #: frontend/src/metabase/query_builder/components/expressions/ExpressionWidget.jsx:126
 #: frontend/src/metabase/visualizations/components/ChartSettings.jsx:439
 msgid "Done"
-msgstr "Fait"
+msgstr "OK"
 
 #: enterprise/frontend/src/metabase-enterprise/application_permissions/selectors.ts:125
 #: frontend/src/metabase/admin/people/components/GroupsListing.jsx:224
@@ -1324,11 +1324,11 @@ msgstr "Annuler les modifications ?"
 
 #: frontend/src/metabase/admin/permissions/components/PermissionsPageLayout/PermissionsEditBar.jsx:43
 msgid "No changes to permissions will be made."
-msgstr "Aucune modification ne sera faite aux permissions."
+msgstr "Les permissions ne seront pas modifiées."
 
 #: frontend/src/metabase/admin/permissions/components/PermissionsPageLayout/PermissionsEditBar.jsx:55
 msgid "You've made changes to permissions."
-msgstr "Vous avez fait des modifications aux permissions."
+msgstr "Vous modifié les permissions."
 
 #: frontend/src/metabase/admin/permissions/components/CollectionPermissionsModal/CollectionPermissionsModal.jsx:37
 msgid "Permissions for this collection"
@@ -1603,15 +1603,15 @@ msgstr "Créer un Slack Bot User pour MetaBot"
 
 #: frontend/src/metabase/admin/settings/components/SettingsSlackForm.jsx:255
 msgid "Once you're there, give it a name and click {0}. Then copy and paste the Bot API Token into the field below. Once you are done, create a \"metabase_files\" channel in Slack. Metabase needs this to upload graphs."
-msgstr "Cela fait, donnez lui/elle un nom et cliquer {0}. Copier et coller ensuite le Bot API Token dans le champ ci-dessous. Enfin, créez un canal Slack \"metabase_files\" . Metabase en a besoin pour télécharger les graphiques."
+msgstr "Ensuite, donnez-lui un nom et cliquez {0}. Puis copiez-collez le token Bot API dans le champ ci-dessous. Enfin, créez un canal « metabase_files » dans Slack. Metabase en aura besoin pour télécharger les graphiques."
 
 #: frontend/src/metabase/admin/settings/components/SettingsUpdatesForm/VersionUpdateNotice/VersionUpdateNotice.jsx:54
 msgid "You're running Metabase {0} which is the latest and greatest!"
-msgstr "Vous faites tourner Metabase {0} qui est la dernière et meilleure version !"
+msgstr "Vous utilisez Metabase {0}, qui est la dernière version, et la meilleure !"
 
 #: frontend/src/metabase/admin/settings/components/SettingsUpdatesForm.jsx:100
 msgid "Metabase {0} is available.  You're running {1}"
-msgstr "Metabase {0} est disponible. Vous faites actuellement tourner {1}"
+msgstr "Metabase {0} est disponible. Vous utilisez actuellement {1}"
 
 #: enterprise/frontend/src/metabase-enterprise/audit_app/components/AuditNotificationEditModal/AuditNotificationEditModal.jsx:76
 #: frontend/src/metabase/account/profile/components/UserProfileForm/UserProfileForm.tsx:89
@@ -1900,7 +1900,7 @@ msgstr "Toutes les bases de données ne gèrent pas les fuseaux horaires, le cas
 
 #: frontend/src/metabase/account/profile/components/UserProfileForm/UserProfileForm.tsx:86
 msgid "Language"
-msgstr "Langage"
+msgstr "Langue"
 
 #: frontend/src/metabase/admin/settings/selectors.js:65
 msgid "Select a language"
@@ -2518,7 +2518,7 @@ msgstr "Pour pouvoir utiliser Metabase avec cette donnée, vous devez activer l'
 
 #: frontend/src/metabase/entities/databases/forms.js:249
 msgid "{0} to go to the console if you haven't already done so."
-msgstr "{0} pour se rendre dans la console si ce n'est déjà fait."
+msgstr "{0} pour se rendre dans la console si ce n’est déjà fait."
 
 #: frontend/src/metabase/entities/databases/forms.js:334
 msgid "How would you like to refer to this database?"
@@ -3400,7 +3400,7 @@ msgstr "a ajouté le filtre"
 #: frontend/src/metabase/home/components/Activity.jsx:400
 #: frontend/src/metabase/home/components/Activity.jsx:431
 msgid "made changes to the filter"
-msgstr "a fait des modifications au filtre"
+msgstr "a modifié le filtre"
 
 #: frontend/src/metabase/home/components/Activity.jsx:438
 msgid "removed the filter {0}"
@@ -4569,7 +4569,7 @@ msgstr "Non trouvé"
 
 #: frontend/src/metabase/public/components/widgets/AdvancedEmbedPane.jsx:44
 msgid "You’ve made changes that need to be published before they will be reflected in your application embed."
-msgstr "Vous avez fait des modifications qui doivent être publiées avant d'être visibles dans l'intégration de votre application."
+msgstr "Vous avez fait des modifications qui doivent être publiées avant d'être visibles dans l’intégration de votre application."
 
 #: frontend/src/metabase/public/components/widgets/AdvancedEmbedPane.jsx:45
 msgid "You will need to publish this {0} before you can embed it in another application."
@@ -4660,15 +4660,15 @@ msgstr "Pour intégrer ce/cette {0} dans votre application :"
 
 #: frontend/src/metabase/public/components/widgets/EmbedCodePane.jsx:40
 msgid "Insert this code snippet in your server code to generate the signed embedding URL "
-msgstr "Insérez cet extrait dans le code de votre serveur pour générer l'URL d'intégration signée ␣"
+msgstr "Insérez ce fragment dans le code de votre serveur pour générer l'URL d'intégration signée␣"
 
 #: frontend/src/metabase/public/components/widgets/EmbedCodePane.jsx:64
 msgid "Then insert this code snippet in your HTML template or single page app."
-msgstr "Ensuite, insérez cet extrait de code dans votre modèle HTML ou votre application à page unique."
+msgstr "Ensuite, insérez ce fragment dans votre modèle HTML ou votre application à page unique."
 
 #: frontend/src/metabase/public/components/widgets/EmbedCodePane.jsx:72
 msgid "Embed code snippet for your HTML or Frontend Application"
-msgstr "Extrait de code pour intégration dans votre HTML ou votre application d'IHM"
+msgstr "Fragment de code pour intégration dans votre HTML ou votre application d'IHM"
 
 #: frontend/src/metabase/public/components/widgets/EmbedCodePane.jsx:79
 msgid "More {0}"
@@ -4688,7 +4688,7 @@ msgstr "Désactiver ce lien public ?"
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:76
 msgid "This will cause the existing link to stop working. You can re-enable it, but when you do it will be a different link."
-msgstr "Cela empêchera le lien existant de fonctionner. Vous pouvez le réactiver, mais si vous le faites, le lien sera différent."
+msgstr "Cela empêchera le lien actuel de fonctionner. Vous pourrez le réactiver, mais le lien sera alors différent."
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:115
 msgid "Public link"
@@ -4704,7 +4704,7 @@ msgstr "Intégration publique"
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:149
 msgid "Embed this {0} in blog posts or web pages by copying and pasting this snippet:"
-msgstr "Intégrez ce/cette {0} dans les posts de blog ou les pages web en copiant/collant ce bout de code :"
+msgstr "Intégrez ce/cette {0} dans les posts de blog ou les pages web en copiant/collant ce fragment:"
 
 #: frontend/src/metabase/public/components/widgets/SharingPane.tsx:165
 msgid "Embed this {0} in an application"
@@ -4872,7 +4872,7 @@ msgstr "L'envoi a échoué"
 
 #: frontend/src/metabase/pulse/components/PulseEditChannels.jsx:233
 msgid "Didn’t send because the pulse has no results."
-msgstr "L'envoi n'a pas été fait car le pulse n'a aucun résultat."
+msgstr "L'envoi n'a pas été effectué, car le pulse n’a aucun résultat."
 
 #: frontend/src/metabase/pulse/components/PulseEditChannels.jsx:234
 msgid "Pulse sent"
@@ -5597,7 +5597,7 @@ msgstr "Cela est causé la plupart du temps par une sélection invalide ou une m
 
 #: frontend/src/metabase/query_builder/components/VisualizationResult.jsx:71
 msgid "This may be the answer you’re looking for. If not, try removing or changing your filters to make them less specific."
-msgstr "C'est peut-être la réponse que vous recherchez. Sinon, essayez d'enlever ou changer vos filtres pour les rendre moins restrictifs."
+msgstr "C'est peut-être la réponse que vous cherchez. Sinon, essayez d’enlever ou de modifier vos filtres pour les rendre moins restrictifs."
 
 #: frontend/src/metabase/query_builder/components/VisualizationResult.jsx:76
 msgid "You can also {0} when there are some results."
@@ -5826,7 +5826,7 @@ msgstr "Période en cours"
 #: frontend/src/metabase/visualizations/lib/settings/column.js:174
 #: frontend/src/metabase/visualizations/lib/settings/series.js:97
 msgid "On"
-msgstr "Oui"
+msgstr "Le"
 
 #: frontend/src/metabase/query_builder/components/filters/pickers/NumberPicker.jsx:30
 msgid "Enter desired number"
@@ -5892,7 +5892,7 @@ msgstr "Donner à une variable le type \"Filtre de champ\" vous permet :\n"
 
 #: frontend/src/metabase/query_builder/components/template_tags/TagEditorHelp.jsx:266
 msgid "When adding a Field Filter variable, you'll need to map it to a specific field. You can then choose to display a filter widget on your question, but even if you don't, you can now map your Field Filter variable to a dashboard filter when adding this question to a dashboard. Field Filters should be used inside of a \"WHERE\" clause."
-msgstr "Une variable de type \"Filtre de champ\" doit être liée à une colonne de table spécifique. Vous pouvez alors choisir d'afficher un filtre dans votre question, mais même si vous ne faites pas, vous pouvez lier votre variable \"Filtre de champ\" à un filtre de tableau de bord contenant une carte avec cette question. les Filtres de champ devraient être utilisés dans le bloc WHERE du patron SQL."
+msgstr "Une variable de type « filtre de champ » doit être liée à une colonne de table spécifique. Vous pouvez alors choisir d’afficher un filtre dans votre question, mais, même si vous ne le faites pas, vous pouvez lier votre variable « filtre de champ » à un filtre de tableau de bord contenant une carte avec cette question. les filtres de champ devraient être utilisés dans le bloc WHERE du patron SQL."
 
 #: frontend/src/metabase/query_builder/components/template_tags/TagEditorHelp.jsx:273
 msgid "Optional Clauses"
@@ -6674,7 +6674,7 @@ msgstr "MetaBot effectue des milliards d'équations différentielles ..."
 
 #: frontend/src/metabase/setup/containers/PostSetupApp.jsx:26
 msgid "Metabot is doing science…"
-msgstr "MetaBot fait des calculs..."
+msgstr "MetaBot est en train de faire des calculs…"
 
 #: frontend/src/metabase/setup/containers/PostSetupApp.jsx:27
 msgid "Metabot is checking out your metrics…"
@@ -8355,7 +8355,7 @@ msgstr "Le fuseau horaire du système est \"{0}\"..."
 #. startup database.  validates connection & runs any necessary migrations
 #: metabase/core.clj:100
 msgid "Setting up and migrating Metabase DB. Please sit tight, this may take a minute..."
-msgstr "Configuration et migration de la base de données Metabase. Faites s'il vous plaît preuve de patience, cela peut prendre une minute..."
+msgstr "Configuration et migration de la base de données Metabase en cours. Merci de patienter, cette opération peut prendre quelques minutes…"
 
 #: metabase/core.clj:121
 msgid "Looks like this is a new installation ... preparing setup wizard"
@@ -9035,7 +9035,7 @@ msgstr "L'URL de base de cette instance de Metabase, par exemple : \"http://meta
 
 #: src/metabase/public_settings.clj
 msgid "The default language for this Metabase instance."
-msgstr "Le langage par défaut de cette instance de Metabase."
+msgstr "La langue par défaut de cette instance de Metabase."
 
 #: src/metabase/public_settings.clj
 msgid "This only applies to emails, Pulses, etc. Users'' browsers will specify the language used in the user interface."
@@ -12160,7 +12160,7 @@ msgstr "Attention : La chaîne de connexion Postgres contient `ssl=true`."
 
 #: target/classes/metabase/db/env.clj
 msgid "You may need to add `?sslmode=require` to your application DB connection string."
-msgstr "Vous devrez peut-être ajouter `?sslmode=true` à la chaîne de connexion de votre application à la base de données."
+msgstr "Vous devrez peut-être ajouter `?sslmode=require` à la chaîne de connexion de votre application à la base de données."
 
 #: target/classes/metabase/db/env.clj
 msgid "If Metabase fails to launch, please add it and try again."
@@ -15495,7 +15495,7 @@ msgstr "Saisissez ici un peu de SQL pour pouvoir le réutiliser plus tard"
 
 #: frontend/src/metabase/entities/snippets.js:21
 msgid "Give your snippet a name"
-msgstr "Donnez un nom à votre snippet"
+msgstr "Donnez un nom à votre fragment"
 
 #: frontend/src/metabase/entities/snippets.js:22
 msgid "Current Customers"
@@ -15535,28 +15535,28 @@ msgstr "Édition de {0}"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetModal.jsx:34
 msgid "Create your new snippet"
-msgstr "Créez votre nouveau snippet"
+msgstr "Créez votre nouveau fragment"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:69
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:299
 msgid "Archived snippets"
-msgstr "Snippets archivés"
+msgstr "Fragments archivés"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:112
 msgid "Snippets are reusable bits of SQL"
-msgstr "Les Snippets sont des bits de SQL réutilisables"
+msgstr "Les fragments sont des bouts de SQL réutilisables"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:117
 msgid "Create a snippet"
-msgstr "Créer un snippet"
+msgstr "Créer un fragmen"
 
 #: frontend/src/metabase/query_builder/components/template_tags/SnippetSidebar.jsx:148
 msgid "Snippets"
-msgstr "Snippets"
+msgstr "Fragments"
 
 #: frontend/src/metabase/query_builder/components/view/SnippetSidebarButton.jsx:16
 msgid "SQL Snippets"
-msgstr "Snippets SQL"
+msgstr "Fragments SQL"
 
 #: frontend/src/metabase/setup/components/LanguageStep/LanguageStep.tsx:45
 msgid "Your language is set to {0}"
@@ -15584,7 +15584,7 @@ msgstr "La durée moyenne d'exécution de la question est de {0} ; en utilisant 
 
 #: metabase/api/native_query_snippet.clj:36
 msgid "A snippet with that name already exists. Please pick a different name."
-msgstr "Il existe déjà une snippet de ce nom. Veuillez choisir un autre nom."
+msgstr "Il existe déjà un fragment de ce nom. Veuillez choisir un autre nom."
 
 #: metabase/api/query_description.clj:46
 msgid "[Unknown Metric]"
@@ -15644,11 +15644,11 @@ msgstr "Paramètre :card invalide : `:card-id` manquant"
 
 #: metabase/driver/common/parameters/values.clj:171
 msgid "Unable to resolve Snippet: missing `:snippet-id`"
-msgstr "Incapable de résoudre la Snippet : `:snippet-id` manquant"
+msgstr "Incapable de résoudre le fragment : `:snippet-id` manquant"
 
 #: metabase/driver/common/parameters/values.clj:174
 msgid "Snippet {0} {1} not found."
-msgstr "Snippet {0} {1} non trouvée."
+msgstr "Fragment {0} {1} non trouvée."
 
 #: src/metabase/driver/common/parameters/values.clj
 msgid "Error determining value for parameter"
@@ -15720,7 +15720,7 @@ msgstr "Erreur de recherche de la valeur du paramètre"
 
 #: src/metabase/public_settings.clj
 msgid "The language that should be used for Metabase's UI, system emails, pulses, and alerts."
-msgstr "Le langage qui doit être utilisé pour l'interface utilisateur de Metabase, les e-mails du système, les pulses et les alertes."
+msgstr "La langue qui doit être utilisée pour l’interface utilisateur de Metabase, les e-mails du système, les pulses et les alertes."
 
 #: src/metabase/public_settings.clj
 msgid "This is also the default language for all users, which they can change from their own account settings."
@@ -19387,7 +19387,7 @@ msgstr "{0} a créé ceci"
 
 #: frontend/src/metabase/lib/revisions/revisions.js:248
 msgid "{0} edited this"
-msgstr "{J'ai édité ceci"
+msgstr "{0} a édité ceci"
 
 #: enterprise/frontend/src/metabase-enterprise/collections/constants.js:5
 #: enterprise/frontend/src/metabase-enterprise/whitelabel/components/FontFilesWidget/utils.ts:8
@@ -20583,18 +20583,18 @@ msgstr "changé les paramètres de visualisation"
 #: frontend/src/metabase/lib/revisions/revisions.js:131
 msgid "added a card"
 msgid_plural "added {0} cards"
-msgstr[0] "ajouté une carte"
-msgstr[1] "ajouté {0} cartes"
+msgstr[0] "a ajouté une carte"
+msgstr[1] "a ajouté {0} cartes"
 
 #: frontend/src/metabase/lib/revisions/revisions.js:139
 msgid "rearranged the cards"
-msgstr "réarrangé les cartes"
+msgstr "a réarrangé les cartes"
 
 #: frontend/src/metabase/lib/revisions/revisions.js:145
 msgid "removed a card"
 msgid_plural "removed {0} cards"
-msgstr[0] "enlevé une carte"
-msgstr[1] "enlevé {0} cartes"
+msgstr[0] "a enlevé une carte"
+msgstr[1] "a enlevé {0} cartes"
 
 #: frontend/src/metabase/lib/revisions/revisions.js:172
 msgid "created this"
@@ -20793,7 +20793,7 @@ msgstr "Exécuter la sélection"
 
 #: frontend/src/metabase/query_builder/components/NativeQueryEditor/RightClickPopover/RightClickPopover.jsx:36
 msgid "Save as snippet"
-msgstr "Sauvegarder comme snippet"
+msgstr "Sauvegarder comme fragment"
 
 #: frontend/src/metabase/query_builder/components/filters/modals/InlineCategoryPicker/SimpleCategoryFilterPicker.tsx:53
 msgid "empty"
@@ -21595,7 +21595,7 @@ msgstr "Explorer le jeu de données d'exemple"
 
 #: frontend/src/metabase/query_builder/components/ImpossibleToCreateModelModal/ImpossibleToCreateModelModal.tsx:16
 msgid "SQL snippets"
-msgstr "Snippet SQL"
+msgstr "Fragments SQL"
 
 #: frontend/src/metabase/query_builder/components/ImpossibleToCreateModelModal/ImpossibleToCreateModelModal.tsx:24
 msgid "reference the results of another saved question"
@@ -21608,7 +21608,7 @@ msgstr "Les variables dans les modèles ne sont pas encore supportées."
 
 #: frontend/src/metabase/query_builder/components/ImpossibleToCreateModelModal/ImpossibleToCreateModelModal.tsx:34
 msgid "To solve this, just remove the variables in this question and try again. (It's okay to use {0} or {1} in your query.)"
-msgstr "Pour résoudre ceci, enlever seulement les variables de cette question et réessayer. (C'est ok d'utiliser {0} ou {1} dans votre requête.)"
+msgstr "Pour corriger ce problème, enlevez simplement les variables de cette question et réessayez. (Vous pouvez utiliser {0} ou {1} dans votre requête.)"
 
 #: frontend/src/metabase/auth/components/ForgotPassword/ForgotPassword.tsx:62
 #: frontend/src/metabase/auth/components/ForgotPassword/ForgotPassword.tsx:73
@@ -21777,7 +21777,7 @@ msgstr "Entrer le jeton que vous avez acheté sur le Metabase Store ci-dessous."
 #: frontend/src/metabase/admin/settings/components/widgets/EmbeddingCustomizationInfo.tsx:12
 msgid "Looking to remove the “Powered by Metabase” logo, customize colors\n"
 "and make it your own? {0}"
-msgstr "Vous cherchez à enlever le logo \"Propulsé par Metabase\", changer les couleurs et faire le vôtre ? {0}"
+msgstr "Vous cherchez à enlever le logo « Propulsé par Metabase », changer les couleurs et faire le vôtre ? {0}"
 
 #: frontend/src/metabase/admin/settings/slack/components/SlackDeleteModal/SlackDeleteModal.tsx:23
 msgid "Are you sure you want to delete your Slack App?"
@@ -24133,7 +24133,7 @@ msgstr "Actualisez les modèles tous les…"
 
 #: metabase/analytics/snowplow.clj:43
 msgid "Boolean indicating whether analytics events are being sent to Snowplow. True if anonymous tracking is enabled for this instance, and a Snowplow collector is available."
-msgstr "Booléen indiquant si les événements d'analyse sont envoyés à Snowplow. True si le suivi anonyme est activé pour cette instance et qu'un collecteur Snowplow est disponible."
+msgstr "Booléen indiquant si les événements d'analyse sont envoyés à Snowplow. Vrai si le suivi anonyme est activé pour cette instance et qu'un collecteur Snowplow est disponible."
 
 #: metabase/analytics/snowplow.clj:34
 msgid "Boolean indicating whether a Snowplow collector is available to receive analytics events. Should be set via environment variable in Cypress tests or during local development."
@@ -24633,7 +24633,7 @@ msgstr "Si vous disposez d'une clé client SSL PEM, vous pouvez convertir cette 
 
 #: frontend/src/metabase/visualizations/visualizations/Text/Text.jsx:169
 msgid "You can use Markdown here, and include variables {{like_this}}"
-msgstr "Vous pouvez utiliser le format Markdown ici, et inclure les variables {{like_this}}."
+msgstr "Vous pouvez utiliser le format Markdown ici, et inclure les variables {{like_this}}"
 
 #: metabase/analytics/prometheus.clj:229
 msgid "Prometheus web-server shut down"
@@ -25451,7 +25451,7 @@ msgstr "Utiliser l'éditeur visuel"
 
 #: frontend/src/metabase/new_query/containers/NewDatasetOptions.jsx:78
 msgid "This automatically inherits metadata from your source tables, and gives your models drill-through."
-msgstr "Cela hérite automatiquement"
+msgstr "Cela hérite automatiquement des méta-données de tables d'origines, et donne à vos modèles la possibilité de vue de détail."
 
 #: frontend/src/metabase/new_query/containers/NewDatasetOptions.jsx:93
 msgid "Use a native query"
@@ -25459,7 +25459,7 @@ msgstr "Utiliser une requête native"
 
 #: frontend/src/metabase/new_query/containers/NewDatasetOptions.jsx:94
 msgid "You can always fall back to a SQL or native query, which is a bit more manual."
-msgstr "Vous pouvez toujours retourner sur une requête native SQL, ce qui est un peu plus manual."
+msgstr "Vous pouvez toujours retourner sur une requête native SQL, ce qui est un peu plus manuel."
 
 #: frontend/src/metabase/new_query/containers/NewDatasetOptions.jsx:113
 msgid "What's a model?"
@@ -26270,4 +26270,14 @@ msgstr "La base de données d'échantillons n'a pas pu être extraite dans le r�
 #: metabase_enterprise/advanced_config/file.clj:261
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Les fichiers de configuration de la Metabase nécessitent un jeton Premium avec la fonction :advanced-config."
+
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Les graphiques dans les abonnements peuvent être légèrement différents des graphiques dans les tableaux de bord."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Les destinataires verront ces données de la même manière que vous, quelles que soient leurs autorisations."
 

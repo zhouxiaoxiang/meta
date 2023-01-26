@@ -26265,3 +26265,13 @@ msgstr "Não foi possível extrair amostras de banco de dados para o diretório 
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Os arquivos de configuração do Metabase requerem um token Premium com o recurso :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Os gráficos nas assinaturas podem parecer ligeiramente diferentes dos gráficos nos painéis de controle."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Os destinatários verão estes dados exatamente como você os vê, independentemente de suas permissões."
+

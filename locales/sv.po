@@ -26174,3 +26174,13 @@ msgstr "Provdatabasen kunde inte extraheras till plugins-katalogen, vilket kan l
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Metabasens konfigurationsfiler kräver en Premium-token med funktionen :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Diagrammen i prenumerationer kan se lite annorlunda ut än diagrammen i instrumentpaneler."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Mottagarna ser uppgifterna precis som du ser dem, oavsett vilka behörigheter de har."
+

@@ -26213,3 +26213,13 @@ msgstr "Voorbeeld database kon niet worden uitgepakt naar de plugins directory, 
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Metabase configuratiebestanden vereisen een Premium token met de :advanced-config functie."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Grafieken in abonnementen kunnen er iets anders uitzien dan grafieken in dashboards."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Ontvangers zien deze gegevens zoals u ze ziet, ongeacht hun rechten."
+

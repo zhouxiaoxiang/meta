@@ -26346,3 +26346,13 @@ msgstr "Vzorovú databázu sa nepodarilo rozbaliť do adresára plugins,čo mô�
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Konfiguračné súbory metabázy vyžadujú token Premium s funkciou :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Grafy v odberoch môžu vyzerať trochu inak ako grafy v ovládacích paneloch."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Príjemcovia uvidia tieto údaje rovnako ako vy, bez ohľadu na ich oprávnenia."
+

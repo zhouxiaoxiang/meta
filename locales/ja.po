@@ -25939,7 +25939,7 @@ msgstr "ポーズ"
 
 #: frontend/src/metabase/admin/settings/auth/components/AuthCard/AuthCard.tsx:133
 msgid "Resume"
-msgstr "レジュメ"
+msgstr "レジューム"
 
 #: frontend/src/metabase/admin/settings/auth/components/AuthCard/AuthCard.tsx:171
 msgid "This will clear all your settings."
@@ -26124,4 +26124,14 @@ msgstr "サンプルデータベースをpluginsディレクトリに展開で�
 #: metabase_enterprise/advanced_config/file.clj:261
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Metabaseの設定ファイルには、:advanced-config機能によるPremiumトークンが必要です。"
+
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "サブスクリプションのチャートは、ダッシュボードのチャートと少し違って見えるかもしれません。"
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "受信者は、権限に関係なく、あなたが見るのと同じようにこのデータを見ることができます。"
 

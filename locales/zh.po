@@ -26195,3 +26195,13 @@ msgstr "无法将示例数据库提取到插件目录，这可能会导致启动
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "元数据库配置文件需要具有 :advanced-config 功能的高级令牌。"
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "订阅中的图表可能看起来与仪表盘中的图表略有不同。"
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "收件人将看到这些数据，就像你看到的一样，不管他们的权限如何。"
+

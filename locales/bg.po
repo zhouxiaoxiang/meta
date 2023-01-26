@@ -26197,3 +26197,13 @@ msgstr "Базата данни на модела не може да бъде и
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Файловете за конфигурация на метабазата изискват Premium токен с функцията :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Графиките в абонаментите може да изглеждат малко по-различно от графиките в таблата за управление."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Получателите ще виждат тези данни така, както ги виждате вие, независимо от техните разрешения."
+

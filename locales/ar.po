@@ -26499,3 +26499,13 @@ msgstr "تعذر استخراج نموذج قاعدة البيانات إلى د
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "تتطلب ملفات تكوين قاعدة التعريف رمزًا مميزًا مع ميزة التكوين المتقدم."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "قد تبدو الرسوم البيانية في الاشتراكات مختلفة قليلاً عن الرسوم البيانية في لوحات المعلومات."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "سيرى المستلمون هذه البيانات تمامًا كما تراها ، بغض النظر عن أذوناتهم."
+

@@ -26124,3 +26124,13 @@ msgstr "Không thể trích xuất cơ sở dữ liệu mẫu vào thư mục ph
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Tệp cấu hình Metabase yêu cầu mã thông báo Cao cấp với tính năng :advanced-config."
 
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Biểu đồ trong đăng ký có thể trông hơi khác so với biểu đồ trong trang tổng quan."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Người nhận sẽ nhìn thấy dữ liệu này giống như bạn nhìn thấy, bất kể quyền của họ là gì."
+

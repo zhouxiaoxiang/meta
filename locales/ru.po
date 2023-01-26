@@ -73,7 +73,7 @@ msgstr "Сканирование"
 #: frontend/src/metabase/entities/databases/big-query-fields.js:162
 #: metabase/driver/common.clj:162
 msgid "Scanning for Filter Values"
-msgstr "Сканирование для значения фильтров"
+msgstr "Сканирование значений фильтров"
 
 #: frontend/src/metabase/admin/databases/components/DatabaseSchedulingForm.jsx:153
 msgid "Metabase can scan the values present in each\n"
@@ -7390,9 +7390,10 @@ msgstr "Показать строку и метки по оси y"
 msgid "Auto y-axis range"
 msgstr "Авто диапазон оси ординат"
 
+#. Fixed a grammatical error.
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:533
 msgid "Use a split y-axis when necessary"
-msgstr "Использовать разрывы школы ординат когда это необходимо"
+msgstr "Делать разрывы оси X при необходимости"
 
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:540
 msgid "Show label on x-axis"
@@ -26069,7 +26070,7 @@ msgstr "Показать линии и метки"
 
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:615
 msgid "Split y-axis when necessary"
-msgstr "При необходимости разделите ось y"
+msgstr "Делать разрывы оси Y при необходимости"
 
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:625
 #: frontend/src/metabase/visualizations/lib/settings/graph.js:647
@@ -26699,4 +26700,14 @@ msgstr "База данных образца не может быть извле
 #: metabase_enterprise/advanced_config/file.clj:261
 msgid "Metabase config files require a Premium token with the :advanced-config feature."
 msgstr "Для файлов конфигурации Metabase требуется токен Premium с функцией :advanced-config."
+
+#: 
+msgctxt "This is in the sidebar when creating or editing a dashboard subscription."
+msgid "Charts in subscriptions may look slightly different from charts in dashboards."
+msgstr "Диаграммы в подписках могут выглядеть несколько иначе, чем диаграммы в приборных панелях."
+
+#: 
+msgctxt "Seen when creating a new dashboard subscription."
+msgid "Recipients will see this data just as you see it, regardless of their permissions."
+msgstr "Получатели будут видеть эти данные так же, как и вы, независимо от их прав доступа."
 
