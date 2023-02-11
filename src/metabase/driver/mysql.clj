@@ -158,7 +158,7 @@
 (defmethod sql.qp/current-datetime-honeysql-form :mysql
   [_]
   (hx/with-database-type-info
-   (case hx/*honey-sql-version*
+   (case (long hx/*honey-sql-version*)
      1 (hx/call :now 6)
      2 [:now [:inline 6]])
    "timestamp"))
