@@ -52,6 +52,9 @@ describe.skip(
           expect(status).to.equal(200);
         });
 
+        // wait two seconds to give the sync a chance to complete
+        cy.wait(2000);
+
         // opening this so you can see the page keeps requesting sync status
         cy.visit("/admin/databases/2");
 
