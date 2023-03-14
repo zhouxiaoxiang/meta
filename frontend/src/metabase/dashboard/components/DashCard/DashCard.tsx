@@ -228,14 +228,19 @@ function DashCard({
   );
 
   const hasHiddenBackground = useMemo(() => {
-    if (isEditing) {
-      return false;
+    if (dashcard?.card?.display === 'table') {
+      return false
+    } else {
+      return true;
     }
+    // if (isEditing) {
+    //   return false;
+    // }
 
-    return (
-      mainCard.visualization_settings["dashcard.background"] === false ||
-      isAction
-    );
+    // return (
+    //   mainCard.visualization_settings["dashcard.background"] === false ||
+    //   isAction
+    // );
   }, [isEditing, isAction, mainCard]);
 
   const isEditingDashboardLayout =

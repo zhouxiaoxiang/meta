@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useCallback, useMemo, useState } from "react";
 import { Responsive as ReactGridLayout } from "react-grid-layout";
+import _ from "underscore";
 
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
@@ -79,16 +80,18 @@ function GridLayout({
         gridItemWidth,
         breakpoint: currentBreakpoint,
         totalNumGridCols: cols,
+        draggable: true,
+        className: "droppable-element",
       });
     },
     [layout, cellSize, itemRenderer, currentBreakpoint, cols],
   );
 
   const height = useMemo(() => {
-    let lowestLayoutCellPoint = Math.max(...layout.map(l => l.y + l.h));
-    if (isEditing) {
-      lowestLayoutCellPoint += Math.ceil(window.innerHeight / cellSize.height);
-    }
+    const lowestLayoutCellPoint = Math.max(...layout.map(l => l.y + l.h));
+    // if (isEditing) {
+    //   lowestLayoutCellPoint += Math.ceil(window.innerHeight / cellSize.height);
+    // }
     // eslint-disable-next-line no-unused-vars
     const [horizontalMargin, verticalMargin] = margin;
     return (cellSize.height + verticalMargin) * lowestLayoutCellPoint;
@@ -103,7 +106,7 @@ function GridLayout({
     () => ({
       width: gridWidth,
       height,
-      background: isEditing ? background : "",
+      // background: isEditing ? background : "",
     }),
     [gridWidth, height, background, isEditing],
   );
@@ -113,7 +116,36 @@ function GridLayout({
   // https://github.com/react-grid-layout/react-grid-layout#performance
   const children = useMemo(() => items.map(renderItem), [items, renderItem]);
 
+  const childrenBySection = _.groupBy(children, (child) => child?.props?.section ?? 0);
+
   return (
+  <div>
+    {Object.keys(childrenBySection).map((index) => (
+      <div className="border-bottom pb2 mb2" key={index}>
+        <ReactGridLayout
+          breakpoints={breakpoints}
+          cols={columnsMap}
+          layouts={layouts}
+          width={gridWidth}
+          margin={margin}
+          rowHeight={rowHeight}
+          isDraggable={isEditing && !isMobile}
+          isResizable={isEditing && !isMobile}
+          {...props}
+          autoSize={true}
+          onLayoutChange={onLayoutChangeWrapped}
+          onBreakpointChange={onBreakpointChange}
+          // style={style}
+          verticalCompact={false}
+          isDroppable={true}
+          onDrop={(layout, layoutItem, _event) => {
+            console.log("onDrop", layout, layoutItem);
+          }}
+        >
+          {childrenBySection[index]}
+        </ReactGridLayout>
+      </div>
+    ))}
     <ReactGridLayout
       breakpoints={breakpoints}
       cols={columnsMap}
@@ -123,14 +155,19 @@ function GridLayout({
       rowHeight={rowHeight}
       isDraggable={isEditing && !isMobile}
       isResizable={isEditing && !isMobile}
-      {...props}
-      autoSize={false}
+      height={3}
+      autoSize={true}
       onLayoutChange={onLayoutChangeWrapped}
       onBreakpointChange={onBreakpointChange}
       style={style}
+      verticalCompact={false}
+      isDroppable={true}
+      onDrop={(layout, layoutItem, _event) => {
+        console.log("onDrop", layout, layoutItem);
+      }}
     >
-      {children}
     </ReactGridLayout>
+  </div>
   );
 }
 

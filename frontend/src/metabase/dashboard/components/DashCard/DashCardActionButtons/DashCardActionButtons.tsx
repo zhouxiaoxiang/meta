@@ -137,6 +137,27 @@ function DashCardActionButtons({
         />,
       );
     }
+
+    buttons.push(
+      <DashCardActionButton
+        key="up section"
+        tooltip={t`move up a section`}
+        onClick={() => {
+          onUpdateVisualizationSettings({ section: (Number(dashcard?.visualization_settings?.section) || 0) - 1 });
+        }}
+      >
+        <Icon name="arrow_up" />
+      </DashCardActionButton>,
+      <DashCardActionButton
+        key="down section"
+        tooltip={t`move down a section`}
+        onClick={() => {
+          onUpdateVisualizationSettings({ section: (Number(dashcard?.visualization_settings?.section) || 0) + 1 });
+        }}
+      >
+        <Icon name="arrow_down" />
+      </DashCardActionButton>,
+    );
   }
 
   return (

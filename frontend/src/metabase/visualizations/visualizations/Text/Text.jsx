@@ -95,7 +95,7 @@ export default class Text extends Component {
       dashboard: true,
       inline: true,
       widget: "toggle",
-      default: true,
+      default: false,
     },
   };
 
