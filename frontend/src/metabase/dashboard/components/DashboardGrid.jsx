@@ -38,7 +38,7 @@ const mapDispatchToProps = { addUndo };
 function measureTextHeight(dashcard) {
   const textContent = dashcard?.visualization_settings?.text;
 
-  return textContent.match(/\n\n/g)?.length || 1;
+  return (textContent ?? "").match(/\n\n/g)?.length || 1;
 }
 
 class DashboardGrid extends Component {
