@@ -83,6 +83,7 @@ class DashboardHeader extends Component {
     addCardToDashboard: PropTypes.func.isRequired,
     addTextDashCardToDashboard: PropTypes.func.isRequired,
     addLinkDashCardToDashboard: PropTypes.func.isRequired,
+    addSectionToDashboard: PropTypes.func.isRequired,
     fetchDashboard: PropTypes.func.isRequired,
     saveDashboardAndCards: PropTypes.func.isRequired,
     setDashboardAttribute: PropTypes.func.isRequired,
@@ -121,6 +122,10 @@ class DashboardHeader extends Component {
 
   onAddLinkCard() {
     this.props.addLinkDashCardToDashboard({ dashId: this.props.dashboard.id });
+  }
+
+  onAddSection() {
+    this.props.addSectionToDashboard({ dashId: this.props.dashboard.id });
   }
 
   onAddAction() {
@@ -258,6 +263,14 @@ class DashboardHeader extends Component {
             data-metabase-event={`Dashboard;Add Link Card`}
           >
             <Icon name="link" size={18} />
+          </DashboardHeaderButton>
+        </Tooltip>,
+        <Tooltip key="add-section-card" tooltip={t`Add section`}>
+          <DashboardHeaderButton
+            onClick={() => this.onAddSection()}
+            data-metabase-event={`Dashboard;Add Sectiond`}
+          >
+            <Icon name="beaker" size={18} />
           </DashboardHeaderButton>
         </Tooltip>,
       );

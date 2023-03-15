@@ -8,6 +8,7 @@ import Questions from "metabase/entities/questions";
 import {
   getPositionForNewDashCard,
   DEFAULT_CARD_SIZE,
+  GRID_WIDTH,
 } from "metabase/lib/dashboard_grid";
 import { createCard } from "metabase/lib/card";
 
@@ -112,6 +113,32 @@ export const addLinkDashCardToDashboard = function ({ dashId }) {
     size_y: DEFAULT_HEIGHT,
     visualization_settings: {
       virtual_card: virtualLinkCard,
+    },
+  };
+  return addDashCardToDashboard({
+    dashId: dashId,
+    dashcardOverrides: dashcardOverrides,
+  });
+};
+
+export const addSectionToDashboard = function ({ dashId }) {
+  const DEFAULT_HEIGHT = 1;
+  const DEFAULT_WIDTH = GRID_WIDTH;
+
+  const virtualSectionCard = {
+    ...createCard(),
+    display: "section",
+    archived: false,
+  };
+
+  const dashcardOverrides = {
+    card: virtualSectionCard,
+    size_x: DEFAULT_WIDTH,
+    size_y: DEFAULT_HEIGHT,
+    visualization_settings: {
+      virtual_card: virtualSectionCard,
+      "dashcard.background": false,
+      text: "---",
     },
   };
   return addDashCardToDashboard({

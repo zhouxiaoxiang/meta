@@ -10,6 +10,7 @@ import SmartScalar from "./visualizations/SmartScalar";
 import Progress from "./visualizations/Progress";
 import Table from "./visualizations/Table";
 import Text from "./visualizations/Text";
+import Section from "./visualizations/Section";
 import LinkViz from "./visualizations/LinkViz";
 import LineChart from "./visualizations/LineChart";
 import BarChart from "./visualizations/BarChart";
@@ -32,6 +33,7 @@ export default function () {
   registerVisualization(Gauge);
   registerVisualization(Table);
   registerVisualization(Text);
+  registerVisualization(Section);
   registerVisualization(LinkViz);
   registerVisualization(LineChart);
   registerVisualization(AreaChart);

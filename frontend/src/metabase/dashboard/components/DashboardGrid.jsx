@@ -35,6 +35,12 @@ import DashCard from "./DashCard";
 
 const mapDispatchToProps = { addUndo };
 
+function measureTextHeight(dashcard) {
+  const textContent = dashcard?.visualization_settings?.text;
+
+  return textContent.match(/\n\n/g)?.length || 1;
+}
+
 class DashboardGrid extends Component {
   static contextType = ContentViewportContext;
 
@@ -162,12 +168,16 @@ class DashboardGrid extends Component {
     const { visualization } = getVisualizationRaw([{ card: dashcard.card }]);
     const initialSize = DEFAULT_CARD_SIZE;
     const minSize = visualization.minSize || DEFAULT_CARD_SIZE;
+
+    const measuredSize =
+      dashcard.card.display === "text" ? measureTextHeight(dashcard) : null;
+
     return {
       i: String(dashcard.id),
       x: dashcard.col || 0,
       y: dashcard.row || 0,
       w: dashcard.size_x || initialSize.width,
-      h: dashcard.size_y || initialSize.height,
+      h: measuredSize || dashcard.size_y || initialSize.height,
       dashcard: dashcard,
       minW: minSize.width,
       minH: minSize.height,
