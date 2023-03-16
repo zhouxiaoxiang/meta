@@ -26,6 +26,10 @@ import {
 } from "metabase/lib/dashboard_grid";
 import { ContentViewportContext } from "metabase/core/context/ContentViewportContext";
 import { addUndo } from "metabase/redux/undo";
+import {
+  addSectionToDashboard,
+  addCardToDashboard,
+} from "metabase/dashboard/actions";
 import { DashboardCard } from "./DashboardGrid.styled";
 
 import GridLayout from "./grid/GridLayout";
@@ -33,7 +37,11 @@ import { generateMobileLayout } from "./grid/utils";
 import AddSeriesModal from "./AddSeriesModal/AddSeriesModal";
 import DashCard from "./DashCard";
 
-const mapDispatchToProps = { addUndo };
+const mapDispatchToProps = {
+  addUndo,
+  addSectionToDashboard,
+  addCardToDashboard,
+};
 
 function measureTextHeight(dashcard) {
   const textContent = dashcard?.visualization_settings?.text;
@@ -72,6 +80,7 @@ class DashboardGrid extends Component {
 
     onUpdateDashCardVisualizationSettings: PropTypes.func.isRequired,
     onReplaceAllDashCardVisualizationSettings: PropTypes.func.isRequired,
+    addSectionToDashboard: PropTypes.func.isRequired,
 
     onChangeLocation: PropTypes.func.isRequired,
   };
@@ -117,6 +126,13 @@ class DashboardGrid extends Component {
       const dashboardCard = dashboard.ordered_cards.find(
         card => String(card.id) === layoutItem.i,
       );
+
+      if (!dashboardCard) {
+        return {
+          ...layoutItem,
+          w: 18,
+        };
+      }
 
       const keys = ["h", "w", "x", "y"];
       const changed = !_.isEqual(
@@ -244,6 +260,14 @@ class DashboardGrid extends Component {
     }
   };
 
+  onDrop = (layout, item, event) => {
+    this.props.addSectionToDashboard({
+      dashId: this.props.dashboard.id,
+      x: item.x,
+      y: item.y,
+    });
+  };
+
   onDragStop = () => {
     this.setState({ isDragging: false });
   };
@@ -291,6 +315,9 @@ class DashboardGrid extends Component {
   };
 
   renderDashCard(dc, { isMobile, gridItemWidth, totalNumGridCols }) {
+    if (!dc) {
+      return <div className="Card rounded flex">hello</div>;
+    }
     return (
       <DashCard
         dashcard={dc}
@@ -378,6 +405,7 @@ class DashboardGrid extends Component {
         onLayoutChange={this.onLayoutChange}
         onDrag={this.onDrag}
         onDragStop={this.onDragStop}
+        onDrop={this.onDrop}
         isEditing={this.isEditingLayout}
         compactType="vertical"
         items={dashboard.ordered_cards}

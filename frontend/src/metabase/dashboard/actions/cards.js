@@ -2,6 +2,7 @@ import _ from "underscore";
 import { t } from "ttag";
 import { createAction } from "metabase/lib/redux";
 import { measureText } from "metabase/lib/measure-text";
+import { isEmpty } from "metabase/lib/validate";
 
 import Questions from "metabase/entities/questions";
 
@@ -25,7 +26,7 @@ function generateTemporaryDashcardId() {
 }
 
 export const addCardToDashboard =
-  ({ dashId, cardId }) =>
+  ({ dashId, cardId, x, y }) =>
   async (dispatch, getState) => {
     await dispatch(Questions.actions.fetch({ id: cardId }));
     const card = Questions.selectors.getObject(getState(), {
@@ -38,17 +39,23 @@ export const addCardToDashboard =
       .filter(dc => !dc.isRemoved);
     const { visualization } = getVisualizationRaw([{ card }]);
     const createdCardSize = visualization.minSize || DEFAULT_CARD_SIZE;
+
+    const position =
+      !isEmpty(x) && !isEmpty(y)
+        ? { row: y, col: x }
+        : getPositionForNewDashCard(
+            existingCards,
+            createdCardSize.width,
+            createdCardSize.height,
+          );
+
     const dashcard = {
       id: generateTemporaryDashcardId(),
       dashboard_id: dashId,
       card_id: card.id,
       card: card,
       series: [],
-      ...getPositionForNewDashCard(
-        existingCards,
-        createdCardSize.width,
-        createdCardSize.height,
-      ),
+      ...position,
       parameter_mappings: [],
       visualization_settings: {},
     };
@@ -65,17 +72,24 @@ export const addDashCardToDashboard = function ({ dashId, dashcardOverrides }) {
     const existingCards = dashboard.ordered_cards
       .map(id => dashcards[id])
       .filter(dc => !dc.isRemoved);
+
+    const position =
+      !isEmpty(dashcardOverrides.x) && !isEmpty(dashcardOverrides.y)
+        ? { row: dashcardOverrides.y, col: dashcardOverrides.x }
+        : getPositionForNewDashCard(existingCards);
+
     const dashcard = {
       id: generateTemporaryDashcardId(),
       card_id: null,
       card: null,
       dashboard_id: dashId,
       series: [],
-      ...getPositionForNewDashCard(existingCards),
+      ...position,
       parameter_mappings: [],
       visualization_settings: {},
     };
     _.extend(dashcard, dashcardOverrides);
+    console.log({ dashcard });
     dispatch(createAction(ADD_CARD_TO_DASH)(dashcard));
   };
 };
@@ -121,7 +135,7 @@ export const addLinkDashCardToDashboard = function ({ dashId }) {
   });
 };
 
-export const addSectionToDashboard = function ({ dashId }) {
+export const addSectionToDashboard = function ({ dashId, x, y }) {
   const DEFAULT_HEIGHT = 1;
   const DEFAULT_WIDTH = GRID_WIDTH;
 
@@ -133,6 +147,8 @@ export const addSectionToDashboard = function ({ dashId }) {
 
   const dashcardOverrides = {
     card: virtualSectionCard,
+    x,
+    y,
     size_x: DEFAULT_WIDTH,
     size_y: DEFAULT_HEIGHT,
     visualization_settings: {
@@ -143,7 +159,7 @@ export const addSectionToDashboard = function ({ dashId }) {
   };
   return addDashCardToDashboard({
     dashId: dashId,
-    dashcardOverrides: dashcardOverrides,
+    dashcardOverrides,
   });
 };
 

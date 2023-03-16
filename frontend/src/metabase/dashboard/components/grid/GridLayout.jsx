@@ -18,6 +18,7 @@ function GridLayout({
   rowHeight,
   isEditing,
   onLayoutChange,
+  onDrop,
   ...props
 }) {
   const [currentBreakpoint, setCurrentBreakpoint] = useState(
@@ -128,6 +129,13 @@ function GridLayout({
       onLayoutChange={onLayoutChangeWrapped}
       onBreakpointChange={onBreakpointChange}
       style={style}
+      isDroppable={isEditing}
+      measureBeforeMount={false}
+      onDrop={onDrop}
+      // onDropDragOver={(e) => {
+      //   console.log(e.currentTarget)
+      //   return ({w: 18, h: 1 })
+      // }}
     >
       {children}
     </ReactGridLayout>

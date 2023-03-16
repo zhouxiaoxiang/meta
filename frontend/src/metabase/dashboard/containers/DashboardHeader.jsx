@@ -269,6 +269,7 @@ class DashboardHeader extends Component {
           <DashboardHeaderButton
             onClick={() => this.onAddSection()}
             data-metabase-event={`Dashboard;Add Sectiond`}
+            draggable
           >
             <Icon name="beaker" size={18} />
           </DashboardHeaderButton>

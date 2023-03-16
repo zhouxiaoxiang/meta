@@ -95,6 +95,8 @@ export function QuestionList({
                   rightIcon={PLUGIN_MODERATION.getStatusIcon(
                     item.moderated_status,
                   )}
+                  draggable
+                  data-question-id={item.id}
                 />
               ))}
             </SelectList>
