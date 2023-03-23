@@ -119,6 +119,7 @@ export default class NotebookStep extends React.Component {
       updateQuery,
       reportTimezone,
       sourceQuestion,
+      readOnly,
     } = this.props;
     const { showPreview } = this.state;
 
@@ -130,7 +131,7 @@ export default class NotebookStep extends React.Component {
 
     const color = getColor();
     const canPreview = step.previewQuery && step.previewQuery.isValid();
-    const showPreviewButton = !showPreview && canPreview;
+    const showPreviewButton = !showPreview && canPreview && !readOnly;
 
     const largeActionButtons =
       isLastStep &&
@@ -189,8 +190,10 @@ export default class NotebookStep extends React.Component {
                   updateQuery={updateQuery}
                   isLastOpened={isLastOpened}
                   reportTimezone={reportTimezone}
+                  readOnly={readOnly}
                 />
               </StepContent>
+
               <StepButtonContainer>
                 <ActionButton
                   ml={[1, 2]}
@@ -214,7 +217,7 @@ export default class NotebookStep extends React.Component {
             />
           )}
 
-          {actionButtons.length > 0 && (
+          {actionButtons.length > 0 && !readOnly && (
             <StepActionsContainer data-testid="action-buttons">
               {actionButtons}
             </StepActionsContainer>

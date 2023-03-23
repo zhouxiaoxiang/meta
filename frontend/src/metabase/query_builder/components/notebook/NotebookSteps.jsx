@@ -44,6 +44,7 @@ export default class NotebookSteps extends React.Component {
       reportTimezone,
       sourceQuestion,
       updateQuestion,
+      readOnly,
     } = this.props;
     const { openSteps, lastOpenedStep } = this.state;
 
@@ -75,6 +76,7 @@ export default class NotebookSteps extends React.Component {
               isLastStep={index === steps.length - 1}
               isLastOpened={lastOpenedStep === step.id}
               reportTimezone={reportTimezone}
+              readOnly={readOnly}
             />
           );
         })}
