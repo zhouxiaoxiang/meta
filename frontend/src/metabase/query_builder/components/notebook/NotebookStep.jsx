@@ -170,13 +170,15 @@ export default class NotebookStep extends React.Component {
         >
           <StepHeader color={color}>
             {title}
-            <Icon
-              name="close"
-              className="ml-auto cursor-pointer text-light text-medium-hover hover-child"
-              tooltip={t`Remove`}
-              onClick={() => updateQuery(step.revert(step.query))}
-              data-testid="remove-step"
-            />
+            {!readOnly && (
+              <Icon
+                name="close"
+                className="ml-auto cursor-pointer text-light text-medium-hover hover-child"
+                tooltip={t`Remove`}
+                onClick={() => updateQuery(step.revert(step.query))}
+                data-testid="remove-step"
+              />
+            )}
           </StepHeader>
 
           {NotebookStepComponent && (
@@ -194,19 +196,23 @@ export default class NotebookStep extends React.Component {
                 />
               </StepContent>
 
-              <StepButtonContainer>
-                <ActionButton
-                  ml={[1, 2]}
-                  className={
-                    !showPreviewButton ? "hidden disabled" : "text-brand-hover"
-                  }
-                  icon="play"
-                  title={t`Preview`}
-                  color={c("text-light")}
-                  transparent
-                  onClick={() => this.setState({ showPreview: true })}
-                />
-              </StepButtonContainer>
+              {!readOnly && (
+                <StepButtonContainer>
+                  <ActionButton
+                    ml={[1, 2]}
+                    className={
+                      !showPreviewButton
+                        ? "hidden disabled"
+                        : "text-brand-hover"
+                    }
+                    icon="play"
+                    title={t`Preview`}
+                    color={c("text-light")}
+                    transparent
+                    onClick={() => this.setState({ showPreview: true })}
+                  />
+                </StepButtonContainer>
+              )}
             </StepBody>
           )}
 
