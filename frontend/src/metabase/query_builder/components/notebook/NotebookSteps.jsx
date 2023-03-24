@@ -9,7 +9,7 @@ import { getQuestionSteps } from "./lib/steps";
 export default class NotebookSteps extends React.Component {
   constructor(props) {
     super(props);
-    const isNew = !props.question.table();
+    const isNew = !props.readOnly && !props.question.table();
     this.state = {
       openSteps: isNew
         ? {
