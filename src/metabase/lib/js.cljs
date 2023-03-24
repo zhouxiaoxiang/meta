@@ -13,6 +13,26 @@
 ;;; this is mostly to ensure all the relevant namespaces with multimethods impls get loaded.
 (comment lib.core/keep-me)
 
+;; TODO: This pattern of "re-export some function and slap a `clj->js` at the end" is going to keep appearing.
+;; Generalize the machinery in `metabase.domain-entities.malli` to handle this case, so we get schema-powered automatic
+;; conversion for incoming args and outgoing return values. I'm imagining something like
+;; `(mu/js-export lib.core/recognize-template-tags)` where that function has a Malli schema and it works like
+;; `metabase.shared.util.namespaces/import-fn` plus wrapping it with conversion for all args and the return value.
+(defn ^:export recognize-template-tags
+  "Given the text of a native query, extract a possibly-empty set of template tag strings from it.
+
+  These looks like mustache templates. For variables, we only allow alphanumeric characters, eg. `{{foo}}`.
+  For snippets they start with `snippet:`, eg. `{{ snippet: arbitrary text here }}`.
+  And for card references either `{{ #123 }}` or with the optional human label `{{ #123-card-title-slug }}`.
+
+  Invalid patterns are simply ignored, so something like `{{&foo!}}` is just disregarded.
+
+  See unit tests in [[for more examples."
+  [query-text]
+  (-> query-text
+      lib.core/recognize-template-tags
+      clj->js))
+
 (defn ^:export suggestedName
   "Return a nice description of a query."
   [query]

@@ -7,7 +7,6 @@ import {
 } from "__support__/sample_database_fixture";
 
 import NativeQuery, {
-  recognizeTemplateTags,
   cardIdFromTagName,
   updateCardTemplateTagNames,
 } from "metabase-lib/queries/NativeQuery";
@@ -376,45 +375,6 @@ describe("NativeQuery", () => {
       expect(fooTag["name"]).toEqual("#123-foo-new"); // foo's name is updated
       expect(barTag["card-id"]).toEqual(1234); // bar's card-id is the same
       expect(barTag["name"]).toEqual("#1234-bar"); // bar's name is the same
-    });
-  });
-
-  describe("recognizeTemplateTags", () => {
-    it("should handle standard variable names", () => {
-      expect(recognizeTemplateTags("SELECT * from {{products}}")).toEqual([
-        "products",
-      ]);
-    });
-
-    it("should allow duplicated variables", () => {
-      expect(
-        recognizeTemplateTags("SELECT {{col}} FROM {{t}} ORDER BY {{col}} "),
-      ).toEqual(["col", "t"]);
-    });
-
-    it("should ignore non-alphanumeric markers", () => {
-      expect(recognizeTemplateTags("SELECT * from X -- {{&universe}}")).toEqual(
-        [],
-      );
-    });
-
-    it("should handle snippets", () => {
-      expect(
-        recognizeTemplateTags(
-          "SELECT * from {{snippet: A snippet name}} cross join {{ snippet:     another-snippet with *&#) }}",
-        ),
-      ).toEqual([
-        "snippet: A snippet name",
-        "snippet:     another-snippet with *&#) ",
-      ]);
-    });
-
-    it("should handle card references", () => {
-      expect(
-        recognizeTemplateTags(
-          "SELECT * from {{#123}} cross join {{ #456-a-card-name }} cross join {{#not-this}} cross join {{#123or-this}}",
-        ),
-      ).toEqual(["#123", "#456-a-card-name"]);
     });
   });
 

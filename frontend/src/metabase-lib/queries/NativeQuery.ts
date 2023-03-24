@@ -4,6 +4,7 @@ import { t } from "ttag";
 import { assoc, assocIn, chain, getIn, updateIn } from "icepick";
 import _ from "underscore";
 import slugg from "slugg";
+import * as ML from "cljs/metabase.lib.js";
 import { humanize } from "metabase/lib/formatting";
 import Utils from "metabase/lib/utils";
 import { ParameterValuesConfig } from "metabase-types/api";
@@ -46,28 +47,6 @@ export const NATIVE_QUERY_TEMPLATE: NativeDatasetQuery = {
 
 ///////////////////////////
 // QUERY TEXT TAG UTILS
-
-const VARIABLE_TAG_REGEX: RegExp = /\{\{\s*([A-Za-z0-9_\.]+)\s*\}\}/g;
-const SNIPPET_TAG_REGEX: RegExp = /\{\{\s*(snippet:\s*[^}]+)\s*\}\}/g;
-export const CARD_TAG_REGEX: RegExp =
-  /\{\{\s*(#([0-9]*)(-[a-z0-9-]*)?)\s*\}\}/g;
-const TAG_REGEXES: RegExp[] = [
-  VARIABLE_TAG_REGEX,
-  SNIPPET_TAG_REGEX,
-  CARD_TAG_REGEX,
-];
-
-// look for variable usage in the query (like '{{varname}}').  we only allow alphanumeric characters for the variable name
-// a variable name can optionally end with :start or :end which is not considered part of the actual variable name
-// expected pattern is like mustache templates, so we are looking for something like {{category}}
-// anything that doesn't match our rule is ignored, so {{&foo!}} would simply be ignored
-// See unit tests for examples
-export function recognizeTemplateTags(queryText: string): string[] {
-  const tagNames = TAG_REGEXES.flatMap(r =>
-    Array.from(queryText.matchAll(r)),
-  ).map(m => m[1]);
-  return _.uniq(tagNames);
-}
 
 // matches '#123-foo-bar' and '#123' but not '#123foo'
 const CARD_TAG_NAME_REGEX: RegExp = /^#([0-9]*)(-[a-z0-9-]*)?$/;
@@ -479,7 +458,7 @@ export default class NativeQuery extends AtomicQuery {
    */
   private _getUpdatedTemplateTags(queryText: string): TemplateTags {
     if (queryText && this.supportsNativeParameters()) {
-      const tags = recognizeTemplateTags(queryText);
+      const tags = ML.recognize_template_tags(queryText);
       const existingTemplateTags = this.templateTagsMap();
       const existingTags = Object.keys(existingTemplateTags);
 
