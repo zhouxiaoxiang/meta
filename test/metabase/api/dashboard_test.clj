@@ -15,7 +15,7 @@
    [metabase.http-client :as client]
    [metabase.models
     :refer [Action
-            Card
+            :m/card
             Collection
             Dashboard
             DashboardCard
@@ -237,7 +237,7 @@
                                                             {:name "Name", :slug "name", :id "b", :type :category}
                                                             {:name "Source", :slug "source", :id "c", :type :category}
                                                             {:name "User", :slug "user_id", :id "d", :type :id}]}
-           Card {card-id :id} {:database_id   (mt/id)
+           :m/card {card-id :id} {:database_id   (mt/id)
                                :query_type    :native
                                :name          "test question"
                                :creator_id    (mt/user->id :crowberto)
@@ -282,7 +282,7 @@
     (testing "fetch a dashboard WITH a dashboard card on it"
       (mt/with-temp* [Dashboard     [{dashboard-id :id
                                       :as          dashboard}    {:name "Test Dashboard"}]
-                      Card          [{card-id :id
+                      :m/card          [{card-id :id
                                       :as     card}         {:name "Dashboard Test Card"}]
                       DashboardCard [dashcard           {:dashboard_id dashboard-id, :card_id card-id}]
                       User          [{user-id :id}      {:first_name "Test" :last_name "User"
@@ -368,7 +368,7 @@
                       Field         [{field-id :id display-name :display_name} {:table_id table-id}]
 
                       Dashboard     [{dashboard-id :id} {:name "Test Dashboard"}]
-                      Card          [{card-id :id
+                      :m/card          [{card-id :id
                                       :as     card}     {:name "Dashboard Test Card"}]
                       DashboardCard [dashcard           {:dashboard_id       dashboard-id
                                                          :card_id            card-id
@@ -416,7 +416,7 @@
                    (dashboard-response (mt/user-http-request :rasta :get 200 (format "dashboard/%d" dashboard-id)))))))))
     (testing "fetch a dashboard from an official collection includes the collection type"
       (mt/with-temp* [Dashboard     [{dashboard-id :id} {:name "Test Dashboard"}]
-                      Card          [{card-id :id}      {:name "Dashboard Test Card"}]
+                      :m/card          [{card-id :id}      {:name "Dashboard Test Card"}]
                       DashboardCard [_                  {:dashboard_id dashboard-id, :card_id card-id}]]
         (with-dashboards-in-readable-collection [dashboard-id]
           (api.card-test/with-cards-in-readable-collection [card-id]
@@ -436,9 +436,9 @@
         (mt/with-temp* [Collection          [{coll-id :id}      {:name "Collection 1"}]
                         Dashboard           [{dashboard-id :id} {:name       "Test Dashboard"
                                                                  :creator_id (mt/user->id :crowberto)}]
-                        Card                [{card-id :id}      {:name          "Dashboard Test Card"
+                        :m/card                [{card-id :id}      {:name          "Dashboard Test Card"
                                                                  :collection_id coll-id}]
-                        Card                [{card-id2 :id}     {:name          "Dashboard Test Card 2"
+                        :m/card                [{card-id2 :id}     {:name          "Dashboard Test Card 2"
                                                                  :collection_id coll-id}]
                         DashboardCard       [{dbc_id :id}       {:dashboard_id dashboard-id, :card_id card-id}]
                         DashboardCardSeries [_                  {:dashboardcard_id dbc_id, :card_id card-id2
@@ -485,7 +485,7 @@
                  (dashboard-response (t2/select-one Dashboard :id dashboard-id)))))
 
         (testing "No-op PUT: Do not return 500"
-          (t2.with-temp/with-temp [Card          {card-id :id} {}
+          (t2.with-temp/with-temp [:m/card          {card-id :id} {}
                                    DashboardCard dashcard      {:card_id card-id, :dashboard_id dashboard-id}]
             ;; so, you can't actually set `:cards` with THIS endpoint (you have to use PUT /api/dashboard/:id/cards)
             ;; but the e2e tests are trying to do it. With Toucan 1, it would silently do nothing and return truthy for
@@ -626,7 +626,7 @@
                    (items)))))
 
         (testing "Check that updating a dashboard at position 3 to position 1 will increment the positions before 3, not after"
-          (api.card-test/with-ordered-items collection [Card      a
+          (api.card-test/with-ordered-items collection [:m/card      a
                                                         Pulse     b
                                                         Dashboard c
                                                         Dashboard d]
@@ -636,7 +636,7 @@
 
         (testing "Check that updating position 1 to 3 will cause b and c to be decremented"
           (api.card-test/with-ordered-items collection [Dashboard a
-                                                        Card      b
+                                                        :m/card      b
                                                         Pulse     c
                                                         Dashboard d]
             (move-dashboard! a 3)
@@ -646,7 +646,7 @@
 
         (testing "Check that updating position 1 to 4 will cause a through c to be decremented"
           (api.card-test/with-ordered-items collection [Dashboard a
-                                                        Card      b
+                                                        :m/card      b
                                                         Pulse     c
                                                         Pulse     d]
             (move-dashboard! a 4)
@@ -654,9 +654,9 @@
                    (items)))))
 
         (testing "Check that updating position 4 to 1 will cause a through c to be incremented"
-          (api.card-test/with-ordered-items collection [Card      a
+          (api.card-test/with-ordered-items collection [:m/card      a
                                                         Pulse     b
-                                                        Card      c
+                                                        :m/card      c
                                                         Dashboard d]
             (move-dashboard! d 1)
             (is (= {"d" 1, "a" 2, "b" 3, "c" 4}
@@ -668,13 +668,13 @@
       (mt/with-temp* [Collection [collection-1]
                       Collection [collection-2]]
         (api.card-test/with-ordered-items collection-1 [Dashboard a
-                                                        Card      b
-                                                        Card      c
+                                                        :m/card      b
+                                                        :m/card      c
                                                         Pulse     d]
           (api.card-test/with-ordered-items collection-2 [Pulse     e
                                                           Pulse     f
                                                           Dashboard g
-                                                          Card      h]
+                                                          :m/card      h]
             (perms/grant-collection-readwrite-permissions! (perms-group/all-users) collection-1)
             (perms/grant-collection-readwrite-permissions! (perms-group/all-users) collection-2)
             ;; Move the first dashboard in collection-1 to collection-1
@@ -700,9 +700,9 @@
     (testing "Check that adding a new Dashboard at Collection position 3 will increment position of the existing item at position 3"
       (mt/with-non-admin-groups-no-root-collection-perms
         (mt/with-temp Collection [collection]
-          (api.card-test/with-ordered-items collection [Card  a
+          (api.card-test/with-ordered-items collection [:m/card  a
                                                         Pulse b
-                                                        Card  d]
+                                                        :m/card  d]
             (perms/grant-collection-readwrite-permissions! (perms-group/all-users) collection)
             (is (= {"a" 1
                     "b" 2
@@ -726,7 +726,7 @@
       (mt/with-non-admin-groups-no-root-collection-perms
         (mt/with-temp Collection [collection]
           (api.card-test/with-ordered-items collection [Dashboard a
-                                                        Card      b
+                                                        :m/card      b
                                                         Pulse     d]
             (perms/grant-collection-readwrite-permissions! (perms-group/all-users) collection)
             (is (= {"a" 1
@@ -809,7 +809,7 @@
                                              :description   "A description"
                                              :collection_id (u/the-id source-coll)
                                              :creator_id    (mt/user->id :rasta)}]
-                      Card       [total-card  {:name "Total orders per month"
+                      :m/card       [total-card  {:name "Total orders per month"
                                                :collection_id (u/the-id source-coll)
                                                :display :line
                                                :visualization_settings
@@ -822,7 +822,7 @@
                                                  :query    {:source-table $$orders
                                                             :aggregation  [[:sum $orders.total]]
                                                             :breakout     [!month.orders.created_at]}})}]
-                      Card      [avg-card  {:name "Average orders per month"
+                      :m/card      [avg-card  {:name "Average orders per month"
                                             :collection_id (u/the-id source-coll)
                                             :display :line
                                             :visualization_settings
@@ -835,7 +835,7 @@
                                               :query    {:source-table $$orders
                                                          :aggregation  [[:avg $orders.total]]
                                                          :breakout     [!month.orders.created_at]}})}]
-                      Card          [model {:name "A model"
+                      :m/card          [model {:name "A model"
                                             :collection_id (u/the-id source-coll)
                                             :dataset true
                                             :dataset_query
@@ -858,7 +858,7 @@
                       DashboardCardSeries [_ {:dashboardcard_id (u/the-id dashcard)
                                               :card_id (u/the-id avg-card)
                                               :position 0}]]
-        (mt/with-model-cleanup [Card Dashboard DashboardCard DashboardCardSeries]
+        (mt/with-model-cleanup [:m/card Dashboard DashboardCard DashboardCardSeries]
           (let [resp (mt/user-http-request :crowberto :post 200
                                            (format "dashboard/%d/copy" (:id dashboard))
                                            {:name        "New dashboard"
@@ -867,8 +867,8 @@
                                             :collection_id (u/the-id dest-coll)})]
             (is (= (:collection_id resp) (u/the-id dest-coll))
                 "Dashboard should go into the destination collection")
-            (is (= 3 (count (t2/select 'Card :collection_id (u/the-id source-coll)))))
-            (let [copied-cards (t2/select 'Card :collection_id (u/the-id dest-coll))
+            (is (= 3 (count (t2/select :m/card :collection_id (u/the-id source-coll)))))
+            (let [copied-cards (t2/select :m/card :collection_id (u/the-id dest-coll))
                   copied-db-cards (t2/select 'DashboardCard :dashboard_id (u/the-id (:id resp)))
                   source-db-cards (t2/select 'DashboardCard :dashboard_id (u/the-id dashboard))]
               (testing "Copies all of the questions on the dashboard"
@@ -893,7 +893,7 @@
                                                :description   "A description"
                                                :collection_id (u/the-id source-coll)
                                                :creator_id    (mt/user->id :rasta)}]
-                        Card       [total-card  {:name "Total orders per month"
+                        :m/card       [total-card  {:name "Total orders per month"
                                                  :collection_id (u/the-id no-read-coll)
                                                  :display :line
                                                  :visualization_settings
@@ -906,7 +906,7 @@
                                                    :query    {:source-table $$orders
                                                               :aggregation  [[:sum $orders.total]]
                                                               :breakout     [!month.orders.created_at]}})}]
-                        Card      [avg-card  {:name "Average orders per month"
+                        :m/card      [avg-card  {:name "Average orders per month"
                                               :collection_id (u/the-id source-coll)
                                               :display :line
                                               :visualization_settings
@@ -919,7 +919,7 @@
                                                 :query    {:source-table $$orders
                                                            :aggregation  [[:avg $orders.total]]
                                                            :breakout     [!month.orders.created_at]}})}]
-                        Card          [card {:name "A card"
+                        :m/card          [card {:name "A card"
                                              :collection_id (u/the-id source-coll)
                                              :dataset_query
                                              (mt/$ids
@@ -936,7 +936,7 @@
                         DashboardCardSeries [_ {:dashboardcard_id (u/the-id dashcard)
                                                 :card_id (u/the-id avg-card)
                                                 :position 0}]]
-          (mt/with-model-cleanup [Card Dashboard DashboardCard DashboardCardSeries]
+          (mt/with-model-cleanup [:m/card Dashboard DashboardCard DashboardCardSeries]
             (perms/revoke-collection-permissions! (perms-group/all-users) no-read-coll)
             (let [resp (mt/user-http-request :rasta :post 200
                                              (format "dashboard/%d/copy" (:id dashboard))
@@ -946,7 +946,7 @@
                                               :collection_id (u/the-id dest-coll)})]
               (is (= (:collection_id resp) (u/the-id dest-coll))
                   "Dashboard should go into the destination collection")
-              (let [copied-cards (t2/select 'Card :collection_id (u/the-id dest-coll))
+              (let [copied-cards (t2/select :m/card :collection_id (u/the-id dest-coll))
                     copied-db-cards (t2/select 'DashboardCard :dashboard_id (u/the-id (:id resp)))]
                 (testing "Copies only one of the questions on the dashboard"
                   (is (= 1 (count copied-cards))))
@@ -969,7 +969,7 @@
                                                :description   "A description"
                                                :collection_id (u/the-id source-coll)
                                                :creator_id    (mt/user->id :rasta)}]
-                        Card       [total-card  {:name "Total orders per month"
+                        :m/card       [total-card  {:name "Total orders per month"
                                                  :collection_id (u/the-id source-coll)
                                                  :display :line
                                                  :visualization_settings
@@ -982,7 +982,7 @@
                                                    :query    {:source-table $$orders
                                                               :aggregation  [[:sum $orders.total]]
                                                               :breakout     [!month.orders.created_at]}})}]
-                        Card      [avg-card  {:name "Average orders per month"
+                        :m/card      [avg-card  {:name "Average orders per month"
                                               :collection_id (u/the-id source-coll)
                                               :display :line
                                               :visualization_settings
@@ -995,7 +995,7 @@
                                                 :query    {:source-table $$orders
                                                            :aggregation  [[:avg $orders.total]]
                                                            :breakout     [!month.orders.created_at]}})}]
-                        Card          [card {:name "A card"
+                        :m/card          [card {:name "A card"
                                              :collection_id (u/the-id source-coll)
                                              :dataset_query
                                              (mt/$ids
@@ -1012,14 +1012,14 @@
                         DashboardCardSeries [_ {:dashboardcard_id (u/the-id dashcard)
                                                 :card_id (u/the-id avg-card)
                                                 :position 0}]]
-          (mt/with-model-cleanup [Card Dashboard DashboardCard DashboardCardSeries]
+          (mt/with-model-cleanup [:m/card Dashboard DashboardCard DashboardCardSeries]
             (let [_resp (mt/user-http-request :rasta :post 200
                                               (format "dashboard/%d/copy" (:id dashboard))
                                               {:name        "New dashboard"
                                                :description "A new description"
                                                :is_deep_copy true
                                                :collection_id (u/the-id source-coll)})
-                  cards-in-coll (t2/select 'Card :collection_id (u/the-id source-coll))]
+                  cards-in-coll (t2/select :m/card :collection_id (u/the-id source-coll))]
               ;; original 3 plust 3 duplicates
               (is (= 6 (count cards-in-coll)) "Not all cards were copied")
               (is (= (into #{} (comp (map :name)
@@ -1141,8 +1141,8 @@
                                                                         :slug "category_id"
                                                                         :id   "_CATEGORY_ID_"
                                                                         :type :category}]}]
-                      Card          [{card-id :id}]
-                      Card          [{card-id2 :id}]
+                      :m/card          [{card-id :id}]
+                      :m/card          [{card-id2 :id}]
                       DashboardCard [{dashcard-id :id} {:dashboard_id       dashboard-id
                                                         :card_id            card-id
                                                         :parameter_mappings [{:parameter_id "random-id"
@@ -1186,7 +1186,7 @@
 
 (deftest simple-creation-with-no-additional-series-test
   (mt/with-temp* [Dashboard [{dashboard-id :id}]
-                  Card      [{card-id :id}]]
+                  :m/card      [{card-id :id}]]
     (with-dashboards-in-writeable-collection [dashboard-id]
       (api.card-test/with-cards-in-readable-collection [card-id]
         (is (= {:size_x                 4
@@ -1224,8 +1224,8 @@
 
 (deftest new-dashboard-card-with-additional-series-test
   (mt/with-temp* [Dashboard [{dashboard-id :id}]
-                  Card      [{card-id :id}]
-                  Card      [{series-id-1 :id} {:name "Series Card"}]]
+                  :m/card      [{card-id :id}]
+                  :m/card      [{series-id-1 :id} {:name "Series Card"}]]
     (with-dashboards-in-writeable-collection [dashboard-id]
       (api.card-test/with-cards-in-readable-collection [card-id series-id-1]
         (let [dashboard-card (mt/user-http-request :rasta :post 200 (format "dashboard/%d/cards" dashboard-id)
@@ -1265,7 +1265,7 @@
                                                                      :slug "category_id"
                                                                      :id   "_CATEGORY_ID_"
                                                                      :type "category"}]}]
-                    Card          [{card-id :id} {:database_id   (mt/id)
+                    :m/card          [{card-id :id} {:database_id   (mt/id)
                                                   :table_id      (mt/id :venues)
                                                   :dataset_query (mt/mbql-query venues)}]]
       (let [mappings [{:parameter_id "_CATEGORY_ID_"
@@ -1375,9 +1375,9 @@
   (testing "DELETE /api/dashboard/id/:cards"
     ;; fetch a dashboard WITH a dashboard card on it
     (mt/with-temp* [Dashboard           [{dashboard-id :id}]
-                    Card                [{card-id :id}]
-                    Card                [{series-id-1 :id}]
-                    Card                [{series-id-2 :id}]
+                    :m/card                [{card-id :id}]
+                    :m/card                [{series-id-1 :id}]
+                    :m/card                [{series-id-2 :id}]
                     DashboardCard       [{dashcard-id :id} {:dashboard_id dashboard-id, :card_id card-id}]
                     DashboardCardSeries [_                 {:dashboardcard_id dashcard-id, :card_id series-id-1, :position 0}]
                     DashboardCardSeries [_                 {:dashboardcard_id dashcard-id, :card_id series-id-2, :position 1}]]
@@ -1399,10 +1399,10 @@
   (testing "PUT /api/dashboard/:id/cards"
     ;; fetch a dashboard WITH a dashboard card on it
     (mt/with-temp* [Dashboard     [{dashboard-id :id}]
-                    Card          [{card-id :id}]
+                    :m/card          [{card-id :id}]
                     DashboardCard [{dashcard-id-1 :id} {:dashboard_id dashboard-id, :card_id card-id}]
                     DashboardCard [{dashcard-id-2 :id} {:dashboard_id dashboard-id, :card_id card-id}]
-                    Card          [{series-id-1 :id}   {:name "Series Card"}]]
+                    :m/card          [{series-id-1 :id}   {:name "Series Card"}]]
       (with-dashboards-in-writeable-collection [dashboard-id]
         (is (= {:size_x                 4
                 :size_y                 4
@@ -1467,8 +1467,8 @@
     (testing "PUT /api/dashboard/:id/cards"
       ;; fetch a dashboard WITH a dashboard card on it
       (mt/with-temp* [Dashboard     [{dashboard-id :id}]
-                      Card          [{model-id :id} {:dataset true}]
-                      Card          [{model-id-2 :id} {:dataset true}]
+                      :m/card          [{model-id :id} {:dataset true}]
+                      :m/card          [{model-id-2 :id} {:dataset true}]
                       Action        [{action-id :id} {:model_id model-id :type :implicit :name "action"}]
                       DashboardCard [action-card {:dashboard_id dashboard-id
                                                   :action_id action-id
@@ -1813,7 +1813,7 @@
    (do-with-chain-filter-fixtures nil f))
 
   ([dashboard-values f]
-   (mt/with-temp* [Card          [{source-card-id         :id}
+   (mt/with-temp* [:m/card          [{source-card-id         :id}
                                   (merge (mt/card-with-source-metadata-for-query (mt/mbql-query categories {:limit 5}))
                                          {:database_id     (mt/id)
                                           :table_id        (mt/id :categories)})]
@@ -1852,7 +1852,7 @@
                                                                   :values_source_config {:card_id     source-card-id
                                                                                          :value_field (mt/$ids $categories.name)}}]}
                                                    dashboard-values)]
-                   Card          [card {:database_id   (mt/id)
+                   :m/card          [card {:database_id   (mt/id)
                                         :table_id      (mt/id :venues)
                                         :dataset_query (mt/mbql-query venues)}]
                    DashboardCard [dashcard {:card_id            (:id card)
@@ -1971,7 +1971,7 @@
 
     (testing "Should work if Dashboard has multiple mappings for a single param"
       (with-chain-filter-fixtures [{:keys [dashboard card dashcard param-keys]}]
-        (mt/with-temp* [Card          [card-2 (dissoc card :id :entity_id)]
+        (mt/with-temp* [:m/card          [card-2 (dissoc card :id :entity_id)]
                         DashboardCard [_dashcard-2 (-> dashcard
                                                        (dissoc :id :card_id :entity_id)
                                                        (assoc  :card_id (:id card-2)))]]
@@ -2075,7 +2075,7 @@
       ;; Note that we can directly query the values for the model, but this is
       ;; nonsensical from a dashboard standpoint as the returned values aren't
       ;; usable for filtering...
-      (mt/with-temp* [Card [{model-id :id :as native-card}
+      (mt/with-temp* [:m/card [{model-id :id :as native-card}
                             {:database_id   (mt/id)
                              :name          "Native Query"
                              :dataset_query (mt/native-query
@@ -2084,14 +2084,14 @@
         (let [metadata (-> (qp/process-query (:dataset_query native-card))
                            :data :results_metadata :columns)]
           (is (seq metadata) "Did not get metadata")
-          (db/update-where! 'Card {:id model-id}
+          (db/update-where! :m/card {:id model-id}
                             :result_metadata (json/generate-string
                                               (assoc-in metadata [0 :id]
                                                         (mt/id :products :category)))))
         ;; ...so instead we create a question on top of this model (note that
         ;; metadata must be present on the model) and use the question on the
         ;; dashboard.
-        (mt/with-temp* [Card [{question-id :id}
+        (mt/with-temp* [:m/card [{question-id :id}
                               {:database_id   (mt/id)
                                :name          "card on native query"
                                :dataset_query {:type     :query
@@ -2281,7 +2281,7 @@
   (testing "fallback to chain-filter"
     (with-redefs [api.dashboard/chain-filter (constantly "chain-filter")]
       (testing "if value-field not found in source card"
-        (mt/with-temp* [Card       [{card-id :id}]
+        (mt/with-temp* [:m/card       [{card-id :id}]
                         Dashboard  [dashboard
                                     {:parameters    [{:id                   "abc"
                                                       :type                 "category"
@@ -2293,7 +2293,7 @@
             (is (= "chain-filter" (mt/user-http-request :rasta :get 200 url))))))
 
       (testing "if card is archived"
-        (mt/with-temp* [Card       [{card-id :id} {:archived true}]
+        (mt/with-temp* [:m/card       [{card-id :id} {:archived true}]
                         Dashboard  [dashboard
                                     {:parameters    [{:id                   "abc"
                                                       :type                 "category"
@@ -2308,7 +2308,7 @@
     (mt/with-non-admin-groups-no-root-collection-perms
       (mt/with-temp*
         [Collection [coll1 {:name "Source card collection"}]
-         Card       [{source-card-id :id}
+         :m/card       [{source-card-id :id}
                      {:collection_id (:id coll1)
                       :database_id   (mt/id)
                       :table_id      (mt/id :venues)
@@ -2346,7 +2346,7 @@
     ;; the id is a valid field that we could use to retrieve values.
     (mt/with-temp*
       ;; card with agggregation and binning columns
-      [Card [{mbql-card-id :id}
+      [:m/card [{mbql-card-id :id}
              (merge (mt/card-with-source-metadata-for-query
                       (mt/mbql-query venues {:limit 5
                                              :aggregation [:count]
@@ -2354,7 +2354,7 @@
                     {:name        "MBQL question"
                      :database_id (mt/id)
                      :table_id    (mt/id :venues)})]
-       Card [{native-card-id :id}
+       :m/card [{native-card-id :id}
              (merge (mt/card-with-source-metadata-for-query
                       (mt/native-query {:query "select name from venues;"}))
                     {:name        "Native question"
@@ -2471,7 +2471,7 @@
                     (is (= "You don't have permissions to do that."
                            (mt/user-http-request :rasta :post 403 (url))))))
                 (testing "Should return error if current User doesn't have query perms for the Card"
-                  (mt/with-temp-vals-in-db Card card-id {:collection_id collection-id}
+                  (mt/with-temp-vals-in-db :m/card card-id {:collection_id collection-id}
                     (is (= "You don't have permissions to do that."
                            (mt/user-http-request :rasta :post 403 (url))))))))))))))
 
@@ -2551,7 +2551,7 @@
     (mt/test-drivers (api.pivots/applicable-drivers)
       (mt/dataset sample-dataset
         (mt/with-temp* [Dashboard     [{dashboard-id :id}]
-                        Card          [{card-id :id} (api.pivots/pivot-card)]
+                        :m/card          [{card-id :id} (api.pivots/pivot-card)]
                         DashboardCard [{dashcard-id :id} {:dashboard_id dashboard-id, :card_id card-id}]]
           (let [result (mt/user-http-request :rasta :post 202 (dashcard-pivot-query-endpoint dashboard-id card-id dashcard-id))
                 rows   (mt/rows result)]

@@ -5,7 +5,7 @@
    [metabase-enterprise.serialization.load :as load]
    [metabase-enterprise.serialization.test-util :as ts]
    [metabase.cmd :as cmd]
-   [metabase.models :refer [Card Dashboard DashboardCard Database User]]
+   [metabase.models :refer [:m/card Dashboard DashboardCard Database User]]
    [metabase.test :as mt]
    [metabase.test.fixtures :as fixtures]
    [metabase.util :as u]
@@ -45,7 +45,7 @@
                    :created_at :%now
                    :updated_at :%now)]
         ;; then the card itself
-        (db/simple-insert! Card
+        (db/simple-insert! :m/card
           :name                   "Single Card"
           :display                "Single Card"
           :database_id            (u/the-id db)
@@ -83,12 +83,12 @@
               (let [{db-id :id, :as db} (ts/create! Database :name "My_Database")]
                 (mt/with-db db
                   (let [{user-id :id}      (ts/create! User, :is_superuser true)
-                        {card-1-id :id}    (ts/create! Card
+                        {card-1-id :id}    (ts/create! :m/card
                                                        :database_id   db-id
                                                        :creator_id    user-id
                                                        :name          "Card_1"
                                                        :dataset_query {:database db-id, :type :native, :native {:query "SELECT 1;"}})
-                        {card-2-id :id}    (ts/create! Card
+                        {card-2-id :id}    (ts/create! :m/card
                                                        :database_id   db-id
                                                        :creator_id    user-id
                                                        :name          "Card_2"
@@ -112,12 +112,12 @@
               (is (nil? (cmd/load dump-dir "--on-error" :abort)))
               (testing "verify that things were loaded as expected"
                 (is (= 1 (t2/count Dashboard)) "# Dashboards")
-                (is (= 2 (t2/count Card)) "# Cards")
+                (is (= 2 (t2/count :m/card)) "# Cards")
                 (is (= 2 (t2/count DashboardCard)) "# DashboardCards")>)))
           (testing "remove one of the questions in the source's dashboard"
             (ts/with-source-db
-              (t2/delete! Card :name "Card_2")
-              (is (= 1 (t2/count Card)) "# Cards")
+              (t2/delete! :m/card :name "Card_2")
+              (is (= 1 (t2/count :m/card)) "# Cards")
               (is (= 1 (t2/count DashboardCard)) "# DashboardCards")))
           (testing "dump again"
             (ts/with-source-db
@@ -132,5 +132,5 @@
               (is (nil? (cmd/load dump-dir "--mode" :update, "--on-error" :abort)))
               (is (= 1 (t2/count Dashboard)) "# Dashboards")
               (testing "Don't delete the Card even tho it was deleted. Just delete the DashboardCard"
-                (is (= 2 (t2/count Card)) "# Cards"))
+                (is (= 2 (t2/count :m/card)) "# Cards"))
               (is (= 1 (t2/count DashboardCard)) "# DashboardCards"))))))))

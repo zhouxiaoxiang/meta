@@ -21,7 +21,7 @@
    [metabase.driver :as driver]
    [metabase.models
     :refer [Action
-            Card
+            :m/card
             Collection
             Dashboard
             Database
@@ -463,7 +463,7 @@
                                                                  :creator_id    1
                                                                  :parameters    "[]"
                                                                  :collection_id nil}]}))}
-               {:model            Card
+               {:model            :m/card
                 :collection-name  "Migrated Questions"
                 :create-instance! (fn []
                                     (create-user!)
@@ -637,7 +637,7 @@
                                      :password    "superstrong"
                                      :date_joined :%now})
             database-id (db/simple-insert! Database {:name "DB", :engine "h2", :created_at :%now, :updated_at :%now})
-            card-id (db/simple-insert! Card {:name                   "My Saved Question"
+            card-id (db/simple-insert! :m/card {:name                   "My Saved Question"
                                              :created_at             :%now
                                              :updated_at             :%now
                                              :creator_id             user-id
@@ -648,7 +648,7 @@
                                              :collection_id          nil})]
        (migrate!)
        (is (= nil
-              (:parameters (first (t2/select (t2/table-name Card) {:where [:= :id card-id]})))))))))
+              (:parameters (first (t2/select (t2/table-name :m/card) {:where [:= :id card-id]})))))))))
 
 (deftest add-parameter-mappings-to-cards-test
   (testing "Migration v44.00-024: Add parameter_mappings to cards"
@@ -662,7 +662,7 @@
             database-id
             (db/simple-insert! Database {:name "DB", :engine "h2", :created_at :%now, :updated_at :%now})
             card-id
-            (db/simple-insert! Card {:name                   "My Saved Question"
+            (db/simple-insert! :m/card {:name                   "My Saved Question"
                                      :created_at             :%now
                                      :updated_at             :%now
                                      :creator_id             user-id
@@ -673,7 +673,7 @@
                                      :collection_id          nil})]
         (migrate!)
         (is (= nil
-               (:parameter_mappings (first (t2/select (t2/table-name Card) {:where [:= :id card-id]})))))))))
+               (:parameter_mappings (first (t2/select (t2/table-name :m/card) {:where [:= :id card-id]})))))))))
 
 (deftest grant-all-users-root-snippets-collection-readwrite-perms-test
   (letfn [(perms-path [] "/collection/namespace/snippets/root/")
@@ -755,7 +755,7 @@
             empty-collection-id      (db/simple-insert! Collection {:name  "Empty Collection"
                                                                     :color "#ff0000"
                                                                     :slug  "empty_collection"})
-            _                        (db/simple-insert! Card {:collection_id          impersonal-collection-id
+            _                        (db/simple-insert! :m/card {:collection_id          impersonal-collection-id
                                                               :name                   "Card 1"
                                                               :display                "table"
                                                               :dataset_query          "{}"
@@ -764,7 +764,7 @@
                                                               :database_id            database-id
                                                               :created_at             #t "2022-10-20T02:09Z"
                                                               :updated_at             #t "2022-10-20T02:09Z"})
-            _                        (db/simple-insert! Card {:collection_id          impersonal-collection-id
+            _                        (db/simple-insert! :m/card {:collection_id          impersonal-collection-id
                                                               :name                   "Card 2"
                                                               :display                "table"
                                                               :dataset_query          "{}"
@@ -888,7 +888,7 @@
                                                :created_at :%now
                                                :updated_at :%now
                                                :active     true})
-            model-id (db/simple-insert! Card {:name                   "My Saved Question"
+            model-id (db/simple-insert! :m/card {:name                   "My Saved Question"
                                               :created_at             :%now
                                               :updated_at             :%now
                                               :creator_id             user-id
