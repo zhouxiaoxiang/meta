@@ -15,7 +15,6 @@
    [metabase.http-client :as client]
    [metabase.models
     :refer [Action
-            :m/card
             Collection
             Dashboard
             DashboardCard
@@ -238,37 +237,37 @@
                                                             {:name "Source", :slug "source", :id "c", :type :category}
                                                             {:name "User", :slug "user_id", :id "d", :type :id}]}
            :m/card {card-id :id} {:database_id   (mt/id)
-                               :query_type    :native
-                               :name          "test question"
-                               :creator_id    (mt/user->id :crowberto)
-                               :dataset_query {:type     :native
-                                               :native   {:query "SELECT COUNT(*) FROM people WHERE {{id}} AND {{name}} AND {{source}} /* AND {{user_id}} */"
-                                                          :template-tags
-                                                          {"id"      {:name         "id"
-                                                                      :display-name "Id"
-                                                                      :type         :dimension
-                                                                      :dimension    [:field (mt/id :people :id) nil]
-                                                                      :widget-type  :id
-                                                                      :default      nil}
-                                                           "name"    {:name         "name"
-                                                                      :display-name "Name"
-                                                                      :type         :dimension
-                                                                      :dimension    [:field (mt/id :people :name) nil]
-                                                                      :widget-type  :category
-                                                                      :default      nil}
-                                                           "source"  {:name         "source"
-                                                                      :display-name "Source"
-                                                                      :type         :dimension
-                                                                      :dimension    [:field (mt/id :people :source) nil]
-                                                                      :widget-type  :category
-                                                                      :default      nil}
-                                                           "user_id" {:name         "user_id"
-                                                                      :display-name "User"
-                                                                      :type         :dimension
-                                                                      :dimension    [:field (mt/id :orders :user_id) nil]
-                                                                      :widget-type  :id
-                                                                      :default      nil}}}
-                                               :database (mt/id)}}
+                                  :query_type    :native
+                                  :name          "test question"
+                                  :creator_id    (mt/user->id :crowberto)
+                                  :dataset_query {:type     :native
+                                                  :native   {:query "SELECT COUNT(*) FROM people WHERE {{id}} AND {{name}} AND {{source}} /* AND {{user_id}} */"
+                                                             :template-tags
+                                                             {"id"      {:name         "id"
+                                                                         :display-name "Id"
+                                                                         :type         :dimension
+                                                                         :dimension    [:field (mt/id :people :id) nil]
+                                                                         :widget-type  :id
+                                                                         :default      nil}
+                                                              "name"    {:name         "name"
+                                                                         :display-name "Name"
+                                                                         :type         :dimension
+                                                                         :dimension    [:field (mt/id :people :name) nil]
+                                                                         :widget-type  :category
+                                                                         :default      nil}
+                                                              "source"  {:name         "source"
+                                                                         :display-name "Source"
+                                                                         :type         :dimension
+                                                                         :dimension    [:field (mt/id :people :source) nil]
+                                                                         :widget-type  :category
+                                                                         :default      nil}
+                                                              "user_id" {:name         "user_id"
+                                                                         :display-name "User"
+                                                                         :type         :dimension
+                                                                         :dimension    [:field (mt/id :orders :user_id) nil]
+                                                                         :widget-type  :id
+                                                                         :default      nil}}}
+                                                  :database (mt/id)}}
            DashboardCard _ {:parameter_mappings [{:parameter_id "a", :card_id card-id, :target [:dimension [:template-tag "id"]]}
                                                  {:parameter_id "b", :card_id card-id, :target [:dimension [:template-tag "name"]]}
                                                  {:parameter_id "c", :card_id card-id, :target [:dimension [:template-tag "source"]]}
@@ -283,7 +282,7 @@
       (mt/with-temp* [Dashboard     [{dashboard-id :id
                                       :as          dashboard}    {:name "Test Dashboard"}]
                       :m/card          [{card-id :id
-                                      :as     card}         {:name "Dashboard Test Card"}]
+                                         :as     card}         {:name "Dashboard Test Card"}]
                       DashboardCard [dashcard           {:dashboard_id dashboard-id, :card_id card-id}]
                       User          [{user-id :id}      {:first_name "Test" :last_name "User"
                                                          :email      "test@example.com"}]
@@ -369,7 +368,7 @@
 
                       Dashboard     [{dashboard-id :id} {:name "Test Dashboard"}]
                       :m/card          [{card-id :id
-                                      :as     card}     {:name "Dashboard Test Card"}]
+                                         :as     card}     {:name "Dashboard Test Card"}]
                       DashboardCard [dashcard           {:dashboard_id       dashboard-id
                                                          :card_id            card-id
                                                          :parameter_mappings [{:card_id      1
@@ -437,9 +436,9 @@
                         Dashboard           [{dashboard-id :id} {:name       "Test Dashboard"
                                                                  :creator_id (mt/user->id :crowberto)}]
                         :m/card                [{card-id :id}      {:name          "Dashboard Test Card"
-                                                                 :collection_id coll-id}]
+                                                                    :collection_id coll-id}]
                         :m/card                [{card-id2 :id}     {:name          "Dashboard Test Card 2"
-                                                                 :collection_id coll-id}]
+                                                                    :collection_id coll-id}]
                         DashboardCard       [{dbc_id :id}       {:dashboard_id dashboard-id, :card_id card-id}]
                         DashboardCardSeries [_                  {:dashboardcard_id dbc_id, :card_id card-id2
                                                                  :position         0}]]
@@ -810,6 +809,19 @@
                                              :collection_id (u/the-id source-coll)
                                              :creator_id    (mt/user->id :rasta)}]
                       :m/card       [total-card  {:name "Total orders per month"
+                                                  :collection_id (u/the-id source-coll)
+                                                  :display :line
+                                                  :visualization_settings
+                                                  {:graph.dimensions ["CREATED_AT"]
+                                                   :graph.metrics ["sum"]}
+                                                  :dataset_query
+                                                  (mt/$ids
+                                                   {:database (mt/id)
+                                                    :type     :query
+                                                    :query    {:source-table $$orders
+                                                               :aggregation  [[:sum $orders.total]]
+                                                               :breakout     [!month.orders.created_at]}})}]
+                      :m/card      [avg-card  {:name "Average orders per month"
                                                :collection_id (u/the-id source-coll)
                                                :display :line
                                                :visualization_settings
@@ -820,30 +832,17 @@
                                                 {:database (mt/id)
                                                  :type     :query
                                                  :query    {:source-table $$orders
-                                                            :aggregation  [[:sum $orders.total]]
+                                                            :aggregation  [[:avg $orders.total]]
                                                             :breakout     [!month.orders.created_at]}})}]
-                      :m/card      [avg-card  {:name "Average orders per month"
-                                            :collection_id (u/the-id source-coll)
-                                            :display :line
-                                            :visualization_settings
-                                            {:graph.dimensions ["CREATED_AT"]
-                                             :graph.metrics ["sum"]}
-                                            :dataset_query
-                                            (mt/$ids
-                                             {:database (mt/id)
-                                              :type     :query
-                                              :query    {:source-table $$orders
-                                                         :aggregation  [[:avg $orders.total]]
-                                                         :breakout     [!month.orders.created_at]}})}]
                       :m/card          [model {:name "A model"
-                                            :collection_id (u/the-id source-coll)
-                                            :dataset true
-                                            :dataset_query
-                                            (mt/$ids
-                                             {:database (mt/id)
-                                              :type :query
-                                              :query {:source-table $$orders
-                                                      :limit 4}})}]
+                                               :collection_id (u/the-id source-coll)
+                                               :dataset true
+                                               :dataset_query
+                                               (mt/$ids
+                                                {:database (mt/id)
+                                                 :type :query
+                                                 :query {:source-table $$orders
+                                                         :limit 4}})}]
                       DashboardCard [dashcard {:dashboard_id (u/the-id dashboard)
                                                :card_id    (u/the-id total-card)
                                                :size_x 6, :size_y 6}]
@@ -894,7 +893,20 @@
                                                :collection_id (u/the-id source-coll)
                                                :creator_id    (mt/user->id :rasta)}]
                         :m/card       [total-card  {:name "Total orders per month"
-                                                 :collection_id (u/the-id no-read-coll)
+                                                    :collection_id (u/the-id no-read-coll)
+                                                    :display :line
+                                                    :visualization_settings
+                                                    {:graph.dimensions ["CREATED_AT"]
+                                                     :graph.metrics ["sum"]}
+                                                    :dataset_query
+                                                    (mt/$ids
+                                                     {:database (mt/id)
+                                                      :type     :query
+                                                      :query    {:source-table $$orders
+                                                                 :aggregation  [[:sum $orders.total]]
+                                                                 :breakout     [!month.orders.created_at]}})}]
+                        :m/card      [avg-card  {:name "Average orders per month"
+                                                 :collection_id (u/the-id source-coll)
                                                  :display :line
                                                  :visualization_settings
                                                  {:graph.dimensions ["CREATED_AT"]
@@ -904,29 +916,16 @@
                                                   {:database (mt/id)
                                                    :type     :query
                                                    :query    {:source-table $$orders
-                                                              :aggregation  [[:sum $orders.total]]
+                                                              :aggregation  [[:avg $orders.total]]
                                                               :breakout     [!month.orders.created_at]}})}]
-                        :m/card      [avg-card  {:name "Average orders per month"
-                                              :collection_id (u/the-id source-coll)
-                                              :display :line
-                                              :visualization_settings
-                                              {:graph.dimensions ["CREATED_AT"]
-                                               :graph.metrics ["sum"]}
-                                              :dataset_query
-                                              (mt/$ids
-                                               {:database (mt/id)
-                                                :type     :query
-                                                :query    {:source-table $$orders
-                                                           :aggregation  [[:avg $orders.total]]
-                                                           :breakout     [!month.orders.created_at]}})}]
                         :m/card          [card {:name "A card"
-                                             :collection_id (u/the-id source-coll)
-                                             :dataset_query
-                                             (mt/$ids
-                                              {:database (mt/id)
-                                               :type :query
-                                               :query {:source-table $$orders
-                                                       :limit 4}})}]
+                                                :collection_id (u/the-id source-coll)
+                                                :dataset_query
+                                                (mt/$ids
+                                                 {:database (mt/id)
+                                                  :type :query
+                                                  :query {:source-table $$orders
+                                                          :limit 4}})}]
                         DashboardCard [dashcard {:dashboard_id (u/the-id dashboard)
                                                  :card_id    (u/the-id total-card)
                                                  :size_x 6, :size_y 6}]
@@ -970,6 +969,19 @@
                                                :collection_id (u/the-id source-coll)
                                                :creator_id    (mt/user->id :rasta)}]
                         :m/card       [total-card  {:name "Total orders per month"
+                                                    :collection_id (u/the-id source-coll)
+                                                    :display :line
+                                                    :visualization_settings
+                                                    {:graph.dimensions ["CREATED_AT"]
+                                                     :graph.metrics ["sum"]}
+                                                    :dataset_query
+                                                    (mt/$ids
+                                                     {:database (mt/id)
+                                                      :type     :query
+                                                      :query    {:source-table $$orders
+                                                                 :aggregation  [[:sum $orders.total]]
+                                                                 :breakout     [!month.orders.created_at]}})}]
+                        :m/card      [avg-card  {:name "Average orders per month"
                                                  :collection_id (u/the-id source-coll)
                                                  :display :line
                                                  :visualization_settings
@@ -980,29 +992,16 @@
                                                   {:database (mt/id)
                                                    :type     :query
                                                    :query    {:source-table $$orders
-                                                              :aggregation  [[:sum $orders.total]]
+                                                              :aggregation  [[:avg $orders.total]]
                                                               :breakout     [!month.orders.created_at]}})}]
-                        :m/card      [avg-card  {:name "Average orders per month"
-                                              :collection_id (u/the-id source-coll)
-                                              :display :line
-                                              :visualization_settings
-                                              {:graph.dimensions ["CREATED_AT"]
-                                               :graph.metrics ["sum"]}
-                                              :dataset_query
-                                              (mt/$ids
-                                               {:database (mt/id)
-                                                :type     :query
-                                                :query    {:source-table $$orders
-                                                           :aggregation  [[:avg $orders.total]]
-                                                           :breakout     [!month.orders.created_at]}})}]
                         :m/card          [card {:name "A card"
-                                             :collection_id (u/the-id source-coll)
-                                             :dataset_query
-                                             (mt/$ids
-                                              {:database (mt/id)
-                                               :type :query
-                                               :query {:source-table $$orders
-                                                       :limit 4}})}]
+                                                :collection_id (u/the-id source-coll)
+                                                :dataset_query
+                                                (mt/$ids
+                                                 {:database (mt/id)
+                                                  :type :query
+                                                  :query {:source-table $$orders
+                                                          :limit 4}})}]
                         DashboardCard [dashcard {:dashboard_id (u/the-id dashboard)
                                                  :card_id    (u/the-id total-card)
                                                  :size_x 6, :size_y 6}]
@@ -1266,8 +1265,8 @@
                                                                      :id   "_CATEGORY_ID_"
                                                                      :type "category"}]}]
                     :m/card          [{card-id :id} {:database_id   (mt/id)
-                                                  :table_id      (mt/id :venues)
-                                                  :dataset_query (mt/mbql-query venues)}]]
+                                                     :table_id      (mt/id :venues)
+                                                     :dataset_query (mt/mbql-query venues)}]]
       (let [mappings [{:parameter_id "_CATEGORY_ID_"
                        :target       [:dimension [:field (mt/id :venues :category_id) nil]]}]]
         ;; TODO -- check series as well?
@@ -1814,9 +1813,9 @@
 
   ([dashboard-values f]
    (mt/with-temp* [:m/card          [{source-card-id         :id}
-                                  (merge (mt/card-with-source-metadata-for-query (mt/mbql-query categories {:limit 5}))
-                                         {:database_id     (mt/id)
-                                          :table_id        (mt/id :categories)})]
+                                     (merge (mt/card-with-source-metadata-for-query (mt/mbql-query categories {:limit 5}))
+                                            {:database_id     (mt/id)
+                                             :table_id        (mt/id :categories)})]
                    Dashboard     [dashboard (merge {:parameters [{:name "Category Name"
                                                                   :slug "category_name"
                                                                   :id   "_CATEGORY_NAME_"
@@ -1853,8 +1852,8 @@
                                                                                          :value_field (mt/$ids $categories.name)}}]}
                                                    dashboard-values)]
                    :m/card          [card {:database_id   (mt/id)
-                                        :table_id      (mt/id :venues)
-                                        :dataset_query (mt/mbql-query venues)}]
+                                           :table_id      (mt/id :venues)
+                                           :dataset_query (mt/mbql-query venues)}]
                    DashboardCard [dashcard {:card_id            (:id card)
                                             :dashboard_id       (:id dashboard)
                                             :parameter_mappings [{:parameter_id "_CATEGORY_NAME_"
@@ -2076,11 +2075,11 @@
       ;; nonsensical from a dashboard standpoint as the returned values aren't
       ;; usable for filtering...
       (mt/with-temp* [:m/card [{model-id :id :as native-card}
-                            {:database_id   (mt/id)
-                             :name          "Native Query"
-                             :dataset_query (mt/native-query
-                                             {:query "SELECT category FROM products LIMIT 10;"})
-                             :dataset       true}]]
+                               {:database_id   (mt/id)
+                                :name          "Native Query"
+                                :dataset_query (mt/native-query
+                                                {:query "SELECT category FROM products LIMIT 10;"})
+                                :dataset       true}]]
         (let [metadata (-> (qp/process-query (:dataset_query native-card))
                            :data :results_metadata :columns)]
           (is (seq metadata) "Did not get metadata")
@@ -2092,12 +2091,12 @@
         ;; metadata must be present on the model) and use the question on the
         ;; dashboard.
         (mt/with-temp* [:m/card [{question-id :id}
-                              {:database_id   (mt/id)
-                               :name          "card on native query"
-                               :dataset_query {:type     :query
-                                               :database (mt/id)
-                                               :query    {:source-table (str "card__" model-id)}}
-                               :dataset       true}]
+                                 {:database_id   (mt/id)
+                                  :name          "card on native query"
+                                  :dataset_query {:type     :query
+                                                  :database (mt/id)
+                                                  :query    {:source-table (str "card__" model-id)}}
+                                  :dataset       true}]
                         Dashboard [dashboard {:name       "Dashboard"
                                               :parameters [{:name      "Native Dropdown"
                                                             :slug      "native_dropdown"
@@ -2309,10 +2308,10 @@
       (mt/with-temp*
         [Collection [coll1 {:name "Source card collection"}]
          :m/card       [{source-card-id :id}
-                     {:collection_id (:id coll1)
-                      :database_id   (mt/id)
-                      :table_id      (mt/id :venues)
-                      :dataset_query (mt/mbql-query venues {:limit 5})}]
+                        {:collection_id (:id coll1)
+                         :database_id   (mt/id)
+                         :table_id      (mt/id :venues)
+                         :dataset_query (mt/mbql-query venues {:limit 5})}]
          Collection [coll2 {:name "Dashboard collections"}]
          Dashboard  [{dashboard-id :id}
                      {:collection_id (:id coll2)
@@ -2347,19 +2346,19 @@
     (mt/with-temp*
       ;; card with agggregation and binning columns
       [:m/card [{mbql-card-id :id}
-             (merge (mt/card-with-source-metadata-for-query
-                      (mt/mbql-query venues {:limit 5
-                                             :aggregation [:count]
-                                             :breakout [[:field %latitude {:binning {:strategy :num-bins :num-bins 10}}]]}))
-                    {:name        "MBQL question"
-                     :database_id (mt/id)
-                     :table_id    (mt/id :venues)})]
+                (merge (mt/card-with-source-metadata-for-query
+                         (mt/mbql-query venues {:limit 5
+                                                :aggregation [:count]
+                                                :breakout [[:field %latitude {:binning {:strategy :num-bins :num-bins 10}}]]}))
+                       {:name        "MBQL question"
+                        :database_id (mt/id)
+                        :table_id    (mt/id :venues)})]
        :m/card [{native-card-id :id}
-             (merge (mt/card-with-source-metadata-for-query
-                      (mt/native-query {:query "select name from venues;"}))
-                    {:name        "Native question"
-                     :database_id (mt/id)
-                     :table_id    (mt/id :venues)})]]
+                (merge (mt/card-with-source-metadata-for-query
+                         (mt/native-query {:query "select name from venues;"}))
+                       {:name        "Native question"
+                        :database_id (mt/id)
+                        :table_id    (mt/id :venues)})]]
 
       (let [mbql-card-fields   (card-fields-from-table-metadata mbql-card-id)
             native-card-fields (card-fields-from-table-metadata native-card-id)

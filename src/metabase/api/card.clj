@@ -18,8 +18,7 @@
    [metabase.mbql.normalize :as mbql.normalize]
    [metabase.mbql.util :as mbql.u]
    [metabase.models
-    :refer [:m/card
-            CardBookmark
+    :refer [CardBookmark
             Collection
             Database
             PersistedInfo
@@ -136,13 +135,13 @@
 (defmethod cards-for-filter-option* :using_model
   [_filter-option model-id]
   (->> (t2/select :m/card {:select [:c.*]
-                        :from [[:report_card :m]]
-                        :join [[:report_card :c] [:and
-                                                  [:= :c.database_id :m.database_id]
-                                                  [:or
-                                                   [:like :c.dataset_query (format "%%card__%s%%" model-id)]
-                                                   [:like :c.dataset_query (format "%%#%s%%" model-id)]]]]
-                        :where [:and [:= :m.id model-id] [:not :c.archived]]})
+                           :from [[:report_card :m]]
+                           :join [[:report_card :c] [:and
+                                                     [:= :c.database_id :m.database_id]
+                                                     [:or
+                                                      [:like :c.dataset_query (format "%%card__%s%%" model-id)]
+                                                      [:like :c.dataset_query (format "%%#%s%%" model-id)]]]]
+                           :where [:and [:= :m.id model-id] [:not :c.archived]]})
        ;; now check if model-id really occurs as a card ID
        (filter (fn [card] (some #{model-id} (-> card :dataset_query query/collect-card-ids))))))
 
@@ -360,8 +359,8 @@ saved later when it is ready."
                                ;; collection to change position, check that and fix it if needed
                                (api/maybe-reconcile-collection-position! card-data)
                                (first (t2/insert-returning-instances! :m/card (cond-> card-data
-                                                                             (and metadata (not timed-out?))
-                                                                             (assoc :result_metadata metadata)))))]
+                                                                               (and metadata (not timed-out?))
+                                                                               (assoc :result_metadata metadata)))))]
      (when-not delay-event?
        (events/publish-event! :card-create card))
      (when timed-out?

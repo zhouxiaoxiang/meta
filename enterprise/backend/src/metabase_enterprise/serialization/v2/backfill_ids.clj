@@ -6,6 +6,7 @@
   so this should produce identical IDs on all platforms and JVM implementations."
   (:require
    [metabase-enterprise.serialization.v2.models :as serdes.models]
+   [metabase.models.interface :as mi]
    [metabase.models.serialization :as serdes]
    [metabase.util :as u]
    [metabase.util.i18n :refer [trs]]
@@ -27,7 +28,9 @@
         (t2/update! model (get entity pk) {:entity_id eid})))))
 
 (defn- has-entity-id? [model]
-  (:entity_id (models/properties model)))
+  (if (isa? model :toucan1/model)
+   (:entity_id (models/properties model))
+   (isa? model ::mi/entity-id)))
 
 (defn backfill-ids
   "Updates all rows of all models that are (a) serialized and (b) have `entity_id` columns to have the
@@ -35,6 +38,9 @@
   row."
   []
   (doseq [model-name (concat serdes.models/exported-models serdes.models/inlined-models)
-          :let [model (db/resolve-model (symbol model-name))]
+          :let [model (if (keyword? :toucan1/model)
+                        ;; toucan 2 model is a keyword
+                        model-name
+                        (db/resolve-model (symbol model-name)))]
           :when (has-entity-id? model)]
     (backfill-ids-for model)))

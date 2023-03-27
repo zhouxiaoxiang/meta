@@ -7,7 +7,7 @@
     :refer [GroupTableAccessPolicy]]
    [metabase-enterprise.test :as met]
    [metabase.models
-    :refer [:m/card Database PermissionsGroup PersistedInfo Table]]
+    :refer [Database PermissionsGroup PersistedInfo Table]]
    [metabase.models.permissions-group :as perms-group]
    [metabase.models.persisted-info :as persisted-info]
    [metabase.query-processor :as qp]
@@ -157,8 +157,8 @@
       (mt/with-current-user (mt/user->id :rasta)
         (mt/with-temp*
           [:m/card [card {:dataset_query (mt/mbql-query venues)
-                       :dataset true
-                       :database_id (mt/id)}]]
+                          :dataset true
+                          :database_id (mt/id)}]]
           (fake-persist-card! card)
           (is (str/includes?
                (:query (qp/compile
@@ -174,8 +174,8 @@
          :attributes {"cat" 50}}
         (mt/with-temp*
           [:m/card [card {:dataset_query (mt/mbql-query venues)
-                       :dataset true
-                       :database_id (mt/id)}]]
+                          :dataset true
+                          :database_id (mt/id)}]]
           (fake-persist-card! card)
           (is (not (str/includes?
                     (:query (qp/compile

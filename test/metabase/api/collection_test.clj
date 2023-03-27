@@ -6,8 +6,7 @@
    [clojure.test :refer :all]
    [metabase.api.collection :as api.collection]
    [metabase.models
-    :refer [:m/card
-            Collection
+    :refer [Collection
             Dashboard
             DashboardCard
             ModerationReview
@@ -437,9 +436,9 @@
     (let [collection-id-or-nil (when collection-or-id-or-nil
                                  (u/the-id collection-or-id-or-nil))]
       (mt/with-temp* [:m/card       [{card-id :id}
-                                  {:name               "Birthday Card"
-                                   :collection_preview false
-                                   :collection_id      collection-id-or-nil}]
+                                     {:name               "Birthday Card"
+                                      :collection_preview false
+                                      :collection_id      collection-id-or-nil}]
                       Dashboard  [{dashboard-id :id}
                                   {:name          "Dine & Dashboard"
                                    :collection_id collection-id-or-nil}]
@@ -546,13 +545,13 @@
     (testing "check that pinning filtering exists"
       (mt/with-temp* [Collection [collection]
                       :m/card       [_ {:collection_id (u/the-id collection)
-                                     :collection_position 1
-                                     :name "pinned-1"}]
+                                        :collection_position 1
+                                        :name "pinned-1"}]
                       :m/card       [_ {:collection_id (u/the-id collection)
-                                     :collection_position 1
-                                     :name "pinned-2"}]
+                                        :collection_position 1
+                                        :name "pinned-2"}]
                       :m/card       [_ {:collection_id (u/the-id collection)
-                                     :name "unpinned-card"}]
+                                        :name "unpinned-card"}]
                       Timeline   [_ {:collection_id (u/the-id collection)
                                      :name "timeline"}]]
         (letfn [(fetch [pin-state]
@@ -609,9 +608,9 @@
                     User       [{user1-id :id} {:first_name "Test" :last_name "AAAA" :email "aaaa@example.com"}]
                     User       [{user2-id :id} {:first_name "Test" :last_name "ZZZZ" :email "zzzz@example.com"}]
                     :m/card       [{card1-id :id :as card1}
-                                {:name "Card with history 1" :collection_id collection-id}]
+                                   {:name "Card with history 1" :collection_id collection-id}]
                     :m/card       [{card2-id :id :as card2}
-                                {:name "Card with history 2" :collection_id collection-id}]
+                                   {:name "Card with history 2" :collection_id collection-id}]
                     :m/card       [_ {:name "ZZ" :collection_id collection-id}]
                     :m/card       [_ {:name "AA" :collection_id collection-id}]
                     Revision   [_revision1 {:model    "Card"
@@ -625,8 +624,8 @@
       ;; need different timestamps and Revision has a pre-update to throw as they aren't editable
       (t2/query-one {:update :revision
                     ;; in the past
-                    :set {:timestamp (.minusHours (ZonedDateTime/now (ZoneId/of "UTC")) 24)}
-                    :where [:= :id (:id _revision1)]})
+                     :set {:timestamp (.minusHours (ZonedDateTime/now (ZoneId/of "UTC")) 24)}
+                     :where [:= :id (:id _revision1)]})
       (testing "Results include last edited information from the `Revision` table"
         (is (= [{:name "AA"}
                 {:name "Card with history 1",
@@ -694,7 +693,7 @@
                       User       [{failuser-id :id} {:first_name "failure" :last_name "failure" :email "failure@example.com"}]
                       User       [{passuser-id :id} {:first_name "pass" :last_name "pass" :email "pass@example.com"}]
                       :m/card       [{card-id :id :as card}
-                                  {:name "card" :collection_id collection-id}]
+                                     {:name "card" :collection_id collection-id}]
                       Dashboard  [{dashboard-id :id :as dashboard} {:name "dashboard" :collection_id collection-id}]
                       Revision   [card-revision1
                                   {:model    "Card"
@@ -719,14 +718,14 @@
         (letfn [(at-year [year] (ZonedDateTime/of year 1 1 0 0 0 0 (ZoneId/of "UTC")))]
           (t2/query-one {:update :revision
                         ;; in the past
-                        :set    {:timestamp (at-year 2015)}
-                        :where  [:in :id (map :id [card-revision1 dash-revision1])]})
+                         :set    {:timestamp (at-year 2015)}
+                         :where  [:in :id (map :id [card-revision1 dash-revision1])]})
           ;; mark the later revisions with the user with name "pass". Note important that its the later revision by
           ;; id. Query assumes increasing timestamps with ids
           (t2/query-one {:update :revision
-                        :set    {:timestamp (at-year 2021)
-                                 :user_id   passuser-id}
-                        :where  [:in :id (map :id [card-revision2 dash-revision2])]}))
+                         :set    {:timestamp (at-year 2021)
+                                  :user_id   passuser-id}
+                         :where  [:in :id (map :id [card-revision2 dash-revision2])]}))
         (is (= ["pass" "pass"]
                (->> (mt/user-http-request :rasta :get 200 (str "collection/" collection-id "/items?models=dashboard&models=card"))
                     :data
@@ -1158,10 +1157,10 @@
     (testing "fully_parametrized of a card"
       (testing "can be false"
         (mt/with-temp :m/card [card {:name          "Business Card"
-                                  :dataset_query {:native {:template-tags {:param0 {:default 0}
-                                                                           :param1 {:required false}
-                                                                           :param2 {:required false}}
-                                                           :query         "select {{param0}}, {{param1}} [[ , {{param2}} ]]"}}}]
+                                     :dataset_query {:native {:template-tags {:param0 {:default 0}
+                                                                              :param1 {:required false}
+                                                                              :param2 {:required false}}
+                                                              :query         "select {{param0}}, {{param1}} [[ , {{param2}} ]]"}}}]
           (is (partial= [{:name                "Business Card"
                           :entity_id           (:entity_id card)
                           :model               "card"
@@ -1172,9 +1171,9 @@
 
       (testing "is false even if a required field-filter parameter has no default"
         (mt/with-temp :m/card [card {:name          "Business Card"
-                                  :dataset_query {:native {:template-tags {:param0 {:default 0}
-                                                                           :param1 {:type "dimension", :required true}}
-                                                           :query         "select {{param0}}, {{param1}}"}}}]
+                                     :dataset_query {:native {:template-tags {:param0 {:default 0}
+                                                                              :param1 {:type "dimension", :required true}}
+                                                              :query         "select {{param0}}, {{param1}}"}}}]
           (is (partial= [{:name                "Business Card"
                           :entity_id           (:entity_id card)
                           :model               "card"
@@ -1185,9 +1184,9 @@
 
       (testing "is false even if an optional required parameter has no default"
         (mt/with-temp :m/card [card {:name          "Business Card"
-                                  :dataset_query {:native {:template-tags {:param0 {:default 0}
-                                                                           :param1 {:required true}}
-                                                           :query         "select {{param0}}, [[ , {{param1}} ]]"}}}]
+                                     :dataset_query {:native {:template-tags {:param0 {:default 0}
+                                                                              :param1 {:required true}}
+                                                              :query         "select {{param0}}, [[ , {{param1}} ]]"}}}]
           (is (partial= [{:name                "Business Card"
                           :entity_id           (:entity_id card)
                           :model               "card"
@@ -1198,7 +1197,7 @@
 
       (testing "is true if invalid parameter syntax causes a parsing exception to be thrown"
         (mt/with-temp :m/card [card {:name          "Business Card"
-                                  :dataset_query {:native {:query "select [[]]"}}}]
+                                     :dataset_query {:native {:query "select [[]]"}}}]
           (is (partial= [{:name                "Business Card"
                           :entity_id           (:entity_id card)
                           :model               "card"
@@ -1209,11 +1208,11 @@
 
       (testing "is true if all obligatory parameters have defaults"
         (mt/with-temp :m/card [card {:name          "Business Card"
-                                  :dataset_query {:native {:template-tags {:param0 {:required false, :default 0}
-                                                                           :param1 {:required true, :default 1}
-                                                                           :param2 {}
-                                                                           :param3 {:type "dimension"}}
-                                                           :query "select {{param0}}, {{param1}} [[ , {{param2}} ]] from t {{param3}}"}}}]
+                                     :dataset_query {:native {:template-tags {:param0 {:required false, :default 0}
+                                                                              :param1 {:required true, :default 1}
+                                                                              :param2 {}
+                                                                              :param3 {:type "dimension"}}
+                                                              :query "select {{param0}}, {{param1}} [[ , {{param2}} ]] from t {{param3}}"}}}]
           (is (partial= [{:name                "Business Card"
                           :entity_id           (:entity_id card)
                           :model               "card"
@@ -1227,13 +1226,13 @@
                                                      :creator_id (mt/user->id :crowberto)
                                                      :name       "snippet"}]
                         :m/card [card {:name          "Business Card"
-                                    :dataset_query {:native {:template-tags {:param0  {:required false
-                                                                                       :default  0}
-                                                                             :snippet {:name         "snippet"
-                                                                                       :type         :snippet
-                                                                                       :snippet-name "snippet"
-                                                                                       :snippet-id   (:id snippet)}}
-                                                             :query "select {{param0}} from {{snippet}}"}}}]]
+                                       :dataset_query {:native {:template-tags {:param0  {:required false
+                                                                                          :default  0}
+                                                                                :snippet {:name         "snippet"
+                                                                                          :type         :snippet
+                                                                                          :snippet-name "snippet"
+                                                                                          :snippet-id   (:id snippet)}}
+                                                                :query "select {{param0}} from {{snippet}}"}}}]]
           (is (partial= [{:name                "Business Card"
                           :entity_id           (:entity_id card)
                           :model               "card"

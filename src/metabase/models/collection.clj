@@ -798,10 +798,10 @@
   This needs to be done recursively for all descendants as well."
   [collection :- (mi/InstanceOf Collection)]
   (t2/query-one {:delete-from :permissions
-                :where       [:in :object (for [collection (cons collection (descendants collection))
-                                                path-fn    [perms/collection-read-path
-                                                            perms/collection-readwrite-path]]
-                                            (path-fn collection))]}))
+                 :where       [:in :object (for [collection (cons collection (descendants collection))
+                                                 path-fn    [perms/collection-read-path
+                                                             perms/collection-readwrite-path]]
+                                             (path-fn collection))]}))
 
 (defn- update-perms-when-moving-across-personal-boundry!
   "If a Collection is moving 'across the boundry' and will become a descendant of a Personal Collection, or will cease
@@ -887,9 +887,9 @@
       (throw (Exception. (tru "You cannot delete a Personal Collection!")))))
   ;; Delete permissions records for this Collection
   (t2/query-one {:delete-from :permissions
-                :where       [:or
-                              [:= :object (perms/collection-readwrite-path collection)]
-                              [:= :object (perms/collection-read-path collection)]]}))
+                 :where       [:or
+                               [:= :object (perms/collection-readwrite-path collection)]
+                               [:= :object (perms/collection-read-path collection)]]}))
 
 
 ;;; -------------------------------------------------- IModel Impl ---------------------------------------------------
