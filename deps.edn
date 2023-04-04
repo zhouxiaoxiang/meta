@@ -161,20 +161,6 @@
  :paths
  ["src" "shared/src" "resources"]
 
- ;; These are needed for the Athena and Redshift drivers if you are developing against them locally. If those drivers'
- ;; dependencies are not included (i.e., if we don't have the `:drivers` profile), these repos are effectively
- ;; ignored.
- ;;
- ;; 1. Maven repos from subprojects do not get copied over -- see
- ;; https://ask.clojure.org/index.php/10726/deps-manifest-dependencies-respect-repos-dependent-project
- ;;
- ;; 2. You cannot include `:mvn/repos` inside of an alias -- see
- ;; https://ask.clojure.org/index.php/12367/support-mvn-repos-inside-an-alias -- if we could, this could go in the
- ;; `:drivers` alias instead.
- :mvn/repos
- {"athena"   {:url "https://s3.amazonaws.com/maven-athena"}
-  "redshift" {:url "https://s3.amazonaws.com/redshift-maven-repository/release"}}
-
  :aliases
  {
 ;;; Local Dev & test profiles
@@ -288,16 +274,13 @@
   ;;    clojure -X:dev:ee:ee-dev:drivers:drivers-dev:test (for EE)
   :drivers-dev
   {:extra-paths
-   ["modules/drivers/athena/test"
-    "modules/drivers/bigquery-cloud-sdk/test"
+   ["modules/drivers/bigquery-cloud-sdk/test"
     "modules/drivers/druid/test"
-    "modules/drivers/googleanalytics/test"
     "modules/drivers/mongo/test"
     "modules/drivers/oracle/test"
     "modules/drivers/presto/test"
     "modules/drivers/presto-common/test"
     "modules/drivers/presto-jdbc/test"
-    "modules/drivers/redshift/test"
     "modules/drivers/snowflake/test"
     "modules/drivers/sparksql/test"
     "modules/drivers/sqlite/test"
@@ -317,16 +300,13 @@
                 "src"
                 "shared/src"
                 "enterprise/backend/src"
-                "modules/drivers/athena/src"
                 "modules/drivers/bigquery-cloud-sdk/src"
                 "modules/drivers/druid/src"
-                "modules/drivers/googleanalytics/src"
                 "modules/drivers/mongo/src"
                 "modules/drivers/oracle/src"
                 "modules/drivers/presto/src"
                 "modules/drivers/presto-common/src"
                 "modules/drivers/presto-jdbc/src"
-                "modules/drivers/redshift/src"
                 "modules/drivers/snowflake/src"
                 "modules/drivers/sparksql/src"
                 "modules/drivers/sqlite/src"
@@ -342,16 +322,13 @@
                :source-paths    ["src"
                                  "shared/src"
                                  "enterprise/backend/src"
-                                 "modules/drivers/athena/src"
                                  "modules/drivers/bigquery-cloud-sdk/src"
                                  "modules/drivers/druid/src"
-                                 "modules/drivers/googleanalytics/src"
                                  "modules/drivers/mongo/src"
                                  "modules/drivers/oracle/src"
                                  "modules/drivers/presto/src"
                                  "modules/drivers/presto-common/src"
                                  "modules/drivers/presto-jdbc/src"
-                                 "modules/drivers/redshift/src"
                                  "modules/drivers/snowflake/src"
                                  "modules/drivers/sparksql/src"
                                  "modules/drivers/sqlite/src"
